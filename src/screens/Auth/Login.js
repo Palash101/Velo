@@ -14,6 +14,10 @@ import {useNavigation} from '@react-navigation/native';
 import {PageContainer} from '../../components/Container';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PageLoader from '../../components/PageLoader';
+import {assets} from '../../config/AssetsConfig';
+import {AuthHeader} from '../../components/AuthHeader';
+import {ThemeButton} from '../../components/Buttons';
+import {OutlinedTextField} from 'react-native-material-textfield';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -55,75 +59,69 @@ const Login = () => {
   return (
     <PageContainer>
       <PageLoader loading={loading} />
-      <Text>Login</Text>
+      <ScrollView style={{flex: 1, paddingBottom: 50}}>
+        <AuthHeader title={'Login'} />
+        <View style={styles.form}>
+          <View style={styles.row}>
+            <OutlinedTextField
+              label="Email address"
+              onChangeText={text => setEmail(text)}
+              ref={email}
+              lineWidth={0}
+              labelFontSize={12}
+              fontSize={16}
+              textColor="#fff"
+              activeLineWidth={2}
+              tintColor="#fff"
+              baseColor="#fff"
+              inputContainerPadding={2}
+              containerStyle={{height: 50}}
+              labelHeight={25}
+              keyboardType="email-address"
+              inputContainerStyle={{
+                borderBottomWidth: 1,
+                borderColor: '#fff',
+                height: 45,
+              }}
+            />
+
+            <OutlinedTextField
+              label="Password"
+              onChangeText={text => setPassword(text)}
+              ref={password}
+              lineWidth={0}
+              labelFontSize={12}
+              fontSize={16}
+              textColor="#fff"
+              activeLineWidth={2}
+              tintColor="#fff"
+              baseColor="#fff"
+              inputContainerPadding={2}
+              labelHeight={25}
+              secureTextEntry={true}
+              containerStyle={{marginTop: 20, height: 50}}
+              inputContainerStyle={{
+                borderBottomWidth: 1,
+                borderColor: '#fff',
+                height: 45,
+              }}
+            />
+          </View>
+
+          <ThemeButton label={'LOGIN'} onPress={submit} loading={loading} />
+
+          <TouchableOpacity
+            style={styles.forget}
+            onPress={() =>console.log()}>
+            <Text style={styles.forgetText}>Forgot Password </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.skip} onPress={() => console.log()}>
+            <Text style={styles.skipText}>Skip Now </Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </PageContainer>
-
-    // <View style={styles.container}  >
-
-    //     <ScrollView style={{flex:1,paddingBottom:50}}>
-    //       <View style={styles.row}>
-    //           <Image source={require('../assets/images/logo.png')} style={styles.logo} />
-    //           <Text style={styles.title}>Login</Text>
-    //       </View>
-
-    //       <View style={styles.form}>
-
-    //         <View style={styles.row}>
-    //                 <OutlinedTextField
-    //                     label='Email address'
-    //                     onChangeText={(text) => this.setState({email:text})}
-    //                     ref={this.state.email}
-    //                     lineWidth={0}
-    //                     labelFontSize={12}
-    //                     fontSize={16}
-    //                     textColor="#fff"
-    //                     activeLineWidth={2}
-    //                     labelHeight={20}
-    //                     tintColor="#fff"
-    //                     baseColor="#fff"
-    //                     inputContainerPadding={2}
-    //                     containerStyle={{height:50}}
-    //                     labelHeight={25}
-    //                     keyboardType = "email-address"
-    //                     inputContainerStyle={{borderBottomWidth:1,borderColor:"#fff",height:45}}
-    //                   />
-
-    //                   <OutlinedTextField
-    //                     label='Password'
-    //                     onChangeText={(text) => this.setState({password:text})}
-    //                     ref={this.state.email}
-    //                     lineWidth={0}
-    //                     labelFontSize={12}
-    //                     fontSize={16}
-    //                     textColor="#fff"
-    //                     activeLineWidth={2}
-    //                     tintColor="#fff"
-    //                     baseColor="#fff"
-    //                     inputContainerPadding={2}
-    //                     labelHeight={25}
-    //                     secureTextEntry={true}
-    //                     containerStyle={{marginTop:20,height:50}}
-    //                     inputContainerStyle={{borderBottomWidth:1,borderColor:"#fff",height:45}}
-    //                   />
-    //           </View>
-
-    //            <TouchableOpacity style={styles.button} onPress={this.Login} >
-    //                 <Text style={[this.state.loading === true ? styles.hide : styles.buttonText]}>LOGIN</Text>
-    //                 <ActivityIndicator style={[this.state.loading === true ? styles.loader : styles.hide]} size="small" color="#fff" />
-
-    //             </TouchableOpacity>
-
-    //             <TouchableOpacity style={styles.forget} onPress={() => Actions.Forget()}>
-    //               <Text style={styles.forgetText}>Forgot Password </Text>
-    //             </TouchableOpacity>
-
-    //             <TouchableOpacity style={styles.skip} onPress={() => Actions.Home()}>
-    //           <Text style={styles.skipText}>Skip Now </Text>
-    //         </TouchableOpacity>
-
-    //       </View>
-
-    //     </ScrollView>
 
     //     <View style={styles.alreadyBox}>
     //         <Text style={{color:"#fff",fontFamily:"Gotham-Medium",fontWeight:"300",opacity:1,fontSize:16}}>Don't have account? </Text>
@@ -199,56 +197,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     height: 53,
   },
-  row: {},
-  logo: {
-    width: 130,
-    height: 53,
-    position: 'absolute',
-    zIndex: 999,
-    top: 50,
-    left: 20,
-  },
-  title: {
-    fontSize: 22,
-    alignSelf: 'center',
-    fontFamily: 'Gotham-Medium',
-    color: '#ffffff',
-    position: 'absolute',
-    left: 20,
-    marginTop: 120,
-    lineHeight: 30,
-    width: 130,
-    textAlign: 'center',
-    borderBottomWidth: 2,
-    paddingBottom: 10,
-    borderColor: '#fff',
-  },
+
   form: {
     marginTop: 220,
-  },
-  buttonText: {
-    color: '#000',
-    fontSize: 16,
-    fontFamily: 'Gotham-Black',
-    lineHeight: 40,
-  },
-  button: {
-    borderWidth: 1,
-    borderRadius: 24,
-    height: 42,
-    borderColor: '#fff',
-    alignItems: 'center',
-    width: 220,
-    zIndex: 3,
-    alignSelf: 'center',
-    backgroundColor: '#d6d5d5',
-    marginTop: 50,
-  },
-  hide: {
-    display: 'none',
-  },
-  show: {
-    display: 'flex',
   },
   back: {
     width: 20,

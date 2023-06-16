@@ -45,7 +45,7 @@ const App = () => {
         normalColor={'#000'}
         textStyle={{paddingRight: 40}}>
         <NavigationContainer>
-          <ScreenNavigationStack />
+          <AuthNavigationStack />
         </NavigationContainer>
       </ToastProvider>
     </>
