@@ -17,18 +17,21 @@ import PageLoader from '../../components/PageLoader';
 import {assets} from '../../config/AssetsConfig';
 import {AuthHeader} from '../../components/AuthHeader';
 import {ThemeButton} from '../../components/Buttons';
-import {OutlinedTextField} from 'react-native-material-textfield';
+import { Input } from '../../components/Input/input';
+import { useToast } from 'react-native-toast-notifications';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
 const Login = () => {
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
+  const toast = useToast();
 
   const submit = async () => {
+    console.log(email !== '' && password !== '','password')
     if (email !== '' && password !== '') {
       setLoading(true);
       const instance = await AuthContoller();
@@ -52,61 +55,21 @@ const Login = () => {
         alert(result.message.error);
       }
     } else {
-      alert('please enter email and password');
+      toast.show('please enter email and password');
     }
   };
 
   return (
+    <>
     <PageContainer>
       <PageLoader loading={loading} />
       <ScrollView style={{flex: 1, paddingBottom: 50}}>
         <AuthHeader title={'Login'} />
         <View style={styles.form}>
-          <View style={styles.row}>
-            <OutlinedTextField
-              label="Email address"
-              onChangeText={text => setEmail(text)}
-              ref={email}
-              lineWidth={0}
-              labelFontSize={12}
-              fontSize={16}
-              textColor="#fff"
-              activeLineWidth={2}
-              tintColor="#fff"
-              baseColor="#fff"
-              inputContainerPadding={2}
-              containerStyle={{height: 50}}
-              labelHeight={25}
-              keyboardType="email-address"
-              inputContainerStyle={{
-                borderBottomWidth: 1,
-                borderColor: '#fff',
-                height: 45,
-              }}
-            />
-
-            <OutlinedTextField
-              label="Password"
-              onChangeText={text => setPassword(text)}
-              ref={password}
-              lineWidth={0}
-              labelFontSize={12}
-              fontSize={16}
-              textColor="#fff"
-              activeLineWidth={2}
-              tintColor="#fff"
-              baseColor="#fff"
-              inputContainerPadding={2}
-              labelHeight={25}
-              secureTextEntry={true}
-              containerStyle={{marginTop: 20, height: 50}}
-              inputContainerStyle={{
-                borderBottomWidth: 1,
-                borderColor: '#fff',
-                height: 45,
-              }}
-            />
-          </View>
+          
+            <Input value={email} label={'Email address'} onChang={setEmail} />
+            <Input value={password} label={'Password'} onChang={setPassword}  secureTextEntry={true} />
+          
 
           <ThemeButton label={'LOGIN'} onPress={submit} loading={loading} />
 
@@ -121,18 +84,19 @@ const Login = () => {
           </TouchableOpacity>
         </View>
       </ScrollView>
+      
+      <View style={styles.alreadyBox}>
+            <Text style={{color:"#fff",fontFamily:"Gotham-Medium",fontWeight:"300",opacity:1,fontSize:16}}>Don't have account? </Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+            <Text style={styles.AlreadyText} >Sign Up</Text>
+            </TouchableOpacity>
+          </View>
+
+          <Image source={assets.loginBg} style={styles.bottombg} />
+          <View style={styles.bgoverlay}></View>
     </PageContainer>
 
-    //     <View style={styles.alreadyBox}>
-    //         <Text style={{color:"#fff",fontFamily:"Gotham-Medium",fontWeight:"300",opacity:1,fontSize:16}}>Don't have account? </Text>
-    //         <TouchableOpacity onPress={() => Actions.Signup()}>
-    //         <Text style={styles.AlreadyText} >Sign Up</Text>
-    //         </TouchableOpacity>
-    //       </View>
-
-    //       <Image source={require('../assets/images/loginbg.png')} style={styles.bottombg} />
-    //       <View style={styles.bgoverlay}></View>
-    // </View>
+    </>
   );
 };
 
@@ -142,6 +106,7 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingTop: Platform.OS === 'ios' ? 50 : 20,
   },
+
   label: {
     fontSize: 15,
     fontFamily: 'Gotham-Medium',

@@ -16,24 +16,24 @@ import DrawerNavigation from './src/navigation/DrawerNavigation';
 import AuthNavigationStack from './src/navigation/AuthNavigation';
 
 const App = () => {
-  useEffect(() => {
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
-      console.log(remoteMessage, 'remoteMessage');
-      Alert.alert(
-        remoteMessage.notification.title,
-        remoteMessage.notification.body,
-      );
-    });
-    return unsubscribe;
-  }, []);
+  // useEffect(() => {
+  //   const unsubscribe = messaging().onMessage(async remoteMessage => {
+  //     console.log(remoteMessage, 'remoteMessage');
+  //     Alert.alert(
+  //       remoteMessage.notification.title,
+  //       remoteMessage.notification.body,
+  //     );
+  //   });
+  //   return unsubscribe;
+  // }, []);
 
-  useEffect(() => {
-    registerAppWithFCM();
-  }, []);
+  // useEffect(() => {
+  //   registerAppWithFCM();
+  // }, []);
 
-  const registerAppWithFCM = async () => {
-    await messaging().registerDeviceForRemoteMessages();
-  };
+  // const registerAppWithFCM = async () => {
+  //   await messaging().registerDeviceForRemoteMessages();
+  // };
 
   return (
     <>
@@ -41,7 +41,7 @@ const App = () => {
         offset={50}
         animationType="zoom-in"
         placement="bottom"
-        icon={<Image source={assets.logo} style={{width: 32, height: 24}} />}
+        icon={<Image source={assets.vlogo} style={{width: 24, height: 24,tintColor:'#fff'}} />}
         normalColor={'#000'}
         textStyle={{paddingRight: 40}}>
         <NavigationContainer>

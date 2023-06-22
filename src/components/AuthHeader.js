@@ -18,6 +18,7 @@ const styles = StyleSheet.create({
     zIndex: 999,
     top: 50,
     left: 20,
+    tintColor:'#fff'
   },
   title: {
     fontSize: 22,

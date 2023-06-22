@@ -22,6 +22,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Gotham-Black',
     lineHeight: 40,
+    fontWeight:'800'
   },
   button: {
     borderWidth: 1,
