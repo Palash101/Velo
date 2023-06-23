@@ -17,8 +17,8 @@ import PageLoader from '../../components/PageLoader';
 import {assets} from '../../config/AssetsConfig';
 import {AuthHeader} from '../../components/AuthHeader';
 import {ThemeButton} from '../../components/Buttons';
-import { Input } from '../../components/Input/input';
-import { useToast } from 'react-native-toast-notifications';
+import {Input} from '../../components/Input/input';
+import {useToast} from 'react-native-toast-notifications';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -31,71 +31,85 @@ const Login = () => {
   const toast = useToast();
 
   const submit = async () => {
-    console.log(email !== '' && password !== '','password')
-    if (email !== '' && password !== '') {
-      setLoading(true);
-      const instance = await AuthContoller();
-      const result = instance.loginUser(email, password);
-      if (result.success === true) {
-        if (result.responseJson.access_token) {
-          AsyncStorage.setItem(
-            'token',
-            JSON.stringify(result.responseJson.access_token),
-          );
-          AsyncStorage.setItem(
-            'user',
-            JSON.stringify(result.responseJson.user),
-          );
-          navigation.navigate('Home');
-          alert('Welcome to velo');
+    console.log(email !== '' && password !== '', 'password');
+    if (loading === false) {
+      if (email !== '' && password !== '') {
+        setLoading(true);
+        const instance = await AuthContoller();
+        const result = instance.loginUser(email, password);
+        if (result.success === true) {
+          if (result.responseJson.access_token) {
+            AsyncStorage.setItem(
+              'token',
+              JSON.stringify(result.responseJson.access_token),
+            );
+            AsyncStorage.setItem(
+              'user',
+              JSON.stringify(result.responseJson.user),
+            );
+            navigation.navigate('Home');
+            alert('Welcome to velo');
+          } else {
+            alert(result.responseJson.error);
+          }
         } else {
-          alert(result.responseJson.error);
+          alert(result.message.error);
         }
       } else {
-        alert(result.message.error);
+        toast.show('please enter email and password');
       }
-    } else {
-      toast.show('please enter email and password');
     }
   };
 
   return (
     <>
-    <PageContainer>
-      <PageLoader loading={loading} />
-      <ScrollView style={{flex: 1, paddingBottom: 50}}>
-        <AuthHeader title={'Login'} />
-        <View style={styles.form}>
-          
+      <PageContainer>
+        <ScrollView style={{flex: 1, paddingBottom: 50}}>
+          <AuthHeader title={'Login'} />
+          <View style={styles.form}>
+            
             <Input value={email} label={'Email address'} onChang={setEmail} />
-            <Input value={password} label={'Password'} onChang={setPassword}  secureTextEntry={true} />
-          
 
-          <ThemeButton label={'LOGIN'} onPress={submit} loading={loading} />
+            <Input
+              value={password}
+              label={'Password'}
+              onChang={setPassword}
+              secureTextEntry={true}
+            />
 
-          <TouchableOpacity
-            style={styles.forget}
-            onPress={() =>console.log()}>
-            <Text style={styles.forgetText}>Forgot Password </Text>
-          </TouchableOpacity>
+            <ThemeButton label={'LOGIN'} onPress={submit} loading={loading} />
 
-          <TouchableOpacity style={styles.skip} onPress={() => console.log()}>
-            <Text style={styles.skipText}>Skip Now </Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-      
-      <View style={styles.alreadyBox}>
-            <Text style={{color:"#fff",fontFamily:"Gotham-Medium",fontWeight:"300",opacity:1,fontSize:16}}>Don't have account? </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-            <Text style={styles.AlreadyText} >Sign Up</Text>
+            <TouchableOpacity
+              style={styles.forget}
+              onPress={() => navigation.navigate('Forgot')}>
+              <Text style={styles.forgetText}>Forgot Password </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.skip} onPress={() => console.log()}>
+              <Text style={styles.skipText}>Skip Now </Text>
             </TouchableOpacity>
           </View>
+        </ScrollView>
 
-          <Image source={assets.loginBg} style={styles.bottombg} />
-          <View style={styles.bgoverlay}></View>
-    </PageContainer>
+        <View style={styles.alreadyBox}>
+          <Text
+            style={{
+              color: '#fff',
+              fontFamily: 'Gotham-Medium',
+              fontWeight: '300',
+              opacity: 1,
+              fontSize: 16,
+            }}>
+            Don't have account?{' '}
+          </Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+            <Text style={styles.AlreadyText}>Sign Up</Text>
+          </TouchableOpacity>
+        </View>
 
+        <Image source={assets.loginBg} style={styles.bottombg} />
+        <View style={styles.bgoverlay}></View>
+      </PageContainer>
     </>
   );
 };

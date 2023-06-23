@@ -5,4 +5,5 @@ export const assets = {
   mainLogo: require('../../assets/icon.png'),
   bg: require('../../assets/images/chbg.jpg'),
   loginBg: require('../../assets/images/loginbg.png'),
+  forgetBg: require('../../assets/images/forgot_bg.jpeg'),
 };

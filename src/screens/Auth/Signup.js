@@ -17,21 +17,17 @@ import PageLoader from '../../components/PageLoader';
 import {assets} from '../../config/AssetsConfig';
 import {AuthHeader} from '../../components/AuthHeader';
 import {ThemeButton} from '../../components/Buttons';
-import { Input } from '../../components/Input/input';
-import { useToast } from 'react-native-toast-notifications';
-import { RadioButton } from 'react-native-paper';
+import {Input} from '../../components/Input/input';
+import {useToast} from 'react-native-toast-notifications';
+import {RadioButton} from 'react-native-paper';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
-const radio_props = [
-    {label: 'Male', value: "Male" },
-    {label: 'Female', value: "Female" },
-  ];
 
 const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [password_confirmation , setPasswordConfirmation] = useState('');
+  const [password_confirmation, setPasswordConfirmation] = useState('');
   const [gender, setGender] = useState('Male');
   const [first_name, setFirstName] = useState('');
   const [last_name, setLastName] = useState('');
@@ -43,17 +39,14 @@ const SignUp = () => {
   const [termsModal, setTermsModal] = useState(false);
   const [terms_and_conditions, setTermsAndConditions] = useState();
   const [privacyModal, setPrivacyModal] = useState(false);
-  const [privacy_policy,setPrivacyPolicy] = useState();
-  
+  const [privacy_policy, setPrivacyPolicy] = useState();
 
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
   const toast = useToast();
 
-
-
   const submit = async () => {
-    console.log(email !== '' && password !== '','password')
+    console.log(email !== '' && password !== '', 'password');
     if (email !== '' && password !== '') {
       setLoading(true);
       const instance = await AuthContoller();
@@ -83,43 +76,70 @@ const SignUp = () => {
 
   return (
     <>
-    <PageContainer>
-      <PageLoader loading={loading} />
-      <ScrollView style={{flex: 1, paddingBottom: 30}}>
-        <AuthHeader title={'Sign up'} />
-        <View style={styles.form}>
-          
-            <Input value={first_name} label={'First name'} onChang={setFirstName} />
-            <Input value={last_name} label={'Last name'} onChang={setLastName}  />
+      <PageContainer>
+        <ScrollView style={{flex: 1, paddingBottom: 30}}>
+          <AuthHeader title={'Sign up'} />
+          <View style={styles.form}>
+            <Input
+              value={first_name}
+              label={'First name'}
+              onChang={setFirstName}
+            />
+            <Input
+              value={last_name}
+              label={'Last name'}
+              onChang={setLastName}
+            />
             <Input value={email} label={'Email address'} onChang={setEmail} />
-            <Input value={password} label={'Password'} onChang={setPassword} secureTextEntry={true} />
-            <Input value={password_confirmation} label={'Confirm password'} onChang={setPasswordConfirmation} secureTextEntry={true} />
-            <Input value={phone} label={'Phone number'} onChang={setPhone} keyboardType={'numeric'} />
-            <RadioButton.Group style={{color:"#fff",flexDirection:'row',display:'flex'}} onValueChange={value => setGender(value)} value={gender}>
-                <RadioButton.Item label="Male" value="Male" />
-                <RadioButton.Item label="Female" value="Female" />
+            <Input
+              value={password}
+              label={'Password'}
+              onChang={setPassword}
+              secureTextEntry={true}
+            />
+            <Input
+              value={password_confirmation}
+              label={'Confirm password'}
+              onChang={setPasswordConfirmation}
+              secureTextEntry={true}
+            />
+            <Input
+              value={phone}
+              label={'Phone number'}
+              onChang={setPhone}
+              keyboardType={'numeric'}
+            />
+            <RadioButton.Group
+              style={{color: '#fff', flexDirection: 'row', display: 'flex'}}
+              onValueChange={value => setGender(value)}
+              value={gender}>
+              <RadioButton.Item label="Male" value="Male" />
+              <RadioButton.Item label="Female" value="Female" />
             </RadioButton.Group>
-            <Input value={referral_code} label={'Refferal code (optional)'} onChang={setRefferalCode} />
 
-          
-
-          <ThemeButton label={'SIGN UP'} onPress={submit} loading={loading} />
-
-         
-        </View>
-      </ScrollView>
-      
-      <View style={styles.alreadyBox}>
-            <Text style={{color:"#fff",fontFamily:"Gotham-Medium",fontWeight:"300",opacity:1,fontSize:16}}>Already have an account? </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-            <Text style={styles.AlreadyText} >Login</Text>
-            </TouchableOpacity>
+            <ThemeButton label={'SIGN UP'} onPress={submit} loading={loading} />
           </View>
+        </ScrollView>
 
-          <Image source={assets.loginBg} style={styles.bottombg} />
-          <View style={styles.bgoverlay}></View>
-    </PageContainer>
+        <View style={styles.alreadyBox}>
+          <Text
+            style={{
+              color: '#fff',
+              fontFamily: 'Gotham-Medium',
+              fontWeight: '300',
+              opacity: 1,
+              fontSize: 16,
+            }}>
+            Already have an account?{' '}
+          </Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+            <Text style={styles.AlreadyText}>Login</Text>
+          </TouchableOpacity>
+        </View>
 
+        <Image source={assets.loginBg} style={styles.bottombg} />
+        <View style={styles.bgoverlay}></View>
+      </PageContainer>
     </>
   );
 };
