@@ -20,6 +20,7 @@
     "@react-navigation/stack": "^6.3.16",
     "react": "18.2.0",
     "react-native": "0.71.10",
+    "react-native-animated-pagination-dots": "^0.1.73",
     "react-native-gesture-handler": "^2.12.0",
     "react-native-material-ripple": "^0.9.1",
     "react-native-material-textfield": "^0.16.1",

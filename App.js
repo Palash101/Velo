@@ -14,6 +14,7 @@ import {Alert, Image} from 'react-native';
 import {assets} from './src/config/AssetsConfig';
 import DrawerNavigation from './src/navigation/DrawerNavigation';
 import AuthNavigationStack from './src/navigation/AuthNavigation';
+import UserProvider, {UserConsumer} from './context/UserContext';
 
 const App = () => {
   // useEffect(() => {
@@ -41,12 +42,27 @@ const App = () => {
         offset={50}
         animationType="zoom-in"
         placement="bottom"
-        icon={<Image source={assets.vlogo} style={{width: 24, height: 24,tintColor:'#fff'}} />}
+        icon={
+          <Image
+            source={assets.vlogo}
+            style={{width: 24, height: 24, tintColor: '#fff'}}
+          />
+        }
         normalColor={'#000'}
         textStyle={{paddingRight: 40}}>
-        <NavigationContainer>
-          <AuthNavigationStack />
-        </NavigationContainer>
+        <UserProvider>
+          <UserConsumer>
+            {({auth}) => {
+              console.log(auth, 'authhh');
+              return (
+                <NavigationContainer>
+                  {auth === true && <ScreenNavigationStack />}
+                  {!auth && <AuthNavigationStack />}
+                </NavigationContainer>
+              );
+            }}
+          </UserConsumer>
+        </UserProvider>
       </ToastProvider>
     </>
   );

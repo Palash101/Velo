@@ -7,10 +7,16 @@ import {
   View,
 } from 'react-native';
 import {assets} from '../../config/AssetsConfig';
+import DrawerNavigation from '../../navigation/DrawerNavigation';
+import { useNavigation } from '@react-navigation/native';
 
-const TopBar = ({navigation}) => {
+const TopBar = () => {
+
+  const navigation = useNavigation();
+
   return (
     <>
+    {/* <DrawerNavigation /> */}
       <View style={styles.box}>
         <TouchableOpacity onPress={() => navigation.openDrawer()}>
           <Image source={assets.bell} style={styles.bar} />

@@ -5,12 +5,29 @@ import Classes from '../screens/Classes';
 import Planner from '../screens/Planner';
 import Buy from '../screens/Buy';
 import Journey from '../screens/Journey';
+import Splash from '../screens/Auth/Splash';
+import DrawerNavigation from './DrawerNavigation';
 
 const ScreenNavigationStack = ({navigation}) => {
   const Stack = createStackNavigator();
 
   return (
     <Stack.Navigator>
+        <Stack.Screen
+        name={'Splash'}
+        component={Splash}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name={'Drawer'}
+        component={DrawerNavigation}
+        options={{
+          headerShown: false,
+          cardStyle: {backgroundColor: '#ffffff'},
+        }}
+      />
       <Stack.Screen
         name={'BottomTab'}
         component={BottomTab}

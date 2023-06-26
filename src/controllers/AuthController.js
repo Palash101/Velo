@@ -1,16 +1,18 @@
 import {API_BASE} from '../config/ApiConfig';
 
 export class AuthContoller {
+
   async loginUser(email, password) {
     const newdata = new FormData();
-    newdata.append('email', this.state.email);
-    newdata.append('password', this.state.password);
-    fetch(API_BASE + '/auth/login', {
+    newdata.append('email', email);
+    newdata.append('password', password);
+    return fetch(API_BASE + '/auth/login', {
       method: 'POST',
       body: newdata,
     })
       .then(response => response.json())
       .then(responseJson => {
+        console.log(responseJson, 'response')
         return {success: true, data: responseJson};
       })
       .catch(error => {
@@ -21,14 +23,14 @@ export class AuthContoller {
 
   async forgotPassword(email) {
     const newdata = new FormData();
-    newdata.append('email', this.state.email);
-    fetch(API_BASE + '/auth/password/reset/request', {
+    newdata.append('email', email);
+    return fetch(API_BASE + '/auth/password/reset/request', {
       method: 'POST',
       body: newdata,
     })
       .then(response => response.json())
       .then(responseJson => {
-        console.log(responseJson,'reee')
+        console.log(responseJson, 'reee')
         return {success: true, data: responseJson};
       })
       .catch(error => {

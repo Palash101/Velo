@@ -1,4 +1,4 @@
-import React, {Component, useState} from 'react';
+import React, {Component, useContext, useState} from 'react';
 import {
   Image,
   Platform,
@@ -19,6 +19,7 @@ import {AuthHeader} from '../../components/AuthHeader';
 import {ThemeButton} from '../../components/Buttons';
 import {Input} from '../../components/Input/input';
 import {useToast} from 'react-native-toast-notifications';
+import { UserContext } from '../../../context/UserContext';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -28,6 +29,10 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
+  const userCtx = useContext(UserContext);
+  const {setAuth} = useContext(UserContext);
+  const {setToken} = useContext(UserContext);
+
   const toast = useToast();
 
   const submit = async () => {
@@ -35,25 +40,25 @@ const Login = () => {
     if (loading === false) {
       if (email !== '' && password !== '') {
         setLoading(true);
-        const instance = await AuthContoller();
-        const result = instance.loginUser(email, password);
-        if (result.success === true) {
-          if (result.responseJson.access_token) {
-            AsyncStorage.setItem(
-              'token',
-              JSON.stringify(result.responseJson.access_token),
-            );
-            AsyncStorage.setItem(
-              'user',
-              JSON.stringify(result.responseJson.user),
-            );
-            navigation.navigate('Home');
-            alert('Welcome to velo');
+        const instance = new AuthContoller();
+        const result = await instance.loginUser(email, password);
+        console.log(result, 'result');
+        if (result?.success === true) {
+          if (result.data.access_token) {
+            userCtx.setUser(result.data.user);
+            setToken(result.data.access_token);
+            setAuth(true);
+
+            navigation.navigate('BottomTab');
+            toast.show('Welcome to velo');
+            setLoading(false);
           } else {
-            alert(result.responseJson.error);
+            setLoading(false);
+            toast.show(result.data.error);
           }
         } else {
-          alert(result.message.error);
+          setLoading(false);
+          toast.show(result.message.error);
         }
       } else {
         toast.show('please enter email and password');
@@ -67,7 +72,6 @@ const Login = () => {
         <ScrollView style={{flex: 1, paddingBottom: 50}}>
           <AuthHeader title={'Login'} />
           <View style={styles.form}>
-            
             <Input value={email} label={'Email address'} onChang={setEmail} />
 
             <Input

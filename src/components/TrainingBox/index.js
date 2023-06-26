@@ -1,8 +1,7 @@
 import {ImageBackground, Text, View} from 'react-native';
 import {Heading2} from '../Typography';
 
-export const TraingBox = ({item}) => {
-  console.log(item);
+export const TraingBox = props => {
   return (
     <View
       style={{
@@ -12,9 +11,10 @@ export const TraingBox = ({item}) => {
         borderRadius: 6,
         marginVertical: 8,
         borderColor: '#ddd',
-      }}>
+      }}
+      {...props}>
       <ImageBackground
-        source={require('../../../assets/images/chbg.jpg')}
+        source={props.bg}
         style={{
           width: '100%',
           height: '100%',
@@ -23,8 +23,8 @@ export const TraingBox = ({item}) => {
           borderRadius: 6,
           overflow: 'hidden',
         }}>
-        <Text style={{color: '#fff', fontWeight: '600', fontSize: 16}}>
-          {item.name}
+        <Text style={{color: '#fff', fontWeight: '600', fontSize: 21}}>
+          {props.title}
         </Text>
       </ImageBackground>
     </View>
