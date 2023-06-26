@@ -16,7 +16,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import PageLoader from '../../components/PageLoader';
 import {assets} from '../../config/AssetsConfig';
 import {AuthHeader} from '../../components/AuthHeader';
-import {ThemeButton} from '../../components/Buttons';
+import {DarkButton, ThemeButton} from '../../components/Buttons';
 import {Input} from '../../components/Input/input';
 import {useToast} from 'react-native-toast-notifications';
 
@@ -60,15 +60,17 @@ const Forgot = () => {
   return (
     <>
       <PageContainer>
-        <ScrollView style={{flex: 1, paddingBottom: 50}}>
+      <ScrollView contentContainerStyle={{flex: 1}}>
+          <View style={{width:'100%',maxWidth:320,alignSelf:'center'}}>
           <AuthHeader title={'Forgot Password'} />
           <View style={styles.form}>
             <Input value={email} label={'Email address'} onChang={setEmail} />
 
-            <ThemeButton
+            <DarkButton
               label={'Reset Password'}
               onPress={submit}
               loading={loading}
+              style={{marginTop:20,}}
             />
 
             <TouchableOpacity
@@ -77,10 +79,9 @@ const Forgot = () => {
               <Text style={styles.skipText}>Go back</Text>
             </TouchableOpacity>
           </View>
+          </View>
         </ScrollView>
 
-        <Image source={assets.forgetBg} style={styles.bottombg} />
-        <View style={styles.bgoverlay}></View>
       </PageContainer>
     </>
   );
@@ -93,22 +94,6 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === 'ios' ? 50 : 20,
   },
 
-  label: {
-    fontSize: 15,
-    fontFamily: 'Gotham-Medium',
-    color: '#111111',
-    marginTop: 20,
-  },
-  bottombg: {
-    position: 'absolute',
-    resizeMode: 'cover',
-    left: 0,
-    right: 0,
-    height: height,
-    width: width,
-    bottom: 0,
-    zIndex: -1,
-  },
   loader: {
     position: 'absolute',
     marginTop: 10,
@@ -120,26 +105,15 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   forgetText: {
-    color: '#fff',
+    color: '#000',
     textAlign: 'center',
-  },
-  bgoverlay: {
-    position: 'absolute',
-    resizeMode: 'cover',
-    left: 0,
-    right: 0,
-    height: height,
-    width: width,
-    bottom: 0,
-    zIndex: -1,
-    backgroundColor: 'rgba(0,0,0,0.75)',
   },
   input: {
     fontSize: 26,
     fontFamily: 'Gotham-Medium',
-    color: '#F8C22E',
+    color: '#000',
     borderWidth: 1,
-    borderColor: '#F8C22E',
+    borderColor: '#000',
     marginTop: 30,
     marginLeft: 20,
     marginRight: 20,
@@ -150,30 +124,7 @@ const styles = StyleSheet.create({
   },
 
   form: {
-    marginTop: 220,
-  },
-  back: {
-    width: 20,
-    height: 20,
-    marginTop: 5,
-    position: 'absolute',
-  },
-  textBelow: {
-    marginTop: 20,
-    width: 250,
-    alignSelf: 'center',
-    textAlign: 'center',
-  },
-  pinkBorder: {
-    borderColor: '#EA0A8C',
-  },
-  belowText: {
-    color: '#ffffff',
-    alignItems: 'center',
-    textAlign: 'center',
-    fontSize: 12,
-    lineHeight: 15,
-    fontFamily: 'Gotham-Medium',
+    marginTop: 180,
   },
   skip: {
     textAlign: 'center',
@@ -185,24 +136,11 @@ const styles = StyleSheet.create({
     right: 0,
   },
   skipText: {
-    color: '#fff',
+    color: '#000',
     textAlign: 'center',
+    fontSize:16,
+    textTransform:'uppercase'
   },
-  alreadyBox: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    marginTop: 20,
-    marginBottom: 20,
-    justifyContent: 'center',
-  },
-  AlreadyText: {
-    color: '#1AA3AD',
-    borderBottomWidth: 1,
-    borderColor: '#1e4b4f',
-    lineHeight: 16,
-    marginTop: 5,
-    fontSize: 16,
-    fontFamily: 'Gotham-Black',
-  },
+ 
 });
 export default Forgot;

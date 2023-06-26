@@ -12,11 +12,11 @@ export const Input = props => {
         onFocus={() => setFocus(!focus)}
         style={styles.input}
         onChangeText={text => props.onChang(text)}
-         activeOutlineColor="#fff"
+         activeOutlineColor="#000"
          outlineColor="transparent"
-         contentStyle={{color: '#ddd'}}
-         textColor="#fff"
-        theme={{colors:{primary:'#fff'}}}
+         contentStyle={{color: '#000'}}
+         textColor="#000"
+        theme={{colors:{primary:'#000'}}}
         {...props}
       />
     </View>
@@ -25,12 +25,13 @@ export const Input = props => {
 
 const styles = StyleSheet.create({
   row: {
-    margin: 10,
+    marginTop: 10,
+    marginBottom:10,
   },
   input: {
     backgroundColor: 'transparent',
-    color: '#fff',
-    borderBottomColor: '#fff',
+    color: '#000',
+    borderBottomColor: '#000',
     borderBottomWidth: 1,
   },
 });

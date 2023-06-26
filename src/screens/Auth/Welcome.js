@@ -11,7 +11,7 @@ import {
 import {assets} from '../../config/AssetsConfig';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useNavigation} from '@react-navigation/native';
-import {ThemeBorderButton, ThemeButton} from '../../components/Buttons';
+import {DarkButton, ThemeButton} from '../../components/Buttons';
 import {useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -46,8 +46,8 @@ const Welcome = () => {
         <StatusBar barStyle="light-content" backgroundColor="#333" />
 
         <View style={styles.centerTextBox}>
-          <Text style={styles.centerText}>Welcome To</Text>
           <Image source={assets.logoWhite} style={styles.logo} />
+          <Text style={styles.centerText}>EMBRACE EVERY MOVEMENT</Text>
         </View>
 
         <ThemeButton
@@ -56,7 +56,7 @@ const Welcome = () => {
           onPress={() => navigation.navigate('Login')}
           loading={false}
         />
-        <ThemeBorderButton
+        <ThemeButton
           label={'SIGN UP'}
           style={styles.SignUpBtn}
           onPress={() => navigation.navigate('Signup')}
@@ -82,7 +82,6 @@ const styles = StyleSheet.create({
     width: 130,
     height: 53,
     alignSelf: 'center',
-    marginTop: 20,
   },
   loginBtn: {
     width: 220,
@@ -111,6 +110,9 @@ const styles = StyleSheet.create({
     fontSize: 22,
     textAlign: 'center',
     lineHeight: 26,
+    marginTop:20,
+    maxWidth:200,
+    alignSelf:'center'
   },
   skip: {
     position: 'absolute',

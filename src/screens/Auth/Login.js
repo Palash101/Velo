@@ -16,7 +16,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import PageLoader from '../../components/PageLoader';
 import {assets} from '../../config/AssetsConfig';
 import {AuthHeader} from '../../components/AuthHeader';
-import {ThemeButton} from '../../components/Buttons';
+import {DarkButton, ThemeButton} from '../../components/Buttons';
 import {Input} from '../../components/Input/input';
 import {useToast} from 'react-native-toast-notifications';
 import { UserContext } from '../../../context/UserContext';
@@ -69,40 +69,43 @@ const Login = () => {
   return (
     <>
       <PageContainer>
-        <ScrollView style={{flex: 1, paddingBottom: 50}}>
-          <AuthHeader title={'Login'} />
-          <View style={styles.form}>
-            <Input value={email} label={'Email address'} onChang={setEmail} />
+        <ScrollView contentContainerStyle={{flex: 1, }}>
+          <View style={{width:'100%',maxWidth:320,alignSelf:'center'}}>
+            <AuthHeader title={'Login'} />
+            <View style={styles.form}>
+              <Input value={email} label={'Email address'} onChang={setEmail} />
 
-            <Input
-              value={password}
-              label={'Password'}
-              onChang={setPassword}
-              secureTextEntry={true}
-            />
+              <Input
+                value={password}
+                label={'Password'}
+                onChang={setPassword}
+                secureTextEntry={true}
+              />
 
-            <ThemeButton label={'LOGIN'} onPress={submit} loading={loading} />
+              <DarkButton label={'LOGIN'} onPress={submit} style={{marginTop:20}} loading={loading} />
 
-            <TouchableOpacity
-              style={styles.forget}
-              onPress={() => navigation.navigate('Forgot')}>
-              <Text style={styles.forgetText}>Forgot Password </Text>
-            </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.forget}
+                onPress={() => navigation.navigate('Forgot')}>
+                <Text style={styles.forgetText}>Forgot Password </Text>
+              </TouchableOpacity>
 
-            <TouchableOpacity style={styles.skip} onPress={() => console.log()}>
-              <Text style={styles.skipText}>Skip Now </Text>
-            </TouchableOpacity>
+              <TouchableOpacity style={styles.skip} onPress={() => console.log()}>
+                <Text style={styles.skipText}>Skip Now </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </ScrollView>
 
         <View style={styles.alreadyBox}>
+          
           <Text
             style={{
-              color: '#fff',
+              color: '#000',
               fontFamily: 'Gotham-Medium',
-              fontWeight: '300',
               opacity: 1,
               fontSize: 16,
+              textTransform:'uppercase'
             }}>
             Don't have account?{' '}
           </Text>
@@ -111,8 +114,6 @@ const Login = () => {
           </TouchableOpacity>
         </View>
 
-        <Image source={assets.loginBg} style={styles.bottombg} />
-        <View style={styles.bgoverlay}></View>
       </PageContainer>
     </>
   );
@@ -121,25 +122,15 @@ const Login = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    paddingTop: Platform.OS === 'ios' ? 50 : 20,
+    padding: 0,
+    paddingTop: Platform.OS === 'ios' ? 0 : 20,
   },
 
   label: {
     fontSize: 15,
     fontFamily: 'Gotham-Medium',
-    color: '#111111',
+    color: '#000',
     marginTop: 20,
-  },
-  bottombg: {
-    position: 'absolute',
-    resizeMode: 'cover',
-    left: 0,
-    right: 0,
-    height: height,
-    width: width,
-    bottom: 0,
-    zIndex: -1,
   },
   loader: {
     position: 'absolute',
@@ -152,26 +143,17 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   forgetText: {
-    color: '#fff',
+    color: '#000',
     textAlign: 'center',
-  },
-  bgoverlay: {
-    position: 'absolute',
-    resizeMode: 'cover',
-    left: 0,
-    right: 0,
-    height: height,
-    width: width,
-    bottom: 0,
-    zIndex: -1,
-    backgroundColor: 'rgba(0,0,0,0.75)',
+    textTransform:'uppercase',
+    fontSize:16,
   },
   input: {
     fontSize: 26,
     fontFamily: 'Gotham-Medium',
-    color: '#F8C22E',
+    color: '#000',
     borderWidth: 1,
-    borderColor: '#F8C22E',
+    borderColor: '#000',
     marginTop: 30,
     marginLeft: 20,
     marginRight: 20,
@@ -182,7 +164,7 @@ const styles = StyleSheet.create({
   },
 
   form: {
-    marginTop: 220,
+    marginTop: 90,
   },
   back: {
     width: 20,
@@ -196,11 +178,8 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     textAlign: 'center',
   },
-  pinkBorder: {
-    borderColor: '#EA0A8C',
-  },
   belowText: {
-    color: '#ffffff',
+    color: '#000',
     alignItems: 'center',
     textAlign: 'center',
     fontSize: 12,
@@ -217,22 +196,23 @@ const styles = StyleSheet.create({
     right: 0,
   },
   skipText: {
-    color: '#fff',
+    color: '#000',
     textAlign: 'center',
+    textTransform:'uppercase',
+    fontSize:16,
   },
   alreadyBox: {
     alignItems: 'center',
-    flexDirection: 'row',
     marginTop: 20,
     marginBottom: 20,
     justifyContent: 'center',
   },
   AlreadyText: {
-    color: '#1AA3AD',
-    borderBottomWidth: 1,
-    borderColor: '#1e4b4f',
+    color: '#000',
+    textTransform:'uppercase',
+    fontWeight:'800',
     lineHeight: 16,
-    marginTop: 5,
+    marginTop: 10,
     fontSize: 16,
     fontFamily: 'Gotham-Black',
   },

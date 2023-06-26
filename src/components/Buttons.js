@@ -5,12 +5,11 @@ export const ThemeButton = props => {
   return (
     <Button
       mode="elevated"
-      style={styles.buttonText}
-      textColor="#000"
+      contentStyle={styles.buttonText}
       onPress={() => props.onPress()}
       {...props}>
       {props.loading !== true ? (
-        props.label
+        <Text style={{fontSize:18,color:'#000'}}>{props.label}</Text>
       ) : (
         <ActivityIndicator style={styles.loader} size="small" color="#fff" />
       )}
@@ -18,16 +17,16 @@ export const ThemeButton = props => {
   );
 };
 
-export const ThemeBorderButton = props => {
+export const DarkButton = props => {
   return (
     <Button
-      mode="outlined"
-      style={styles.OutlineButtonText}
-      textColor="#fff"
+    style={{width:'100%'}}
+      mode="elevated"
+      contentStyle={styles.OutlineButtonText}
       onPress={() => props.onPress()}
       {...props}>
       {props.loading !== true ? (
-        props.label
+        <Text style={{fontSize:18,color:'#fff'}}>{props.label}</Text>
       ) : (
         <ActivityIndicator style={styles.loader} size="small" color="#fff" />
       )}
@@ -39,24 +38,21 @@ const styles = StyleSheet.create({
   buttonText: {
     fontFamily: 'Gotham-Black',
     fontWeight: '800',
-    backgroundColor: '#d6d5d5',
+    backgroundColor: '#fff',
     alignItems: 'center',
     alignSelf: 'center',
     width: 220,
-    height: 42,
-    marginTop: 50,
+    height: 55,
+
   },
   OutlineButtonText: {
     fontFamily: 'Gotham-Black',
     fontWeight: '800',
-    backgroundColor: 'transparent',
+    backgroundColor: '#000',
     alignItems: 'center',
     alignSelf: 'center',
-    width: 220,
-    height: 42,
-    borderWidth: 1,
-    color: '#ffffff',
-    borderColor: '#ffffff',
+    width: '100%',
+    height: 55,
   },
   loader: {
     marginTop: 8,

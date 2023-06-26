@@ -16,7 +16,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import PageLoader from '../../components/PageLoader';
 import {assets} from '../../config/AssetsConfig';
 import {AuthHeader} from '../../components/AuthHeader';
-import {ThemeButton} from '../../components/Buttons';
+import {DarkButton, ThemeButton} from '../../components/Buttons';
 import {Input} from '../../components/Input/input';
 import {useToast} from 'react-native-toast-notifications';
 import {RadioButton} from 'react-native-paper';
@@ -77,58 +77,60 @@ const SignUp = () => {
   return (
     <>
       <PageContainer>
-        <ScrollView style={{flex: 1, paddingBottom: 30}}>
-          <AuthHeader title={'Sign up'} />
-          <View style={styles.form}>
-            <Input
-              value={first_name}
-              label={'First name'}
-              onChang={setFirstName}
-            />
-            <Input
-              value={last_name}
-              label={'Last name'}
-              onChang={setLastName}
-            />
-            <Input value={email} label={'Email address'} onChang={setEmail} />
-            <Input
-              value={password}
-              label={'Password'}
-              onChang={setPassword}
-              secureTextEntry={true}
-            />
-            <Input
-              value={password_confirmation}
-              label={'Confirm password'}
-              onChang={setPasswordConfirmation}
-              secureTextEntry={true}
-            />
-            <Input
-              value={phone}
-              label={'Phone number'}
-              onChang={setPhone}
-              keyboardType={'numeric'}
-            />
-            <RadioButton.Group
-              style={{color: '#fff', flexDirection: 'row', display: 'flex'}}
-              onValueChange={value => setGender(value)}
-              value={gender}>
-              <RadioButton.Item label="Male" value="Male" />
-              <RadioButton.Item label="Female" value="Female" />
-            </RadioButton.Group>
+        <ScrollView contentContainerStyle={{flex: 1}}>
+          <View style={{width:'100%',maxWidth:320,alignSelf:'center'}}>
+            <AuthHeader title={'Sign up'} />
+            <View style={styles.form}>
+              <Input
+                value={first_name}
+                label={'First name'}
+                onChang={setFirstName}
+              />
+              <Input
+                value={last_name}
+                label={'Last name'}
+                onChang={setLastName}
+              />
+              <Input value={email} label={'Email address'} onChang={setEmail} />
+              <Input
+                value={password}
+                label={'Password'}
+                onChang={setPassword}
+                secureTextEntry={true}
+              />
+              <Input
+                value={password_confirmation}
+                label={'Confirm password'}
+                onChang={setPasswordConfirmation}
+                secureTextEntry={true}
+              />
+              <Input
+                value={phone}
+                label={'Phone number'}
+                onChang={setPhone}
+                keyboardType={'numeric'}
+              />
+              <RadioButton.Group
+                style={{color: '#000', flexDirection: 'row', display: 'flex'}}
+                onValueChange={value => setGender(value)}
+                value={gender}>
+                <RadioButton.Item label="Male" value="Male" style={{width:'40%'}} />
+                <RadioButton.Item label="Female" value="Female" style={{width:'40%'}} />
+              </RadioButton.Group>
 
-            <ThemeButton label={'SIGN UP'} onPress={submit} loading={loading} />
+              <DarkButton label={'SIGN UP'} style={{marginTop:20}} onPress={submit} loading={loading} />
+            </View>
           </View>
         </ScrollView>
 
         <View style={styles.alreadyBox}>
           <Text
             style={{
-              color: '#fff',
+              color: '#000',
               fontFamily: 'Gotham-Medium',
-              fontWeight: '300',
               opacity: 1,
               fontSize: 16,
+              textTransform:'uppercase'
             }}>
             Already have an account?{' '}
           </Text>
@@ -137,8 +139,6 @@ const SignUp = () => {
           </TouchableOpacity>
         </View>
 
-        <Image source={assets.loginBg} style={styles.bottombg} />
-        <View style={styles.bgoverlay}></View>
       </PageContainer>
     </>
   );
@@ -147,25 +147,15 @@ const SignUp = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    paddingTop: Platform.OS === 'ios' ? 50 : 20,
+    padding: 0,
+    paddingTop: Platform.OS === 'ios' ? 0 : 20,
   },
 
   label: {
     fontSize: 15,
     fontFamily: 'Gotham-Medium',
-    color: '#111111',
+    color: '#000',
     marginTop: 20,
-  },
-  bottombg: {
-    position: 'absolute',
-    resizeMode: 'cover',
-    left: 0,
-    right: 0,
-    height: height,
-    width: width,
-    bottom: 0,
-    zIndex: -1,
   },
   loader: {
     position: 'absolute',
@@ -178,26 +168,16 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   forgetText: {
-    color: '#fff',
+    color: '#000',
     textAlign: 'center',
   },
-  bgoverlay: {
-    position: 'absolute',
-    resizeMode: 'cover',
-    left: 0,
-    right: 0,
-    height: height,
-    width: width,
-    bottom: 0,
-    zIndex: -1,
-    backgroundColor: 'rgba(0,0,0,0.75)',
-  },
+ 
   input: {
     fontSize: 26,
     fontFamily: 'Gotham-Medium',
-    color: '#F8C22E',
+    color: '#000',
     borderWidth: 1,
-    borderColor: '#F8C22E',
+    borderColor: '#000',
     marginTop: 30,
     marginLeft: 20,
     marginRight: 20,
@@ -208,7 +188,7 @@ const styles = StyleSheet.create({
   },
 
   form: {
-    marginTop: 200,
+    marginTop: 20,
   },
   back: {
     width: 20,
@@ -222,43 +202,28 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     textAlign: 'center',
   },
-  pinkBorder: {
-    borderColor: '#EA0A8C',
-  },
   belowText: {
-    color: '#ffffff',
+    color: '#000',
     alignItems: 'center',
     textAlign: 'center',
     fontSize: 12,
     lineHeight: 15,
     fontFamily: 'Gotham-Medium',
   },
-  skip: {
-    textAlign: 'center',
-    marginTop: 30,
-    bottom: Platform.OS === 'ios' ? 10 : 10,
-    position: 'absolute',
-    zIndex: 3,
-    left: 0,
-    right: 0,
-  },
-  skipText: {
-    color: '#fff',
-    textAlign: 'center',
-  },
+ 
+ 
   alreadyBox: {
     alignItems: 'center',
-    flexDirection: 'row',
     marginTop: 20,
     marginBottom: 20,
     justifyContent: 'center',
   },
   AlreadyText: {
-    color: '#1AA3AD',
-    borderBottomWidth: 1,
-    borderColor: '#1e4b4f',
+    color: '#000',
+    textTransform:'uppercase',
+    fontWeight:'800',
     lineHeight: 16,
-    marginTop: 5,
+    marginTop: 10,
     fontSize: 16,
     fontFamily: 'Gotham-Black',
   },
