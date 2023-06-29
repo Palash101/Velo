@@ -14,7 +14,7 @@ const Tab = createBottomTabNavigator();
 
 const BottomTab = ({navigation}) => {
   return (
-    <View flex>
+    <View style={{display:'flex',flex:1}}>
       <Tab.Navigator tabBar={props => <MyTabBar {...props} />}>
         <Tab.Screen
           name={bottomMenu[0].name}
@@ -32,6 +32,7 @@ const BottomTab = ({navigation}) => {
           component={Classes}
           options={{
             tabBarLabel: bottomMenu[1].label,
+            headerShown: false,
           }}
         />
         <Tab.Screen
@@ -39,12 +40,14 @@ const BottomTab = ({navigation}) => {
           component={Planner}
           options={{
             tabBarLabel: bottomMenu[2].label,
+            headerShown: false,
           }}
         />
         <Tab.Screen
           name={bottomMenu[3].name}
           component={Buy}
           options={{
+            headerShown: false,
             tabBarLabel: bottomMenu[3].label,
           }}
         />
@@ -53,6 +56,7 @@ const BottomTab = ({navigation}) => {
           component={Journey}
           options={{
             tabBarLabel: bottomMenu[4].label,
+            headerShown: false,
           }}
         />
       </Tab.Navigator>

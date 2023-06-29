@@ -1,4 +1,4 @@
-import {useRef} from 'react';
+import React, {useRef} from 'react';
 import {
   Text,
   View,
@@ -8,7 +8,6 @@ import {
   Dimensions,
   ScrollView,
 } from 'react-native';
-import TopBar from '../../components/TopBar';
 import {PageContainer} from '../../components/Container';
 import {Heading} from '../../components/Typography';
 import {TraingBox} from '../../components/TrainingBox';
@@ -40,7 +39,6 @@ const Home = ({navigation}) => {
 
   return (
     <>
-      <TopBar />
 
       <PageContainer>
         <ScrollView contentContainerStyle={{paddingBottom: 100}}>
@@ -55,7 +53,7 @@ const Home = ({navigation}) => {
           ))}
 
           <View style={{marginTop: 10}}>
-            <Heading style={{marginBottom: 10}}>HAPPENING NOW</Heading>
+            <Heading style={{marginBottom: 5}}>HAPPENING NOW</Heading>
 
             <FlatList
               horizontal={true}
@@ -76,9 +74,9 @@ const Home = ({navigation}) => {
                   bg={item.img}
                   key={key}
                   style={{
-                    width: width / 2 - 10,
-                    marginHorizontal: 8,
-                    height: 110,
+                    width: width / 2 - 15,
+                    marginRight: 8,
+                    height: 100,
                   }}
                 />
               )}
@@ -91,34 +89,37 @@ const Home = ({navigation}) => {
               dotStyle={{
                 width: 10,
                 height: 10,
-                backgroundColor: '#000',
                 borderRadius: 5,
                 marginHorizontal: 5,
               }}
+              activeDotColor='#000'
+              inActiveDotColor='#888'
               containerStyle={{
-                top: 170,
+                top: 145,
                 left: '50%',
                 right: '50%',
                 width: width,
-                marginLeft: -20,
+                marginLeft: -45,
               }}
             />
           </View>
 
-          <View style={{marginTop: 50}}>
-            <Heading style={{marginBottom:10}}>DOUBLE JOY</Heading>
+          <View style={{marginTop: 40}}>
+            <Heading style={{marginBottom: 5}}>DOUBLE JOY</Heading>
             <TraingBox
               title={''}
               bg={require('../../../assets/images/bg.png')}
-              style={{marginHorizontal: 8, height: 180}}
+              style={{marginHorizontal: 8, height: 140}}
+              onPress={() => navigation.navigate('DoubleJoy')}
             />
           </View>
-          <View style={{marginTop: 20}}>
-            <Heading style={{marginBottom:10}}>STORE</Heading>
+          <View style={{marginTop: 15}}>
+            <Heading style={{marginBottom: 5}}>STORE</Heading>
             <TraingBox
               title={''}
               bg={require('../../../assets/images/bg.png')}
-              style={{marginHorizontal: 8, height: 180}}
+              style={{marginHorizontal: 8, height: 140}}
+              onPress={() => navigation.navigate('Store')}
             />
           </View>
         </ScrollView>

@@ -1,6 +1,9 @@
 export const assets = {
   splash: require('../../assets/splash.gif'),
   bell: require('../../assets/icons/bell.png'),
+  back: require('../../assets/icons/back.png'),
+  edit: require('../../assets/icons/edit.png'),
+  hamburger: require('../../assets/icons/Hamburger_icon.png'),
   logo: require('../../assets/images/logo.png'),
   logoWhite: require('../../assets/images/logo-white.png'),
   vlogo: require('../../assets/vlogo.png'),
@@ -8,4 +11,6 @@ export const assets = {
   bg: require('../../assets/images/chbg.jpg'),
   loginBg: require('../../assets/images/loginbg.png'),
   forgetBg: require('../../assets/images/forgot_bg.jpeg'),
+  clock: require('../../assets/icons/clock.png'),
+  shake: require('../../assets/images/shake.png'),
 };

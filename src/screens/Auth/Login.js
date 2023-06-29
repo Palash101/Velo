@@ -49,7 +49,7 @@ const Login = () => {
             setToken(result.data.access_token);
             setAuth(true);
 
-            navigation.navigate('BottomTab');
+            navigation.navigate('Drawer');
             toast.show('Welcome to velo');
             setLoading(false);
           } else {

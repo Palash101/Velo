@@ -1,15 +1,16 @@
-import {ImageBackground, Text, View} from 'react-native';
-import {Heading2} from '../Typography';
+import React from 'react';
+import {ImageBackground, Text, TouchableOpacity, View} from 'react-native';
 
 export const TraingBox = props => {
   return (
-    <View
+    <TouchableOpacity
       style={{
         height: 100,
         width: '100%',
         borderWidth: 1,
-        borderRadius: 6,
-        marginVertical: 8,
+        borderRadius: 12,
+        overflow: 'hidden',
+        marginVertical: 2,
         borderColor: '#ddd',
       }}
       {...props}>
@@ -20,13 +21,13 @@ export const TraingBox = props => {
           height: '100%',
           justifyContent: 'center',
           alignItems: 'center',
-          borderRadius: 6,
+          borderRadius: 12,
           overflow: 'hidden',
         }}>
         <Text style={{color: '#fff', fontWeight: '600', fontSize: 21}}>
           {props.title}
         </Text>
       </ImageBackground>
-    </View>
+    </TouchableOpacity>
   );
 };

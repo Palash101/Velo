@@ -22,7 +22,7 @@ const Splash = () => {
     AsyncStorage.getItem('user', (err, result) => {
       setTimeout(() => {
         if (result) {
-          navigation.navigate('BottomTab');
+          navigation.navigate('Drawer');
         } else {
           navigation.navigate('Welcome');
         }

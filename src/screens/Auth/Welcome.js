@@ -23,7 +23,7 @@ const Welcome = () => {
   useEffect(() => {
     AsyncStorage.getItem('token', (err, result) => {
       if (result) {
-        navigation.navigate('BottomTab');
+        navigation.navigate('Drawer');
       }
     });
     BackHandler.addEventListener('hardwareBackPress', handleBackButton);

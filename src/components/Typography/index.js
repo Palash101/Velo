@@ -19,6 +19,7 @@ const styles = StyleSheet.create({
   Heading: {
     textTransform: 'uppercase',
     fontSize: 18,
+    marginHorizontal:5,
   },
   Heading2: {
     textTransform: 'uppercase',

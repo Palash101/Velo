@@ -12,12 +12,17 @@ import {RoundedDarkButton, RoundedThemeButton} from '../../components/Buttons';
 import {FlatList} from 'react-native-gesture-handler';
 import {useState} from 'react';
 import {PackageItem} from '../../components/PackageItem';
+import { CartItem } from '../../components/CartItem';
 
-const Buy = () => {
-  const [active, setActive] = useState('All');
+const Store = () => {
+  const [active, setActive] = useState('Shakes');
 
   const [data, setData] = useState([
     {name: 'AAA'},
+    {name: 'BBB'},
+    {name: 'CCC'},
+    {name: 'AAA'},
+    {name: 'BBB'},
     {name: 'BBB'},
     {name: 'CCC'},
     {name: 'AAA'},
@@ -32,26 +37,8 @@ const Buy = () => {
     <>
       <PageContainer>
         <View style={{paddingHorizontal: 10}}>
-          <View style={styles.tab}>
-            {active === 'All' ? (
-              <RoundedDarkButton label={'ALL PACKAGES'} style={styles.tabBtn} />
-            ) : (
-              <RoundedThemeButton
-                label={'ALL PACKAGES'}
-                onPress={() => setActive('All')}
-                style={styles.tabBtn}
-              />
-            )}
-            {active === 'My' ? (
-              <RoundedDarkButton label={'My PACKAGES'} style={styles.tabBtn} />
-            ) : (
-              <RoundedThemeButton
-                label={'MY PACKAGES'}
-                onPress={() => setActive('My')}
-                style={styles.tabBtn}
-              />
-            )}
-          </View>
+            <Text style={styles.mainHeading}>Store</Text>
+        
 
           <View style={styles.classesList}>
             <FlatList
@@ -64,7 +51,7 @@ const Buy = () => {
                 justifyContent: 'space-between',
               }}
               renderItem={({item}, key) => (
-                <PackageItem key={key} item={item} onPress={selectItem} />
+                <CartItem key={key} item={item} onPress={selectItem} />
               )}
             />
           </View>
@@ -73,23 +60,29 @@ const Buy = () => {
     </>
   );
 };
-export default Buy;
+export default Store;
 
 const width = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
+    mainHeading:{
+        fontSize:20,
+        fontWeight:'700',
+        textAlign:'center',
+        marginTop:10,
+    },
   tab: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 40,
+    marginTop: 20,
     marginBottom: 10,
   },
   tabBtn: {
-    width: width / 2 - 30,
+    width: width / 3 - 20,
   },
   classesList: {
-    marginBottom: 170,
+    marginBottom: 100,
   },
   calander: {
     marginBottom: 20,
