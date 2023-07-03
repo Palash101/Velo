@@ -107,12 +107,12 @@ const styles = StyleSheet.create({
   centerText: {
     color: '#ffffff',
     fontFamily: 'Gotham-Medium',
-    fontSize: 22,
+    fontSize: 18,
     textAlign: 'center',
     lineHeight: 26,
-    marginTop:20,
-    maxWidth:200,
-    alignSelf:'center'
+    marginTop: 20,
+    maxWidth: 300,
+    alignSelf: 'center',
   },
   skip: {
     position: 'absolute',

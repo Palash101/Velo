@@ -1,6 +1,7 @@
 export const assets = {
   splash: require('../../assets/splash.gif'),
   bell: require('../../assets/icons/bell.png'),
+  chevron: require('../../assets/icons/chevron.png'),
   back: require('../../assets/icons/back.png'),
   edit: require('../../assets/icons/edit.png'),
   hamburger: require('../../assets/icons/Hamburger_icon.png'),

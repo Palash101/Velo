@@ -9,7 +9,7 @@ export const ThemeButton = props => {
       onPress={() => props.onPress()}
       {...props}>
       {props.loading !== true ? (
-        <Text style={{fontSize:18,color:'#000'}}>{props.label}</Text>
+        <Text style={{fontSize:18,color:'#000',fontFamily: 'Gotham-Medium',}}>{props.label}</Text>
       ) : (
         <ActivityIndicator style={styles.loader} size="small" color="#fff" />
       )}
@@ -26,7 +26,7 @@ export const DarkButton = props => {
       onPress={() => props.onPress()}
       {...props}>
       {props.loading !== true ? (
-        <Text style={{fontSize:18,color:'#fff'}}>{props.label}</Text>
+        <Text style={{fontSize:18,color:'#fff',fontFamily: 'Gotham-Medium',}}>{props.label}</Text>
       ) : (
         <ActivityIndicator style={styles.loader} size="small" color="#fff" />
       )}
@@ -42,7 +42,7 @@ export const RoundedDarkButton = props => {
       onPress={() => props.onPress()}
       {...props}>
       {props.loading !== true ? (
-        <Text style={{fontSize:14,color:'#fff',lineHeight:16,}}>{props.label}</Text>
+        <Text style={{fontSize:14,color:'#fff',lineHeight:16,fontFamily: 'Gotham-Medium',}}>{props.label}</Text>
       ) : (
         <ActivityIndicator style={styles.loader} size="small" color="#fff" />
       )}
@@ -57,7 +57,7 @@ export const RoundedThemeButton = props => {
       onPress={() => props.onPress()}
       {...props}>
       {props.loading !== true ? (
-        <Text style={{fontSize:14,color:'#000',lineHeight:16}}>{props.label}</Text>
+        <Text style={{fontSize:14,color:'#000',fontFamily: 'Gotham-Medium',lineHeight:16}}>{props.label}</Text>
       ) : (
         <ActivityIndicator style={styles.loader} size="small" color="#fff" />
       )}
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
     alignItems: 'center',
     alignSelf: 'center',
-    width: 220,
+    width: '100%',
     height: 36,
   },
   RoundedThemeButton:{

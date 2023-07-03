@@ -20,6 +20,7 @@ export const GreyBox = props => {
           color: props.active ? '#fff' : '#000',
           fontSize: 16,
           textTransform: 'uppercase',
+          fontFamily:'Gotham-Medium',
           ...props.textStyle,
         }}>
         {props.label}

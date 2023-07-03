@@ -14,15 +14,23 @@ import {useNavigation} from '@react-navigation/native';
 import {PageContainer} from '../../components/Container';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PageLoader from '../../components/PageLoader';
-import {assets} from '../../config/AssetsConfig';
 import {AuthHeader} from '../../components/AuthHeader';
 import {DarkButton, ThemeButton} from '../../components/Buttons';
 import {Input} from '../../components/Input/input';
 import {useToast} from 'react-native-toast-notifications';
-import {RadioButton} from 'react-native-paper';
+import RadioForm, {
+  RadioButton,
+  RadioButtonInput,
+  RadioButtonLabel,
+} from 'react-native-simple-radio-button';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
+
+var radio_props = [
+  {label: 'Male', value: 'Male'},
+  {label: 'Female', value: 'Female'},
+];
 
 const SignUp = () => {
   const [email, setEmail] = useState('');
@@ -78,47 +86,68 @@ const SignUp = () => {
     <>
       <PageContainer>
         <ScrollView contentContainerStyle={{flex: 1}}>
-          <View style={{width:'100%',maxWidth:320,alignSelf:'center'}}>
+          <View style={{width: '100%', maxWidth: 320, alignSelf: 'center'}}>
             <AuthHeader title={'Sign up'} />
             <View style={styles.form}>
               <Input
                 value={first_name}
-                label={'First name'}
+                label={'FIRST NAME'}
                 onChang={setFirstName}
               />
               <Input
                 value={last_name}
-                label={'Last name'}
+                label={'LAST NAME'}
                 onChang={setLastName}
               />
-              <Input value={email} label={'Email address'} onChang={setEmail} />
+              <Input
+                value={email}
+                label={'E_MAIL ADDRESS'}
+                onChang={setEmail}
+              />
               <Input
                 value={password}
-                label={'Password'}
+                label={'PASSWORD'}
                 onChang={setPassword}
                 secureTextEntry={true}
               />
               <Input
                 value={password_confirmation}
-                label={'Confirm password'}
+                label={'CONFIRM PASSWORD'}
                 onChang={setPasswordConfirmation}
                 secureTextEntry={true}
               />
               <Input
                 value={phone}
-                label={'Phone number'}
+                label={'PHONE NUMBER'}
                 onChang={setPhone}
                 keyboardType={'numeric'}
               />
-              <RadioButton.Group
-                style={{color: '#000', flexDirection: 'row', display: 'flex'}}
-                onValueChange={value => setGender(value)}
-                value={gender}>
-                <RadioButton.Item label="Male" value="Male" style={{width:'40%'}} />
-                <RadioButton.Item label="Female" value="Female" style={{width:'40%'}} />
-              </RadioButton.Group>
 
-              <DarkButton label={'SIGN UP'} style={{marginTop:20}} onPress={submit} loading={loading} />
+              <View style={{marginTop: 20}}>
+                <RadioForm
+                  radio_props={radio_props}
+                  buttonColor={'#000'}
+                  formHorizontal={true}
+                  initial={0}
+                  buttonSize={10}
+                  buttonOuterSize={20}
+                  labelStyle={{
+                    fontSize: 16,
+                    fontFamily: 'Gotham-Medium',
+                    color: '#000',
+                    paddingRight: 15,
+                  }}
+                  onPress={value => {
+                    setGender(value);
+                  }}
+                />
+              </View>
+              <DarkButton
+                label={'SIGN UP'}
+                style={{marginTop: 20}}
+                onPress={submit}
+                loading={loading}
+              />
             </View>
           </View>
         </ScrollView>
@@ -130,7 +159,7 @@ const SignUp = () => {
               fontFamily: 'Gotham-Medium',
               opacity: 1,
               fontSize: 16,
-              textTransform:'uppercase'
+              textTransform: 'uppercase',
             }}>
             Already have an account?{' '}
           </Text>
@@ -138,7 +167,6 @@ const SignUp = () => {
             <Text style={styles.AlreadyText}>Login</Text>
           </TouchableOpacity>
         </View>
-
       </PageContainer>
     </>
   );
@@ -171,7 +199,7 @@ const styles = StyleSheet.create({
     color: '#000',
     textAlign: 'center',
   },
- 
+
   input: {
     fontSize: 26,
     fontFamily: 'Gotham-Medium',
@@ -210,8 +238,7 @@ const styles = StyleSheet.create({
     lineHeight: 15,
     fontFamily: 'Gotham-Medium',
   },
- 
- 
+
   alreadyBox: {
     alignItems: 'center',
     marginTop: 20,
@@ -220,8 +247,8 @@ const styles = StyleSheet.create({
   },
   AlreadyText: {
     color: '#000',
-    textTransform:'uppercase',
-    fontWeight:'800',
+    textTransform: 'uppercase',
+    fontWeight: '800',
     lineHeight: 16,
     marginTop: 10,
     fontSize: 16,

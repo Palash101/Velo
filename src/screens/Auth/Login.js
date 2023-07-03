@@ -73,11 +73,11 @@ const Login = () => {
           <View style={{width:'100%',maxWidth:320,alignSelf:'center'}}>
             <AuthHeader title={'Login'} />
             <View style={styles.form}>
-              <Input value={email} label={'Email address'} onChang={setEmail} />
+              <Input value={email} label={'E-MAIL ADDRESS'} onChang={setEmail} />
 
               <Input
                 value={password}
-                label={'Password'}
+                label={'PASSWORD'}
                 onChang={setPassword}
                 secureTextEntry={true}
               />
@@ -147,6 +147,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textTransform:'uppercase',
     fontSize:16,
+    fontFamily: 'Gotham-Medium',
   },
   input: {
     fontSize: 26,
@@ -161,6 +162,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     textAlign: 'center',
     height: 53,
+    textTransform:'uppercase'
   },
 
   form: {
@@ -199,7 +201,8 @@ const styles = StyleSheet.create({
     color: '#000',
     textAlign: 'center',
     textTransform:'uppercase',
-    fontSize:16,
+    fontSize:14,
+    fontFamily: 'Gotham-Light',
   },
   alreadyBox: {
     alignItems: 'center',
@@ -210,7 +213,6 @@ const styles = StyleSheet.create({
   AlreadyText: {
     color: '#000',
     textTransform:'uppercase',
-    fontWeight:'800',
     lineHeight: 16,
     marginTop: 10,
     fontSize: 16,

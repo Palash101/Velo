@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   Image,
   StyleSheet,
@@ -16,50 +16,115 @@ import {
   RoundedDarkButton,
   RoundedThemeButton,
 } from '../../components/Buttons';
+import {UserContext} from '../../../context/UserContext';
+import {useToast} from 'react-native-toast-notifications';
+import {ProfileController} from '../../controllers/ProfileController';
+import PageLoader from '../../components/PageLoader';
 
 const ChangePassword = ({navigation}) => {
-    const [password, setPassword] = useState('');
-    const [password_confirmation, setPasswordConfirmation] = useState('');
-     const [loading, setLoading] = useState(false);
+  const [oldPassword, setOldPassword] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const {getToken} = useContext(UserContext);
+  const toast = useToast();
 
-  const submit = () => {};
+  useEffect(() => {
+    setOldPassword('');
+    setPassword('');
+    setConfirmPassword('');
+  }, [navigation])
+
+  const submit = async () => {
+    const token = await getToken();
+    const validate = validatePassword();
+    console.log(validate, 'validate');
+    if (!validate.msg) {
+      setLoading(true);
+      const data = {
+        oldPassword: oldPassword,
+        password: password,
+        confirmPassword: confirmPassword,
+      };
+      const instance = new ProfileController();
+      const result = await instance.changePassword(data, token);
+      if (result.status === 'success') {
+        toast.show(result.message);
+        setLoading(false);
+        setOldPassword('');
+        setPassword('');
+        setConfirmPassword('');
+        navigation.navigate('Profile');
+      } else {
+        toast.show(result.message);
+        setLoading(false);
+      }
+    } else {
+      toast.show(validate.msg);
+    }
+  };
+
+  function validatePassword() {
+    if (oldPassword !== '' && password !== '' && confirmPassword !== '') {
+      if (password == confirmPassword) {
+        if (password.length > 7) {
+          return true;
+        } else {
+          return {msg: 'Password must be 8 characters.'};
+        }
+      } else {
+        return {msg: 'New Password and Confirm Password does not each other.'};
+      }
+    } else {
+      return {msg: 'please fill all details'};
+    }
+  }
 
   return (
-    <PageContainer>
-      <ScrollView contentContainerStyle={{flex: 1}}>
-        <Text style={{paddingLeft: 15}}>CHANGE PROFILE</Text>
+    <>
+      {/* <PageLoader loading={loading} /> */}
+      <PageContainer>
+        <ScrollView contentContainerStyle={{flex: 1}}>
+          <Text style={{paddingLeft: 15}}>CHANGE PROFILE</Text>
 
-        <View style={styles.form}>
-        <Input
-        value={password}
-        label={'Password'}
-        onChang={setPassword}
-        secureTextEntry={true}
-        />
-        <Input
-        value={password_confirmation}
-        label={'Confirm password'}
-        onChang={setPasswordConfirmation}
-        secureTextEntry={true}
-        />
+          <View style={styles.form}>
+            <Input
+              value={oldPassword}
+              label={'Current Password'}
+              onChang={setOldPassword}
+              secureTextEntry={true}
+            />
+            <Input
+              value={password}
+              label={'New Password'}
+              onChang={setPassword}
+              secureTextEntry={true}
+            />
+            <Input
+              value={confirmPassword}
+              label={'Confirm password'}
+              onChang={setConfirmPassword}
+              secureTextEntry={true}
+            />
 
-          <View style={styles.btnBox}>
-            <RoundedThemeButton
-              label={'CANCEL'}
-              style={{marginTop: 20, width: width / 2 - 50}}
-              onPress={() => navigation.navigate('Profile')}
-              loading={loading}
-            />
-            <RoundedDarkButton
-              label={'SAVE'}
-              style={{marginTop: 20, width: width / 2 - 50}}
-              onPress={submit}
-              loading={loading}
-            />
+            <View style={styles.btnBox}>
+              <RoundedThemeButton
+                label={'CANCEL'}
+                style={{marginTop: 20, width: width / 2 - 50}}
+                onPress={() => navigation.navigate('Profile')}
+                loading={false}
+              />
+              <RoundedDarkButton
+                label={'SAVE'}
+                style={{marginTop: 20, width: width / 2 - 50}}
+                onPress={submit}
+                loading={loading}
+              />
+            </View>
           </View>
-        </View>
-      </ScrollView>
-    </PageContainer>
+        </ScrollView>
+      </PageContainer>
+    </>
   );
 };
 export default ChangePassword;
@@ -69,7 +134,7 @@ const styles = StyleSheet.create({
   form: {
     width: width - 40,
     alignSelf: 'center',
-    marginTop:50
+    marginTop: 50,
   },
   btnBox: {
     display: 'flex',
@@ -84,25 +149,5 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: 50,
     marginBottom: 20,
-  },
-  name: {
-    fontSize: 20,
-    fontWeight: '600',
-    textAlign: 'center',
-    color: '#000',
-  },
-  email: {
-    fontSize: 12,
-    fontWeight: '500',
-    textAlign: 'center',
-    lineHeight: 20,
-    color: '#333',
-  },
-  phone: {
-    fontSize: 12,
-    fontWeight: '500',
-    textAlign: 'center',
-    lineHeight: 20,
-    color: '#333',
   },
 });

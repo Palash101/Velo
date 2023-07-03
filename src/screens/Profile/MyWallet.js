@@ -1,21 +1,45 @@
-import React, {useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {StyleSheet, Text, View, ScrollView, Dimensions} from 'react-native';
 import {PageContainer} from '../../components/Container';
 import {RoundedDarkButton} from '../../components/Buttons';
+import PageLoader from '../../components/PageLoader';
+import { WalletController } from '../../controllers/WalletController';
+import { UserContext } from '../../../context/UserContext';
 
 const MyWallet = ({navigation}) => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const {getToken} = useContext(UserContext);
+  const [balance, setBalance] = useState(0);
+
+  useEffect(() => {
+    getMyBanance()
+  },[])
+
+
+  const getMyBanance = async () => {
+    const token = await getToken();
+    const instance = new WalletController();
+    const result = await instance.getBalance(token)
+    console.log(result,'ress')
+    setLoading(false)
+    if(result?.attributes?.balance){
+      setBalance(result.attributes.balance)
+    }
+  }
 
   const submit = () => {};
 
   return (
+    <>
+    <PageLoader loading={loading} />
+    
     <PageContainer>
       <ScrollView contentContainerStyle={{flex: 1}}>
         <Text style={{paddingLeft: 15}}>WALLET</Text>
 
         <View style={styles.form}>
           <View style={styles.walletBox}>
-            <Text style={styles.amountText}>0 QR</Text>
+            <Text style={styles.amountText}>{balance} QR</Text>
           </View>
           <View style={styles.btnBox}>
             <RoundedDarkButton
@@ -34,6 +58,7 @@ const MyWallet = ({navigation}) => {
         </View>
       </ScrollView>
     </PageContainer>
+    </>
   );
 };
 export default MyWallet;
