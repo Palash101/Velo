@@ -25,8 +25,8 @@ export const Input = props => {
 
 const styles = StyleSheet.create({
   row: {
-    marginTop: 10,
-    marginBottom: 10,
+    marginTop: 0,
+    marginBottom: 5,
   },
   input: {
     backgroundColor: 'transparent',
@@ -34,5 +34,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#000',
     borderBottomWidth: 1,
     textTransform: 'uppercase',
+    fontSize: 14,
+    fontFamily: 'Gotham-Medium',
   },
 });

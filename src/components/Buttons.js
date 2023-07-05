@@ -8,11 +8,8 @@ export const ThemeButton = props => {
       contentStyle={styles.buttonText}
       onPress={() => props.onPress()}
       {...props}>
-      {props.loading !== true ? (
         <Text style={{fontSize:18,color:'#000',fontFamily: 'Gotham-Medium',}}>{props.label}</Text>
-      ) : (
-        <ActivityIndicator style={styles.loader} size="small" color="#fff" />
-      )}
+     
     </Button>
   );
 };
@@ -25,11 +22,9 @@ export const DarkButton = props => {
       contentStyle={styles.OutlineButtonText}
       onPress={() => props.onPress()}
       {...props}>
-      {props.loading !== true ? (
-        <Text style={{fontSize:18,color:'#fff',fontFamily: 'Gotham-Medium',}}>{props.label}</Text>
-      ) : (
-        <ActivityIndicator style={styles.loader} size="small" color="#fff" />
-      )}
+      
+        <Text style={{fontSize:18,textTransform:'uppercase',color:'#fff',fontFamily: 'Gotham-Medium',}}>{props.label}</Text>
+    
     </Button>
   );
 };
@@ -41,11 +36,9 @@ export const RoundedDarkButton = props => {
       contentStyle={styles.RoundedDarkButton}
       onPress={() => props.onPress()}
       {...props}>
-      {props.loading !== true ? (
+      {/* {props.loading !== true ? ( */}
         <Text style={{fontSize:14,color:'#fff',lineHeight:16,fontFamily: 'Gotham-Medium',}}>{props.label}</Text>
-      ) : (
-        <ActivityIndicator style={styles.loader} size="small" color="#fff" />
-      )}
+      
     </Button>
   );
 };

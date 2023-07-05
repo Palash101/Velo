@@ -11,10 +11,10 @@ export const AuthHeader = ({title}) => {
 
 const styles = StyleSheet.create({
   row:{
-    marginTop:100
+    marginTop:10
   },
   title: {
-    fontSize: 32,
+    fontSize: 24,
     color:'#000',
     textTransform:'uppercase',
     fontFamily:'Gotham-Book',

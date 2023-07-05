@@ -25,7 +25,7 @@ const ProfileEdit = ({navigation}) => {
   const [last_name, setLastName] = useState('');
   const [phone, setPhone] = useState('');
   const [dob, setDob] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const {getToken} = useContext(UserContext);
   const [user, setUser] = useState({});
   const toast = useToast();
@@ -39,25 +39,30 @@ const ProfileEdit = ({navigation}) => {
     const token = await getToken();
     const instance = new ProfileController();
     const result = await instance.getUserDetail(token);
+    console.log(result, 'result');
     setUser(result.user);
     setFirstName(result.user.first_name);
     setLastName(result.user.last_name);
     setEmail(result.user.email);
     setPhone(result.user.phone);
     setDob(result.user.dob);
+    const db = moment(new Date(result.user.dob)).format('YYYY-MM-DD');
+    console.log(moment('Jul').format('MM'), 'dbb');
+    setLoading(false);
   };
 
   const submit = async () => {
     if (first_name !== '' && last_name !== '' && email !== '' && phone !== '') {
       setLoading(true);
       const data = {
+        ...user,
         first_name: first_name,
         last_name: last_name,
         email: email,
         phone: phone,
-        dob: moment(data.dob).format('YYYY-MM-DD'),
-        ...user,
+        dob: moment(dob).format('YYYY-MM-DD'),
       };
+      console.log(data, 'data');
       const token = await getToken();
       const instance = new ProfileController();
       const result = await instance.updateProfile(data, token);
@@ -72,13 +77,21 @@ const ProfileEdit = ({navigation}) => {
         var value = '';
         if (errors.phone) {
           var value = errors.phone + ' ,';
+          toast.show(value);
         }
-        if (errors.email) {
+        else if (errors.email) {
           value = value + errors.email;
+          toast.show(value);
         }
-        toast.show(value);
+        else if (errors.dob) {
+          value = value + errors.dob;
+          toast.show(value);
+        }
+        
         setLoading(false);
+       
       }
+     
     } else {
       toast.show('Please fill all details');
     }
@@ -111,51 +124,62 @@ const ProfileEdit = ({navigation}) => {
               onChang={setPhone}
               keyboardType={'numeric'}
             />
-            <DatePicker
-              style={{
-                borderBottomWidth: 1.5,
-                borderColor: '#000',
-                width: '100%',
-                paddingTop: 22,
-              }}
-              placeholder="Birth Date"
-              date={dob}
-              mode="date"
-              format="DD MMM YYYY"
-              maxDate="2010-01-01"
-              confirmBtnText="Confirm"
-              cancelBtnText="Cancel"
-              customStyles={{
-                dateIcon: {
-                  display: 'none',
-                },
-
-                dateText: {
-                  fontSize: 16,
-                  color: '#000',
-                  paddingLeft:15,
-                  paddingBottom:5
-                },
-                dateInput: {
-                  fontSize: 18,
-                  color: '#000',
-                  marginTop: 10,
-                  borderWidth: 0,
-                  alignItems: 'flex-start',
+            <View>
+              <Text
+                style={{
+                  paddingTop: 15,
+                  fontSize: 12,
+                  color: '#333',
+                  marginLeft: 15,
+                }}>
+                Date of Birth
+              </Text>
+              <DatePicker
+                style={{
+                  borderBottomWidth: 1.5,
+                  borderColor: '#000',
                   width: '100%',
-                },
-              }}
-              onDateChange={date => {
-                setDob(date);
-              }}
-            />
+                  paddingTop: 0,
+                }}
+                placeholder="Birth Date"
+                date={dob}
+                mode="date"
+                format="DD MMM YYYY"
+                maxDate="2010-01-01"
+                confirmBtnText="Confirm"
+                cancelBtnText="Cancel"
+                customStyles={{
+                  dateIcon: {
+                    display: 'none',
+                  },
+
+                  dateText: {
+                    fontSize: 16,
+                    color: '#000',
+                    paddingLeft: 15,
+                    paddingBottom: 0,
+                  },
+                  dateInput: {
+                    fontSize: 18,
+                    color: '#000',
+                    marginTop: 0,
+                    borderWidth: 0,
+                    alignItems: 'flex-start',
+                    width: '100%',
+                  },
+                }}
+                onDateChange={date => {
+                  setDob(date);
+                }}
+              />
+            </View>
 
             <View style={styles.btnBox}>
               <RoundedThemeButton
                 label={'CANCEL'}
                 style={{marginTop: 20, width: width / 2 - 50}}
                 onPress={() => navigation.navigate('Profile')}
-                loading={loading}
+                loading={false}
               />
               <RoundedDarkButton
                 label={'SAVE'}

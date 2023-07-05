@@ -12,10 +12,12 @@ import {RoundedDarkButton, RoundedThemeButton} from '../../components/Buttons';
 import {FlatList} from 'react-native-gesture-handler';
 import {useState} from 'react';
 import {PackageItem} from '../../components/PackageItem';
-import { CartItem } from '../../components/CartItem';
+import {CartItem} from '../../components/CartItem';
+import { useNavigation } from '@react-navigation/native';
 
 const DoubleJoy = () => {
   const [active, setActive] = useState('Shakes');
+ const navigation = useNavigation();
 
   const [data, setData] = useState([
     {name: 'AAA'},
@@ -31,13 +33,14 @@ const DoubleJoy = () => {
   ]);
 
   const selectItem = item => {
-    Alert.alert(item.name);
+    navigation.navigate('DoubleJoyDetail');
+   // Alert.alert(item.name);
   };
   return (
     <>
       <PageContainer>
         <View style={{paddingHorizontal: 10}}>
-            <Text style={styles.mainHeading}>Double Joy</Text>
+          <Text style={styles.mainHeading}>Double Joy</Text>
           <View style={styles.tab}>
             {active === 'Shakes' ? (
               <RoundedDarkButton label={'SHAKES'} style={styles.tabBtn} />
@@ -93,12 +96,12 @@ export default DoubleJoy;
 const width = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
-    mainHeading:{
-        fontSize:20,
-        fontWeight:'700',
-        textAlign:'center',
-        marginTop:10,
-    },
+  mainHeading: {
+    fontSize: 20,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginTop: 10,
+  },
   tab: {
     display: 'flex',
     flexDirection: 'row',

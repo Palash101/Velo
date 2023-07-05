@@ -19,7 +19,7 @@ import {AuthHeader} from '../../components/AuthHeader';
 import {DarkButton, ThemeButton} from '../../components/Buttons';
 import {Input} from '../../components/Input/input';
 import {useToast} from 'react-native-toast-notifications';
-import { UserContext } from '../../../context/UserContext';
+import {UserContext} from '../../../context/UserContext';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -36,29 +36,22 @@ const Login = () => {
   const toast = useToast();
 
   const submit = async () => {
-    console.log(email !== '' && password !== '', 'password');
     if (loading === false) {
       if (email !== '' && password !== '') {
         setLoading(true);
         const instance = new AuthContoller();
         const result = await instance.loginUser(email, password);
         console.log(result, 'result');
-        if (result?.success === true) {
-          if (result.data.access_token) {
-            userCtx.setUser(result.data.user);
-            setToken(result.data.access_token);
-            setAuth(true);
-
-            navigation.navigate('Drawer');
-            toast.show('Welcome to velo');
-            setLoading(false);
-          } else {
-            setLoading(false);
-            toast.show(result.data.error);
-          }
+        if (result.access_token) {
+          userCtx.setUser(result.user);
+          setToken(result.access_token);
+          setAuth(true);
+          navigation.navigate('Drawer');
+          toast.show('Welcome to velo');
+          setLoading(false);
         } else {
           setLoading(false);
-          toast.show(result.message.error);
+          toast.show(result.error);
         }
       } else {
         toast.show('please enter email and password');
@@ -69,11 +62,15 @@ const Login = () => {
   return (
     <>
       <PageContainer>
-        <ScrollView contentContainerStyle={{flex: 1, }}>
-          <View style={{width:'100%',maxWidth:320,alignSelf:'center'}}>
+        <ScrollView contentContainerStyle={{flex: 1}}>
+          <View style={{width: '100%', maxWidth: 320, alignSelf: 'center'}}>
             <AuthHeader title={'Login'} />
             <View style={styles.form}>
-              <Input value={email} label={'E-MAIL ADDRESS'} onChang={setEmail} />
+              <Input
+                value={email}
+                label={'E-MAIL ADDRESS'}
+                onChang={setEmail}
+              />
 
               <Input
                 value={password}
@@ -82,7 +79,12 @@ const Login = () => {
                 secureTextEntry={true}
               />
 
-              <DarkButton label={'LOGIN'} onPress={submit} style={{marginTop:20}} loading={loading} />
+              <DarkButton
+                label={'LOGIN'}
+                onPress={submit}
+                style={{marginTop: 20}}
+                loading={loading}
+              />
 
               <TouchableOpacity
                 style={styles.forget}
@@ -90,7 +92,9 @@ const Login = () => {
                 <Text style={styles.forgetText}>Forgot Password </Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.skip} onPress={() => console.log()}>
+              <TouchableOpacity
+                style={styles.skip}
+                onPress={() => console.log()}>
                 <Text style={styles.skipText}>Skip Now </Text>
               </TouchableOpacity>
             </View>
@@ -98,14 +102,13 @@ const Login = () => {
         </ScrollView>
 
         <View style={styles.alreadyBox}>
-          
           <Text
             style={{
               color: '#000',
               fontFamily: 'Gotham-Medium',
               opacity: 1,
               fontSize: 16,
-              textTransform:'uppercase'
+              textTransform: 'uppercase',
             }}>
             Don't have account?{' '}
           </Text>
@@ -113,7 +116,6 @@ const Login = () => {
             <Text style={styles.AlreadyText}>Sign Up</Text>
           </TouchableOpacity>
         </View>
-
       </PageContainer>
     </>
   );
@@ -145,8 +147,8 @@ const styles = StyleSheet.create({
   forgetText: {
     color: '#000',
     textAlign: 'center',
-    textTransform:'uppercase',
-    fontSize:16,
+    textTransform: 'uppercase',
+    fontSize: 16,
     fontFamily: 'Gotham-Medium',
   },
   input: {
@@ -162,7 +164,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     textAlign: 'center',
     height: 53,
-    textTransform:'uppercase'
+    textTransform: 'uppercase',
   },
 
   form: {
@@ -200,8 +202,8 @@ const styles = StyleSheet.create({
   skipText: {
     color: '#000',
     textAlign: 'center',
-    textTransform:'uppercase',
-    fontSize:14,
+    textTransform: 'uppercase',
+    fontSize: 14,
     fontFamily: 'Gotham-Light',
   },
   alreadyBox: {
@@ -212,7 +214,7 @@ const styles = StyleSheet.create({
   },
   AlreadyText: {
     color: '#000',
-    textTransform:'uppercase',
+    textTransform: 'uppercase',
     lineHeight: 16,
     marginTop: 10,
     fontSize: 16,

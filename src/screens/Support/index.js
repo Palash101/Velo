@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Image,
   ScrollView,
@@ -7,32 +7,32 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {PageContainer} from '../../components/Container';
-import {useState} from 'react';
-import {assets} from '../../config/AssetsConfig';
+import { PageContainer } from '../../components/Container';
+import { assets } from '../../config/AssetsConfig';
+import { SupportController } from '../../controllers/SupportController';
 
-const Support = ({navigation}) => {
+const Support = ({ navigation }) => {
   const Faqs = [
     {
-      id:1,
+      id: 1,
       question: 'What is the waitlist policy?',
       answer:
         'Lorem ipsum doller emit is dummy content Lorem ipsum doller emit is dummy content Lorem ipsum doller emit is dummy content',
     },
     {
-      id:2,
+      id: 2,
       question: 'What is the waitlist policy?',
       answer:
         'Lorem ipsum doller emit is dummy content Lorem ipsum doller emit is dummy content Lorem ipsum doller emit is dummy content',
     },
     {
-      id:3,
+      id: 3,
       question: 'What is the waitlist policy?',
       answer:
         'Lorem ipsum doller emit is dummy content Lorem ipsum doller emit is dummy content Lorem ipsum doller emit is dummy content',
     },
     {
-      id:4,
+      id: 4,
       question: 'What is the waitlist policy?',
       answer:
         'Lorem ipsum doller emit is dummy content Lorem ipsum doller emit is dummy content Lorem ipsum doller emit is dummy content',
@@ -40,12 +40,36 @@ const Support = ({navigation}) => {
   ];
 
   const [data, setData] = useState(Faqs);
+  const [supportData, setSupportData] = useState();
   const [active, setActive] = useState({});
+
+  const toggleActive = async (item) => {
+    if (active.id === item.id) {
+      setActive('')
+    }
+    else {
+      setActive(item)
+    }
+  }
+
+  useEffect(() => {
+    getSupportData()
+  }, [])
+
+  const getSupportData = async () => {
+    const instance = new SupportController();
+    const result = await instance.getSupport();
+    if (result.status === 'success') {
+      console.log(result.contact_us, 'result.contact_us')
+      setSupportData(result.contact_us);
+    }
+  }
+
 
   return (
     <PageContainer>
-      <ScrollView contentContainerStyle={{paddingBottom: 50}}>
-        <Text style={{paddingLeft: 15, height: 30, textTransform: 'uppercase'}}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 50 }}>
+        <Text style={{ paddingLeft: 15, height: 30, textTransform: 'uppercase' }}>
           FAQ
         </Text>
 
@@ -54,22 +78,29 @@ const Support = ({navigation}) => {
             <View style={styles.faqItem}>
               <TouchableOpacity
                 style={styles.faqTitle}
-                onPress={() => setActive(item)}>
-                <Text>{item.question}</Text>
-                <Image source={assets.chevron} style={styles.chevronImage} />
+                onPress={() => toggleActive(item)}>
+                <Text style={styles.titleText}>{item.question}</Text>
+                <Image source={assets.chevron} style={active.id !== item.id ? styles.chevronImage : styles.chevronImageOpen} />
               </TouchableOpacity>
               {active.id === item.id && (
-              <View style={styles.faqPara}>
-                <Text>{item.answer}</Text>
-              </View>
+                <View style={styles.faqPara}>
+                  <Text style={styles.paraText}>{item.answer}</Text>
+                </View>
               )}
             </View>
           ))}
         </View>
+        {supportData &&
+          <>
+            <Text style={{ paddingLeft: 15, height: 30, textTransform: 'uppercase' }}>
+              {supportData.heading}
+            </Text>
 
-        <Text style={{paddingLeft: 15, height: 30, textTransform: 'uppercase'}}>
-          SUPPORT
-        </Text>
+            <View style={styles.support}>
+              <Text style={styles.supportText}>{supportData.description}</Text>
+            </View>
+          </>
+        }
       </ScrollView>
     </PageContainer>
   );
@@ -82,12 +113,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
   },
+  support:{
+    padding:15,
+  },
+  supportText:{
+    fontSize:14,
+    fontFamily:'Gotham-Book',
+    lineHeight:18,
+  },
   faqTitle: {
     backgroundColor: '#f2f2f2',
     padding: 20,
     borderRadius: 16,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 6},
+    shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.2,
     shadowRadius: 10,
     marginVertical: 10,
@@ -95,14 +134,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
+  titleText:{
+    fontFamily:'Gotham-Book',
+    lineHeight:16,
+    fontSize:14,
+  },
+  paraText:{
+    fontFamily:'Gotham-Book',
+    lineHeight:16,
+    fontSize:14,
+  },
   faqPara: {
     backgroundColor: '#fff',
     padding: 20,
     borderRadius: 16,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 6},
+    shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.2,
     shadowRadius: 10,
+    fontFamily:'Gotham-Book',
   },
   chevronImage: {
     width: 22,
@@ -111,6 +161,6 @@ const styles = StyleSheet.create({
   chevronImageOpen: {
     width: 22,
     height: 22,
-    transform: [{rotate: '180deg'}],
+    transform: [{ rotate: '180deg' }],
   },
 });

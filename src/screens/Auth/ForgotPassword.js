@@ -39,16 +39,18 @@ const Forgot = () => {
           return false;
         } else {
           setLoading(true);
-          const instance = await AuthContoller();
-          const result = instance.forgotPassword(email);
-         
-          console.log(result,'resultt')
-         
-          if (result.data.responseJson.status === 'success') {
-            toast.show('', result.data.responseJson.message);
+          const instance = new AuthContoller();
+          const result = await instance.forgotPassword(email);
+
+          console.log(result, 'resultt');
+
+          if (result.status === 'success') {
+            toast.show('', result.message);
             navigation.navigate('Login');
+            setLoading(false)
           } else {
-            toast.show(result.data.responseJson.message);
+            toast.show(result.message);
+            setLoading(false)
           }
         }
       } else {
@@ -59,29 +61,29 @@ const Forgot = () => {
 
   return (
     <>
+    <PageLoader loading={loading} />
       <PageContainer>
-      <ScrollView contentContainerStyle={{flex: 1}}>
-          <View style={{width:'100%',maxWidth:320,alignSelf:'center'}}>
-          <AuthHeader title={'Forgot Password'} />
-          <View style={styles.form}>
-            <Input value={email} label={'Email address'} onChang={setEmail} />
+        <ScrollView contentContainerStyle={{flex: 1}}>
+          <View style={{width: '100%', maxWidth: 320, alignSelf: 'center'}}>
+            <AuthHeader title={'Forgot Password'} />
+            <View style={styles.form}>
+              <Input value={email} label={'E-MAIL ADDRESS'} onChang={setEmail} />
 
-            <DarkButton
-              label={'Reset Password'}
-              onPress={submit}
-              loading={loading}
-              style={{marginTop:20,}}
-            />
+              <DarkButton
+                label={'Reset Password'}
+                onPress={submit}
+                loading={loading}
+                style={{marginTop: 20}}
+              />
 
-            <TouchableOpacity
-              style={{marginTop: 20}}
-              onPress={() => navigation.navigate('Login')}>
-              <Text style={styles.skipText}>Go back</Text>
-            </TouchableOpacity>
-          </View>
+              <TouchableOpacity
+                style={{marginTop: 20}}
+                onPress={() => navigation.navigate('Login')}>
+                <Text style={styles.skipText}>Go back</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </ScrollView>
-
       </PageContainer>
     </>
   );
@@ -108,21 +110,7 @@ const styles = StyleSheet.create({
     color: '#000',
     textAlign: 'center',
   },
-  input: {
-    fontSize: 26,
-    fontFamily: 'Gotham-Medium',
-    color: '#000',
-    borderWidth: 1,
-    borderColor: '#000',
-    marginTop: 30,
-    marginLeft: 20,
-    marginRight: 20,
-    borderRadius: 12,
-    alignItems: 'center',
-    textAlign: 'center',
-    height: 53,
-  },
-
+ 
   form: {
     marginTop: 180,
   },
@@ -138,9 +126,9 @@ const styles = StyleSheet.create({
   skipText: {
     color: '#000',
     textAlign: 'center',
-    fontSize:16,
-    textTransform:'uppercase'
+    fontSize: 16,
+    textTransform: 'uppercase',
+    fontFamily:'Gotham-Book'
   },
- 
 });
 export default Forgot;

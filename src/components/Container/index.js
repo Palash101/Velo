@@ -9,8 +9,8 @@ import {
 import {assets} from '../../config/AssetsConfig';
 import {ScrollView} from 'react-native-gesture-handler';
 
-export const PageContainer = ({children}) => {
-  return <View style={styles.container}>{children}</View>;
+export const PageContainer = ({children}, props) => {
+  return <View style={styles.container} {...props}>{children}</View>;
 };
 
 const styles = StyleSheet.create({

@@ -26,6 +26,8 @@ import Store from '../screens/Store';
 import ProfileEdit from '../screens/Profile/ProfileEdit';
 import ChangePassword from '../screens/Profile/ChangePassword';
 import MyWallet from '../screens/Profile/MyWallet';
+import DoubleJoyDetail from '../screens/DoubleJoy/detail';
+import DoubleJoyCheckout from '../screens/Checkout/DoubleJouCheckout';
 
 const Drawer = createDrawerNavigator();
 
@@ -223,6 +225,21 @@ export default function DrawerNavigation() {
           headerTitle: props => <LogoTitle {...props} />,
         }}
       />
+      <Drawer.Screen
+        name="DoubleJoyDetail"
+        component={DoubleJoyDetail}
+        options={{
+          headerShown: false
+        }}
+      />
+      <Drawer.Screen
+        name="DoubleJoyCheckout"
+        component={DoubleJoyCheckout}
+        options={{
+          headerShown: false
+        }}
+      />
+
        <Drawer.Screen
         name="Store"
         component={Store}

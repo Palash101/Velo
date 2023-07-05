@@ -22,6 +22,8 @@
     "react": "18.2.0",
     "react-native": "0.71.10",
     "react-native-animated-pagination-dots": "^0.1.73",
+    "react-native-check-box": "^2.1.7",
+    "react-native-country-codes-picker": "^2.3.3",
     "react-native-datepicker": "^1.7.2",
     "react-native-gesture-handler": "^2.12.0",
     "react-native-material-ripple": "^0.9.1",
