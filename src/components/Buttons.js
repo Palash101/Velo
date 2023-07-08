@@ -37,7 +37,7 @@ export const RoundedDarkButton = props => {
       onPress={() => props.onPress()}
       {...props}>
       {/* {props.loading !== true ? ( */}
-        <Text style={{fontSize:14,color:'#fff',lineHeight:16,fontFamily: 'Gotham-Medium',}}>{props.label}</Text>
+        <Text style={{fontSize:14,color:'#fff',lineHeight:16,fontFamily: 'Gotham-Medium',textTransform:'uppercase'}}>{props.label}</Text>
       
     </Button>
   );
@@ -49,11 +49,8 @@ export const RoundedThemeButton = props => {
       contentStyle={styles.RoundedThemeButton}
       onPress={() => props.onPress()}
       {...props}>
-      {props.loading !== true ? (
-        <Text style={{fontSize:14,color:'#000',fontFamily: 'Gotham-Medium',lineHeight:16}}>{props.label}</Text>
-      ) : (
-        <ActivityIndicator style={styles.loader} size="small" color="#fff" />
-      )}
+        <Text style={{fontSize:14,color:'#000',fontFamily: 'Gotham-Medium',lineHeight:16,textTransform:'uppercase'}}>{props.label}</Text>
+     
     </Button>
   );
 };
@@ -92,7 +89,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f2f2f2',
     alignItems: 'center',
     alignSelf: 'center',
-    width: 220,
+    width: '100%',
     height: 36,
   },
   loader: {

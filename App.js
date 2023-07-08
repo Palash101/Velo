@@ -39,7 +39,7 @@ const App = () => {
 
   return (
     <>
-      <ErrorBoundary>
+      {/* <ErrorBoundary> */}
         <ToastProvider
           offset={50}
           animationType="zoom-in"
@@ -66,7 +66,7 @@ const App = () => {
             </UserConsumer>
           </UserProvider>
         </ToastProvider>
-      </ErrorBoundary>
+      {/* </ErrorBoundary> */}
     </>
   );
 };

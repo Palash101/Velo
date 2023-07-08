@@ -1,6 +1,7 @@
-export const API_BASE = 'https://veloqa.com/dev/api';
-export const API_SUCCESS = 'https://veloqa.com/dev'
+// export const API_BASE = 'https://veloqa.com/dev/api';
+// export const API_SUCCESS = 'https://veloqa.com/admin';
 
 
-// export const API_BASE = 'http://neha.craftandcode.in/api';
-// export const API_SUCCESS = 'http://neha.craftandcode.in'
+export const API_BASE = 'https://neha.craftandcode.in/api';
+export const API_SUCCESS = 'https://neha.craftandcode.in';
+export const API_LAYOUT = 'https://app.craftandcode.in/'

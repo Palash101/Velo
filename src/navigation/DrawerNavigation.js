@@ -28,6 +28,7 @@ import ChangePassword from '../screens/Profile/ChangePassword';
 import MyWallet from '../screens/Profile/MyWallet';
 import DoubleJoyDetail from '../screens/DoubleJoy/detail';
 import DoubleJoyCheckout from '../screens/Checkout/DoubleJouCheckout';
+import ClassDetail from '../screens/ClassDetail';
 
 const Drawer = createDrawerNavigator();
 
@@ -206,6 +207,13 @@ export default function DrawerNavigation() {
         options={{
           headerLeft: () => <BackIcon />,
           headerTitle: props => <LogoTitle {...props} />,
+        }}
+      />
+       <Drawer.Screen
+        name="ClassDetail"
+        component={ClassDetail}
+        options={{
+          headerShown: false
         }}
       />
 

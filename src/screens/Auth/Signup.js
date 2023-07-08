@@ -23,7 +23,8 @@ import RadioForm, {
   RadioButtonInput,
   RadioButtonLabel,
 } from 'react-native-simple-radio-button';
-import DatePicker from 'react-native-datepicker';
+ import DatePicker from 'react-native-datepicker';
+// import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 import CheckBox from 'react-native-check-box';
 import {ModalView} from '../../components/ModalView';
@@ -41,6 +42,8 @@ var radio_props = [
   {label: 'FEMALE', value: 'Female'},
 ];
 
+
+
 const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -49,20 +52,26 @@ const SignUp = () => {
   const [first_name, setFirstName] = useState('');
   const [last_name, setLastName] = useState('');
   const [phone, setPhone] = useState('');
-  const [dob, setDob] = useState('');
+  
   const [terms, setTerms] = useState(false);
   const [termsModal, setTermsModal] = useState(false);
   const [policyModal, setPolicyModal] = useState(false);
   const [code, setCode] = useState('+91');
   const [countryPicker, setCountryPicker] = useState(false);
   const [selectedFlag, setSelectedFlag] = useState('');
-
+  const [datePicker, setDatePicker] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
   const userCtx = useContext(UserContext);
   const {setAuth} = useContext(UserContext);
   const {setToken} = useContext(UserContext);
   const toast = useToast();
+
+  const dt = new Date();
+  const maxDate = new Date(dt.setFullYear(dt.getFullYear() - 15));
+  const minDate = new Date(dt.setFullYear(dt.getFullYear() - 45));
+  const [dob, setDob] = useState(maxDate);
+ 
 
   const submit = async () => {
     const validate = validateDetail();
@@ -121,6 +130,17 @@ const SignUp = () => {
       }
     } else {
       return {msg: 'please fill all details'};
+    }
+  }
+
+  function showDatePicker() {
+    setDatePicker(true);
+  }
+
+  function onDateSelected(event, value) {
+    setDob(value);
+    if (Platform.OS !== 'ios') {
+      setDatePicker(false);
     }
   }
 
@@ -189,7 +209,7 @@ const SignUp = () => {
                 />
               </View>
 
-              <View>
+              <View style={{position: 'relative'}}>
                 <Text
                   style={{
                     paddingTop: 15,
@@ -199,6 +219,23 @@ const SignUp = () => {
                   }}>
                   BIRTH DATE
                 </Text>
+                 {/* <Input
+                  value={moment(dob).format('YYYY-MM-DD')}
+                  onChangeText={() => console.log('')}
+                  label={'BIRTH DATE'}
+                  disabled={true}
+                />
+                <TouchableOpacity
+                  style={{
+                    height: 50,
+                    position: 'absolute',
+                    left: 15,
+                    right: 15,
+                    top: 0,
+                  }}
+                  onPress={() => showDatePicker()}></TouchableOpacity> */}
+            
+
                 <DatePicker
                   style={{
                     borderBottomWidth: 1.5,
@@ -236,7 +273,7 @@ const SignUp = () => {
                   onDateChange={date => {
                     setDob(date);
                   }}
-                />
+                /> 
               </View>
 
               <View style={{marginTop: 15}}>
@@ -343,6 +380,37 @@ const SignUp = () => {
           setCountryPicker(false);
         }}
       />
+
+{datePicker && (
+          <View>
+            <DateTimePicker
+              value={dob}
+              mode={'date'}
+              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+              is24Hour={true}
+              onChange={onDateSelected}
+              minimumDate={minDate}
+              maximumDate={maxDate}
+              textColor="#333"
+            />
+            {Platform.OS === 'ios' && (
+              <TouchableOpacity
+                style={{
+                  backgroundColor: '#ddd',
+                  width: 100,
+                  padding: 10,
+                  borderRadius: 10,
+                  marginBottom: 30,
+                  margin: 'auto',
+                  alignSelf: 'center',
+                  textAlign: 'center',
+                }}
+                onPress={() => setDatePicker(false)}>
+                <Text style={{fontSize: 18, textAlign: 'center'}}>OK!</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
     </>
   );
 };

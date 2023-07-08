@@ -1,34 +1,89 @@
 import React from 'react';
-import {StyleSheet, View, Image, Text, Dimensions} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Image,
+  Text,
+  Dimensions,
+  TouchableOpacity,
+} from 'react-native';
 import {Badge} from 'react-native-paper';
 import {assets} from '../../config/AssetsConfig';
+import moment from 'moment';
+import {useNavigation} from '@react-navigation/native';
 
 const width = Dimensions.get('window').width;
 export const ClassItem = props => {
+  const {item} = props;
+  const time = moment(item.start_date + ' ' + item.start_time).format(
+    'hh:mm A',
+  );
+  const navigation = useNavigation();
+
   return (
     <>
-      <View style={styles.outerBox}>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('ClassDetail', {item: item})}
+        style={styles.outerBox}>
         <View style={styles.imageBox}>
           <Image
-            source={require('../../../assets/images/bg.png')}
+            source={
+              item?.trainer?.image
+                ? {uri: item?.trainer?.image}
+                : require('../../../assets/images/bg.png')
+            }
             style={styles.mainImage}
           />
         </View>
         <View style={styles.centerBox}>
           <Text style={styles.title} ellipsizeMode="tail" numberOfLines={1}>
-            CYCLE | <Text style={styles.subTitle}>Justin bieber ride</Text>
+            {item.type} | <Text style={styles.subTitle}>{item.title}</Text>
           </Text>
           <View style={styles.timeBox}>
             <Image source={assets.clock} style={styles.timeImage} />
-            <Text style={styles.time}>05:15 PM</Text>
+            <Text style={styles.time}>{time}</Text>
           </View>
-          <Text style={styles.trainerName}>PAOLA</Text>
+          <Text style={styles.trainerName}>{item?.trainer?.first_name}</Text>
         </View>
         <View style={styles.lastBox}>
-          <Text style={styles.lastBoxText}>LADIES ONLY</Text>
-          <Badge style={styles.bedge}>Fully Booked</Badge>
+          {item.gender === 'Female' && (
+            <Text style={styles.lastBoxText}>LADIES ONLY</Text>
+          )}
+
+
+          {item.attributes.booking_count_status.waiting_available === 0 &&
+            item.attributes.booking_count_status.available === 0 &&
+            item.attributes.user_waiting === false &&
+            item.attributes.mine_booking === false && (
+              <Badge style={[styles.bedge, {backgroundColor: '#000'}]}>Fully Booked</Badge>
+            )}
+
+          {item.attributes.mine_booking === true &&
+            item.attributes.user_waiting === false && (
+              <Badge style={[styles.bedge, {backgroundColor: '#000'}]}>Booked</Badge>
+            )}
+
+          {item.attributes.booking_count_status.waiting_available !== 0 &&
+            item.attributes.booking_count_status.available === 0 &&
+            item.attributes.user_waiting === false &&
+            item.attributes.mine_booking === false && (
+              <Badge style={[styles.bedge, {backgroundColor: '#FFC107'}]}>Join Waitlist</Badge>
+            )}
+
+          {item.attributes.user_waiting === true && (
+            <Badge style={[styles.bedge, {backgroundColor: '#000'}]}>
+              Waiting: {item.attributes.booking_count_status.waiting}
+            </Badge>
+          )}
+
+          {item.attributes.available_seat_text !== '' &&
+            item.attributes.mine_booking === false && (
+              <Badge style={[styles.bedge, {backgroundColor: '#30ae4d'}]}>
+                {item.attributes.available_seat_text}
+              </Badge>
+            )}
         </View>
-      </View>
+      </TouchableOpacity>
     </>
   );
 };
@@ -95,12 +150,14 @@ const styles = StyleSheet.create({
   },
   trainerName: {
     fontSize: 12,
+    textTransform: 'uppercase',
   },
   title: {
     fontSize: 16,
     fontWeight: '700',
     width: width - 220,
     overflow: 'hidden',
+    textTransform: 'uppercase',
   },
   subTitle: {
     fontSize: 10,

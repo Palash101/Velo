@@ -17,6 +17,7 @@ export const Input = props => {
         contentStyle={{color: '#000', textTransform: 'uppercase'}}
         textColor="#000"
         theme={{colors: {primary: '#000'}, textTransform: 'uppercase'}}
+        value={props.value ? props.value : ''}
         {...props}
       />
     </View>
@@ -33,7 +34,7 @@ const styles = StyleSheet.create({
     color: '#000',
     borderBottomColor: '#000',
     borderBottomWidth: 1,
-    textTransform: 'uppercase',
+    //textTransform: 'uppercase',
     fontSize: 14,
     fontFamily: 'Gotham-Medium',
   },

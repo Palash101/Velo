@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
-import {Image, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, {useState} from 'react';
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {PageContainer} from '../../components/Container';
-import { assets } from '../../config/AssetsConfig';
+import {assets} from '../../config/AssetsConfig';
 
 const Journey = ({navigation}) => {
-  const [data, setData] = useState([{},{},{}])
+  const [data, setData] = useState([{}, {}, {}]);
 
   return (
     <PageContainer>
@@ -29,20 +36,19 @@ const Journey = ({navigation}) => {
           </View>
         </View>
 
-          <View style={styles.achBoxTitle}>
-            <Text style={styles.achTitle}>Achievements</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Achievement')}>
+        <View style={styles.achBoxTitle}>
+          <Text style={styles.achTitle}>Achievements</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Achievement')}>
             <Text style={styles.achTitle}>See all</Text>
           </TouchableOpacity>
-          </View>
+        </View>
 
-          <View style={styles.achBoxes}>
-            {data.map((item, index) => (
-              <View style={styles.achBox} key={index}>
-              <Image source={assets.vlogo} style={styles.achImg}/>
+        <View style={styles.achBoxes}>
+          {data.map((item, index) => (
+            <View style={styles.achBox} key={index}>
+              <Image source={assets.vlogo} style={styles.achImg} />
             </View>
-            ))}
-         
+          ))}
         </View>
       </ScrollView>
     </PageContainer>
@@ -50,76 +56,75 @@ const Journey = ({navigation}) => {
 };
 export default Journey;
 const styles = StyleSheet.create({
-  totalClass:{
-    marginVertical:50,
-    alignItems:'center'
+  totalClass: {
+    marginVertical: 50,
+    alignItems: 'center',
   },
-  title:{
-    fontSize:82,
-    fontWeight:'600',
-    lineHeight:82,
-    marginVertical:10,
+  title: {
+    fontSize: 82,
+    fontWeight: '600',
+    lineHeight: 82,
+    marginVertical: 10,
   },
-  subTitle:{
-    fontSize:16,
-    textTransform:'uppercase',
-    fontWeight:'600'
+  subTitle: {
+    fontSize: 16,
+    textTransform: 'uppercase',
+    fontWeight: '600',
   },
-  para:{
-    fontSize:12,
-    textTransform:'uppercase',
-    fontWeight:'600',
-    marginTop:-20
+  para: {
+    fontSize: 12,
+    textTransform: 'uppercase',
+    fontWeight: '600',
+    marginTop: -20,
   },
-  rideBoxes:{
-    display:'flex',
-    justifyContent:'space-between',
-    flexDirection:'row'
+  rideBoxes: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
   },
-  rideBox:{
-    backgroundColor:'#fff',
-    textAlign:'center',
-    padding:20,
-    borderRadius:16,
+  rideBox: {
+    backgroundColor: '#fff',
+    textAlign: 'center',
+    padding: 20,
+    borderRadius: 16,
     shadowColor: '#000',
     shadowOffset: {width: 2, height: 12},
     shadowOpacity: 0.3,
     shadowRadius: 10,
   },
-  rideText1:{
-    fontSize:16,
-    textAlign:'center',
-    textTransform:'uppercase',
-    fontWeight:'600'
+  rideText1: {
+    fontSize: 16,
+    textAlign: 'center',
+    textTransform: 'uppercase',
+    fontWeight: '600',
   },
-  count:{
-    fontSize:32,
-    fontWeight:'700'
+  count: {
+    fontSize: 32,
+    fontWeight: '700',
   },
-  achBoxes:{
-    display:'flex',
-    justifyContent:'space-around',
-    flexDirection:'row',
+  achBoxes: {
+    display: 'flex',
+    justifyContent: 'space-around',
+    flexDirection: 'row',
   },
-  achBoxTitle:{
-    display:'flex',
-    justifyContent:'space-between',
-    flexDirection:'row',
-    marginTop:70,
-    marginBottom:15,
+  achBoxTitle: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    marginTop: 70,
+    marginBottom: 15,
   },
-  achTitle:{
-    fontSize:14,
-    textTransform:'uppercase'
+  achTitle: {
+    fontSize: 14,
+    textTransform: 'uppercase',
   },
-  achBox:{
-    backgroundColor:'#f2f2f2',
-    padding:20,
-    borderRadius:16,
+  achBox: {
+    backgroundColor: '#f2f2f2',
+    padding: 20,
+    borderRadius: 16,
   },
-  achImg:{
-    width:38,
-    height:38,
-  }
-
+  achImg: {
+    width: 38,
+    height: 38,
+  },
 });

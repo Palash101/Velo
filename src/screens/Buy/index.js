@@ -19,7 +19,7 @@ import {UserContext} from '../../../context/UserContext';
 import {Modal} from 'react-native-paper';
 import WebView from 'react-native-webview';
 import {useToast} from 'react-native-toast-notifications';
-import {API_BASE} from '../../config/ApiConfig';
+import {API_BASE, API_SUCCESS} from '../../config/ApiConfig';
 import {ActivePackageItem} from '../../components/PackageItem/ActivePackageItem';
 import PageLoader from '../../components/PageLoader';
 const height = Dimensions.get('window').height;
@@ -80,7 +80,7 @@ const Buy = ({navigation}) => {
   };
 
   const checkResponse = data => {
-    if (data.url === 'https://veloqa.com/admin/package/paymentsuccess') {
+    if (data.url === API_SUCCESS +'/package/paymentsuccess') {
       setPaymentModal(false);
       toast.show('Package purchased successfully');
       navigation.navigate('Buy');
@@ -282,7 +282,7 @@ const Buy = ({navigation}) => {
             <Text style={styles.titleText}>CHECKOUT</Text>
           </View>
 
-          <ScrollView contentContainerStyle={styles.modalContent}>
+          <ScrollView contentContainerStyle={styles.modalContent1}>
             {bookingSummery()}
           </ScrollView>
         </View>
@@ -362,6 +362,13 @@ const styles = StyleSheet.create({
     padding: 10,
     bottom: 0,
     height: height - 100,
+    backgroundColor: '#ffffff',
+  },
+  modalContent1: {
+    padding: 10,
+    bottom: 0,
+    height: 'auto',
+    minHeight:400,
     backgroundColor: '#ffffff',
   },
   errorText: {
