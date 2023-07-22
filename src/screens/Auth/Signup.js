@@ -23,7 +23,7 @@ import RadioForm, {
   RadioButtonInput,
   RadioButtonLabel,
 } from 'react-native-simple-radio-button';
- import DatePicker from 'react-native-datepicker';
+import DatePicker from 'react-native-datepicker';
 // import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 import CheckBox from 'react-native-check-box';
@@ -42,8 +42,6 @@ var radio_props = [
   {label: 'FEMALE', value: 'Female'},
 ];
 
-
-
 const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -52,7 +50,7 @@ const SignUp = () => {
   const [first_name, setFirstName] = useState('');
   const [last_name, setLastName] = useState('');
   const [phone, setPhone] = useState('');
-  
+
   const [terms, setTerms] = useState(false);
   const [termsModal, setTermsModal] = useState(false);
   const [policyModal, setPolicyModal] = useState(false);
@@ -71,12 +69,11 @@ const SignUp = () => {
   const maxDate = new Date(dt.setFullYear(dt.getFullYear() - 15));
   const minDate = new Date(dt.setFullYear(dt.getFullYear() - 45));
   const [dob, setDob] = useState(maxDate);
- 
 
   const submit = async () => {
     const validate = validateDetail();
     if (!validate.msg) {
-      setLoading(true)
+      setLoading(true);
       const data = {
         first_name: first_name,
         last_name: last_name,
@@ -85,21 +82,28 @@ const SignUp = () => {
         confirmPassword: confirmPassword,
         dob: dob,
         phone: phone,
-       // phone: code + phone,
         gender: gender,
       };
       const instance = new AuthContoller();
       const result = await instance.signUpUser(data);
-      if (result?.status !== 'error') {
+      if (result.status) {
         userCtx.setUser(result.user);
         setToken(result.access_token);
         setAuth(true);
-        navigation.navigate('Drawer');
         toast.show(result.message);
         setLoading(false);
       } else {
+        var errors = result.errors;
+        var value = '';
+        if (errors.phone) {
+           value = errors.phone + ' ,';
+        }
+        if (errors.email) {
+          value = value + errors.email;
+        }
+
         setLoading(false);
-        toast.show(result.message);
+        toast.show(value);
       }
     } else {
       toast.show(validate.msg);
@@ -161,7 +165,7 @@ const SignUp = () => {
 
   return (
     <>
-    <PageLoader loading={loading} />
+      <PageLoader loading={loading} />
       <PageContainer>
         <ScrollView contentContainerStyle={{paddingBottom: 10}}>
           <View
@@ -219,7 +223,7 @@ const SignUp = () => {
                   }}>
                   BIRTH DATE
                 </Text>
-                 {/* <Input
+                {/* <Input
                   value={moment(dob).format('YYYY-MM-DD')}
                   onChangeText={() => console.log('')}
                   label={'BIRTH DATE'}
@@ -234,12 +238,11 @@ const SignUp = () => {
                     top: 0,
                   }}
                   onPress={() => showDatePicker()}></TouchableOpacity> */}
-            
 
                 <DatePicker
                   style={{
                     borderBottomWidth: 1.5,
-                    borderColor: '#000',
+                    borderColor: '#000000',
                     width: '100%',
                     paddingTop: 0,
                   }}
@@ -257,13 +260,13 @@ const SignUp = () => {
 
                     dateText: {
                       fontSize: 14,
-                      color: '#000',
+                      color: '#000000',
                       paddingLeft: 15,
                       paddingBottom: 0,
                     },
                     dateInput: {
                       fontSize: 14,
-                      color: '#000',
+                      color: '#000000',
                       marginTop: 0,
                       borderWidth: 0,
                       alignItems: 'flex-start',
@@ -273,13 +276,13 @@ const SignUp = () => {
                   onDateChange={date => {
                     setDob(date);
                   }}
-                /> 
+                />
               </View>
 
               <View style={{marginTop: 15}}>
                 <RadioForm
                   radio_props={radio_props}
-                  buttonColor={'#000'}
+                  buttonColor={'#000000'}
                   formHorizontal={true}
                   initial={0}
                   buttonSize={10}
@@ -287,7 +290,7 @@ const SignUp = () => {
                   labelStyle={{
                     fontSize: 14,
                     fontFamily: 'Gotham-Book',
-                    color: '#000',
+                    color: '#000000',
                     paddingRight: 15,
                     marginBottom: 10,
                   }}
@@ -318,16 +321,16 @@ const SignUp = () => {
                     paddingLeft: 0,
                     paddingTop: 8,
                     fontSize: 12,
-                    color: '#000',
+                    color: '#000000',
                   }}
                   onClick={() => setTerms(!terms)}
                   isChecked={terms}
-                  checkBoxColor={'#000'}
+                  checkBoxColor={'#000000'}
                   rightText={''}
                   rightTextStyle={{
                     fontSize: 12,
                     fontWeight: 'bold',
-                    color: '#000',
+                    color: '#000000',
                   }}
                 />
                 {renderTerms()}
@@ -335,7 +338,7 @@ const SignUp = () => {
 
               <DarkButton
                 label={'SIGN UP'}
-                style={{marginTop: 20}}
+                style={{marginTop: 20, backgroundColor: '#000'}}
                 onPress={submit}
                 loading={loading}
               />
@@ -381,36 +384,36 @@ const SignUp = () => {
         }}
       />
 
-{datePicker && (
-          <View>
-            <DateTimePicker
-              value={dob}
-              mode={'date'}
-              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-              is24Hour={true}
-              onChange={onDateSelected}
-              minimumDate={minDate}
-              maximumDate={maxDate}
-              textColor="#333"
-            />
-            {Platform.OS === 'ios' && (
-              <TouchableOpacity
-                style={{
-                  backgroundColor: '#ddd',
-                  width: 100,
-                  padding: 10,
-                  borderRadius: 10,
-                  marginBottom: 30,
-                  margin: 'auto',
-                  alignSelf: 'center',
-                  textAlign: 'center',
-                }}
-                onPress={() => setDatePicker(false)}>
-                <Text style={{fontSize: 18, textAlign: 'center'}}>OK!</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-        )}
+      {/* {datePicker && (
+        <View>
+          <DateTimePicker
+            value={dob}
+            mode={'date'}
+            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+            is24Hour={true}
+            onChange={onDateSelected}
+            minimumDate={minDate}
+            maximumDate={maxDate}
+            textColor="#333"
+          />
+          {Platform.OS === 'ios' && (
+            <TouchableOpacity
+              style={{
+                backgroundColor: '#ddd',
+                width: 100,
+                padding: 10,
+                borderRadius: 10,
+                marginBottom: 30,
+                margin: 'auto',
+                alignSelf: 'center',
+                textAlign: 'center',
+              }}
+              onPress={() => setDatePicker(false)}>
+              <Text style={{fontSize: 18, textAlign: 'center'}}>OK!</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      )} */}
     </>
   );
 };
@@ -433,20 +436,19 @@ const styles = StyleSheet.create({
   AlreadyText: {
     color: '#000',
     textTransform: 'uppercase',
-    fontWeight: '800',
     lineHeight: 16,
     marginTop: 10,
-    fontSize: 16,
-    fontFamily: 'Gotham-Black',
+    fontSize: 14,
+    fontFamily: 'Gotham-Medium',
   },
   normalText: {
-    color: '#000',
+    color: '#161415',
     fontSize: 12,
     lineHeight: 18,
     fontFamily: 'Gotham-Book',
   },
   mediumText: {
-    color: '#000',
+    color: '#000000',
     fontSize: 12,
     lineHeight: 18,
     fontFamily: 'Gotham-Medium',
@@ -463,8 +465,8 @@ const styles = StyleSheet.create({
     width: width - 170,
     marginLeft: 5,
     backgroundColor: 'transparent',
-    color: '#000',
-    borderBottomColor: '#000',
+    color: '#000000',
+    borderBottomColor: '#000000',
     borderBottomWidth: 1,
     textTransform: 'uppercase',
     fontSize: 14,
@@ -480,7 +482,7 @@ const styles = StyleSheet.create({
     marginTop: 13,
     borderRadius: 6,
     paddingHorizontal: 5,
-    borderColor: '#000',
+    borderColor: '#000000',
   },
   codeText: {
     lineHeight: 28,

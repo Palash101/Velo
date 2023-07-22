@@ -16,6 +16,7 @@ import {useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const height = Dimensions.get('window').height;
+const width = Dimensions.get('window').width;
 
 const Welcome = () => {
   const navigation = useNavigation();
@@ -84,17 +85,17 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   loginBtn: {
-    width: 220,
+    width: '80%',
     position: 'absolute',
     zIndex: 3,
-    bottom: Platform.OS === 'ios' ? 120 : 120,
+    bottom: Platform.OS === 'ios' ? 140 : 140,
     alignSelf: 'center',
   },
   SignUpBtn: {
-    width: 220,
+    width: '80%',
     position: 'absolute',
     zIndex: 3,
-    bottom: Platform.OS === 'ios' ? 50 : 50,
+    bottom: Platform.OS === 'ios' ? 60 : 60,
     alignSelf: 'center',
   },
   centerTextBox: {
@@ -118,7 +119,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
-    top: height - 40,
+    top: height - 50,
   },
   skipText: {
     color: '#fff',

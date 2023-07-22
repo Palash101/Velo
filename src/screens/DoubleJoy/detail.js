@@ -10,12 +10,16 @@ import {
   View,
 } from 'react-native';
 import {PageContainer} from '../../components/Container';
-import {RoundedDarkButton, RoundedThemeButton} from '../../components/Buttons';
+import {RoundedDarkButton, RoundedGreyButton, RoundedThemeButton} from '../../components/Buttons';
 import {FlatList} from 'react-native-gesture-handler';
 import {assets} from '../../config/AssetsConfig';
 import ScaledImage from '../../components/ScaleImage';
 
 const DoubleJoyDetail = ({navigation}) => {
+
+  const addToCart = () => {
+    navigation.navigate('DoubleJoyCheckout')
+  }
   return (
     <>
       <View style={styles.mainContainer}>
@@ -82,15 +86,15 @@ const DoubleJoyDetail = ({navigation}) => {
               </TouchableOpacity>
             </View>
 
-            <RoundedDarkButton
+            <RoundedGreyButton
               style={styles.buyBtn}
               label={'ADD NOTE TO ORDER'}
               onPress={() => console.log('sdf')}
             />
-            <RoundedDarkButton
+            <RoundedGreyButton
               style={styles.buyBtn}
               label={'ADD TO CART'}
-              onPress={() => console.log('sdf')}
+              onPress={() => addToCart()}
             />
           </View>
         </View>
@@ -105,14 +109,13 @@ const width = Dimensions.get('window').width;
 const styles = StyleSheet.create({
   mainHeading: {
     fontSize: 20,
-    fontWeight: '700',
     textAlign: 'center',
-    marginTop: 50,
-    fontFamily: 'Gotham-medium',
+    marginTop: 60,
+    fontFamily: 'Gotham-Medium',
   },
   itemImage: {
     width: 160,
-    height: 260,
+    height: 240,
     alignSelf: 'center',
     marginTop: 10,
   },
@@ -127,13 +130,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#f2f2f2',
     height: 24,
     borderRadius: 6,
-    marginTop: 7,
-    width:60,
-    alignSelf:'center',
-    marginTop:20,
+    width: 60,
+    alignSelf: 'center',
+    marginTop: 20,
   },
   incrementBox: {
-    backgroundColor: '#000',
+    backgroundColor: '#161415',
     padding: 3,
     height: 24,
     width: 24,
@@ -149,7 +151,7 @@ const styles = StyleSheet.create({
     lineHeight: 17,
   },
   decrementBox: {
-    backgroundColor: '#000',
+    backgroundColor: '#161415',
     padding: 3,
     height: 24,
     width: 24,
@@ -171,6 +173,7 @@ const styles = StyleSheet.create({
   },
   buyBtn: {
     marginTop: 20,
+    backgroundColor: '#ddd',
   },
   detailBox: {
     backgroundColor: '#f2f2f2',
@@ -195,34 +198,36 @@ const styles = StyleSheet.create({
   },
   greyBox: {
     backgroundColor: '#f2f2f2',
-    padding: 10,
+    padding: 15,
     textAlign: 'center',
     borderRadius: 15,
   },
   unitTitle: {
     fontSize: 16,
     fontFamily: 'Gotham-Medium',
-    color: '#000',
+    color: '#000000',
   },
   unit: {
-    ontSize: 6,
+    fontSize: 10,
     fontFamily: 'Gotham-Medium',
-    color: '#000',
+    color: '#000000',
+    textAlign:'center',
   },
   detailInnerBox:{
-    paddingHorizontal:'15%'
+    paddingHorizontal:'15%',
   },
   title:{
     fontSize:21,
-    fontFamily:'Gotham-Book',
-    fontWeight:'800',
-    textTransform:'uppercase'
+    fontFamily:'Gotham-Medium',
+    textTransform:'uppercase',
+    marginBottom:5,
   },
   subTitle:{
-    fontSize:12,
+    fontSize:10,
     textTransform:'uppercase',
     lineHeight:16,
-    color:'#333'
+    color:'#000',
+    fontFamily:'Gotham-Book',
   },
   
 });

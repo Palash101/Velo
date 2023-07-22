@@ -38,8 +38,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     textAlign: 'center',
     padding: 10,
-    borderRadius: 16,
-    shadowColor: '#000',
+    borderRadius: 24,
+    shadowColor: '#161415',
     shadowOffset: {width: -1, height: 2},
     shadowOpacity: 0.2,
     shadowRadius: 10,
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     marginTop: 7,
   },
   incrementBox: {
-    backgroundColor: '#000',
+    backgroundColor: '#161415',
     padding: 3,
     height: 24,
     width: 24,
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     lineHeight: 17,
   },
   decrementBox: {
-    backgroundColor: '#000',
+    backgroundColor: '#161415',
     padding: 3,
     height: 24,
     width: 24,

@@ -6,6 +6,7 @@ const width = Dimensions.get('window').width;
 
 export const ActivePackageItem = (props) => {
   const {item} = props;
+  console.log(item,'item')
   return (
     <View style={styles.box}>
       <Text style={styles.title}>{item?.attributes?.name}</Text>
@@ -25,7 +26,7 @@ export const ActivePackageItem = (props) => {
 
 const styles = StyleSheet.create({
   box: {
-    backgroundColor: '#000',
+    backgroundColor: '#161415',
     paddingVertical: 30,
     paddingHorizontal: 30,
     borderRadius: 24,

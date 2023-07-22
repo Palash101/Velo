@@ -12,11 +12,11 @@ export const Input = props => {
         onFocus={() => setFocus(!focus)}
         style={styles.input}
         onChangeText={text => props.onChang(text)}
-        activeOutlineColor="#000"
+        activeOutlineColor="#161415"
         outlineColor="transparent"
-        contentStyle={{color: '#000', textTransform: 'uppercase'}}
-        textColor="#000"
-        theme={{colors: {primary: '#000'}, textTransform: 'uppercase'}}
+        contentStyle={{color: '#161415', textTransform: 'uppercase'}}
+        textColor="#161415"
+        theme={{colors: {primary: '#161415'}, textTransform: 'uppercase'}}
         value={props.value ? props.value : ''}
         {...props}
       />
@@ -31,8 +31,8 @@ const styles = StyleSheet.create({
   },
   input: {
     backgroundColor: 'transparent',
-    color: '#000',
-    borderBottomColor: '#000',
+    color: '#161415',
+    borderBottomColor: '#161415',
     borderBottomWidth: 1,
     //textTransform: 'uppercase',
     fontSize: 14,

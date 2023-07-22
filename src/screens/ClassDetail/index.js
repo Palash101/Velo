@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {
   Dimensions,
   Image,
@@ -12,7 +12,13 @@ import {
 } from 'react-native';
 import {PageContainer} from '../../components/Container';
 import TopBar from '../../components/TopBar';
-import {RoundedDarkButton, RoundedThemeButton} from '../../components/Buttons';
+import {
+  RoundedDarkButton,
+  RoundedGreyButton,
+  RoundedOutlineButton,
+  RoundedRedButton,
+  RoundedThemeButton,
+} from '../../components/Buttons';
 import {FlatList} from 'react-native-gesture-handler';
 import {useState} from 'react';
 import {ClassItem} from '../../components/ClassItem';
@@ -23,28 +29,76 @@ import PageLoader from '../../components/PageLoader';
 import WebView from 'react-native-webview';
 import {API_LAYOUT, API_SUCCESS} from '../../config/ApiConfig';
 import {useNavigation} from '@react-navigation/native';
-import { useToast } from 'react-native-toast-notifications';
-import { assets } from '../../config/AssetsConfig';
+import {useToast} from 'react-native-toast-notifications';
+import {assets} from '../../config/AssetsConfig';
+import {UserConsumer} from '../../../context/UserContext';
+import {ModalView} from '../../components/ModalView';
+import {ClassContoller} from '../../controllers/ClassController';
+import {BuyContoller} from '../../controllers/BuyController';
 
 const height = Dimensions.get('window').height;
-const ClassDetail = (props) => {
+const width = Dimensions.get('window').width;
+
+const ClassDetail = props => {
   const [open, setOpen] = useState(true);
   const [loading, setLoading] = useState(true);
   const [selectedSeat, setSelectedSeat] = useState();
-  const [pageUrl, setPageUrl] = useState(
-    API_LAYOUT + 'app/class-layout',
-  );
-  const {item} = props.route.params;
-
+  const [pageUrl, setPageUrl] = useState('');
+  const {getToken} = useContext(UserConsumer);
   const toast = useToast();
-   const navigation = useNavigation();
+  const navigation = useNavigation();
+  const [payModal, setPayModal] = useState(false);
+  const [item, setItem] = useState();
+  const [userPackages, setUserPackages] = useState();
+  const [forceReload, setForseReload] = useState(false);
+  const [cancelModal, setCancelModal] = useState(false)
 
-  useEffect(() => {
-    console.log(item,'item')
-    loadClassLayout();
+  React.useEffect(() => {
+    const focusHandler = navigation.addListener('focus', () => {
+      console.log('Refreshed');
+      setForseReload(!forceReload);
+    });
+    return focusHandler;
   }, [navigation]);
 
+  useEffect(() => {
+    loadClassLayout();
+    getDetail();
+    getUserAllPackages();
+  }, [props.route.params]);
+
+  useEffect(() => {}, [setItem]);
+
+  const getUserAllPackages = async () => {
+    const token = await getToken();
+    const instance = new BuyContoller();
+    const result = await instance.getUserPackages(token);
+    console.log(result, 'userpackage');
+    if (result.status === 'error') {
+    } else {
+      setUserPackages(result);
+    }
+  };
+
+  const getDetail = async () => {
+    setLoading(true);
+    const token = await getToken();
+    const id = props.route.params.item.id;
+    const instance = new ClassContoller();
+    const result = await instance.getClassDetail(id, token);
+    console.log(result, 'pricee');
+    setItem(result.class);
+    setLoading(false);
+  };
+
   const loadClassLayout = async () => {
+    const newToken = await getToken();
+    console.log(props.route.params.item, 'props.route.params');
+    const id = props.route.params.item.id;
+    const url = API_LAYOUT + 'app/class-layout?id=' + id + '&token=' + newToken;
+    console.log(url, 'url');
+    setPageUrl(url);
+    setLoading(false);
     setOpen(true);
   };
 
@@ -61,83 +115,346 @@ const ClassDetail = (props) => {
     }
   };
 
-  const LogoTitle = () => {
-    return <Image source={assets.logo} style={{width: 60, height: 24}} />;
-  };
-
-  const BackIcon = () => {
-    return (
-      <TouchableOpacity onPress={() => {
-        setOpen(false);
-        navigation.navigate('Home');}}>
-        <Image
-          source={assets.back}
-          style={{width: 24, height: 24, marginLeft: 15}}
-        />
-      </TouchableOpacity>
-    );
-  };
-
   const bookNow = async () => {
-    console.log(selectedSeat, 'selected');
-  }
+    console.log(selectedSeat, item.priceType, 'selected');
+    if (selectedSeat) {
+      setPayModal(true);
+    } else {
+      toast.show('Please select seat.');
+    }
+  };
+
+  const Checkout = async type => {
+    const data = {
+      classes_id: item.id,
+      type: type,
+      seat: selectedSeat,
+      device: 'mobile',
+    };
+    completeBooking(data);
+  };
+
+  const CheckoutFromPackage = async value => {
+    console.log(value.id, 'valuevalue');
+    const data = {
+      classes_id: item.id,
+      type: 'Package',
+      seat: selectedSeat,
+      device: 'mobile',
+      package_id: value.id,
+    };
+    completeBooking(data);
+  };
+
+  const completeBooking = async data => {
+    setLoading(true);
+    const token = await getToken();
+    const instance = new ClassContoller();
+    const result = await instance.BookClass(data, token);
+    console.log(result, 'result');
+    if (result.status === 'success') {
+      toast.show(result.msg);
+      setPayModal(false);
+      setLoading(false);
+      navigation.goBack();
+    } else {
+      toast.show(result.msg);
+      setLoading(false);
+    }
+  };
+
+  const updateBooking = async () => {
+    console.log(selectedSeat, item.priceType, 'selected');
+    if (selectedSeat) {
+      setLoading(true);
+      const data = {
+        seat: selectedSeat,
+        booking_id: item.bookings[0].id,
+      };
+      const token = await getToken();
+      const instance = new ClassContoller();
+      const result = await instance.UpdateClass(data, token);
+      console.log(result, 'result');
+      if (result.status === 'success') {
+        toast.show(result.msg);
+        setLoading(false);
+        navigation.goBack();
+      } else {
+        toast.show(result.msg);
+        setLoading(false);
+      }
+    } else {
+      toast.show('Please select seat.');
+    }
+  };
+
+  const cancelBooking = async () => {
+    setLoading(true);
+    const data = {
+      booking_id: item.bookings[0].id,
+    };
+    const token = await getToken();
+    const instance = new ClassContoller();
+    const result = await instance.CancelClass(data, token);
+    console.log(result, 'result');
+    if (result.status === 'success') {
+      toast.show(result.msg);
+      setLoading(false);
+      setCancelModal(false)
+      navigation.goBack();
+    } else {
+      toast.show(result.msg);
+      setLoading(false);
+    }
+  };
+
+  const leaveWaitlist = async () => {};
+
+  const bookNowInWaing = async () => {};
+
+  const renderButton = () => {
+    if (item && item?.attributes) {
+      if (
+        item?.attributes?.mine_booking === true &&
+        item?.attributes?.user_waiting === false
+      ) {
+        return (
+          <View
+            style={{textAlign: 'center', alignItems: 'center', marginTop: -65}}>
+            <Text style={{fontSize: 12}}>Booked</Text>
+            <RoundedRedButton
+              label={'CANCEL'}
+              onPress={() => setCancelModal(true)}
+              style={{width: 150, marginLeft: 5, marginTop: 5}}
+            />
+            <RoundedDarkButton
+              label={'UPDATE BIKE'}
+              onPress={updateBooking}
+              style={{width: 150, marginLeft: 5, marginTop: 5}}
+            />
+          </View>
+        );
+      } else if (item?.attributes?.user_waiting === true) {
+        return (
+          <RoundedDarkButton
+            label={'LEAVE WAITLIST'}
+            onPress={leaveWaitlist}
+            style={{width: 150, marginLeft: 5}}
+          />
+        );
+      } else if (
+        item.attributes.user_waiting === false &&
+        item.attributes.mine_booking === false &&
+        item.attributes.booking_count_status.available === 0 &&
+        item.attributes.booking_count_status.waiting_available !== 0
+      ) {
+        return (
+          <RoundedDarkButton
+            label={'JOIN WAITLIST'}
+            onPress={bookNowInWaing}
+            theme={{colors: {primary: 'green'}}}
+            style={{width: 150, marginLeft: 5, padding: 0}}
+          />
+        );
+      } else {
+        <RoundedDarkButton
+          label={'BOOK NOW'}
+          onPress={bookNow}
+          style={{width: 150, marginLeft: 5}}
+        />;
+      }
+    }
+  };
 
   return (
     <>
       <PageLoader loading={loading} />
-      <Modal
-        visible={open}
-        onRequestClose={() => setOpen(false)}
-        animationType="slide">
-        <View style={{paddingTop: Platform.OS === 'ios' ? 60 : 0}}>
-          <View
-            style={{
-              flexDirection: 'row',
-              borderBottomWidth: 1,
-              borderColor: '#000',
-              justifyContent:'space-between',
-              paddingBottom:15,
-            }}>
-            <BackIcon />
-            <LogoTitle />
-            <View style={{width: 24, height: 24, marginLeft: 15}}></View>
-          </View>
-          <ScrollView
-            contentContainerStyle={{
-              bottom: 0,
-              height: height - 180,
-              backgroundColor: '#fff',
-            }}>
+
+      <View
+        style={{
+          paddingTop: Platform.OS === 'ios' ? 0 : 0,
+          backgroundColor: '#fff',
+        }}>
+        <ScrollView
+          contentContainerStyle={{
+            bottom: 0,
+            height: height - 180,
+            backgroundColor: '#fff',
+          }}>
+          {pageUrl && (
             <WebView
               source={{
                 uri: pageUrl,
+                forceReload: forceReload,
                 headers: {
-                  //  Authorization: 'Bearer ' + token,
                   Accept: 'application/json',
                 },
               }}
-              onMessage={(event) => {
-                setSelectedSeat(JSON.parse(event.nativeEvent.data).seatClick)
-            }}
+              onMessage={event => {
+                setSelectedSeat(JSON.parse(event.nativeEvent.data).seatClick);
+              }}
               onNavigationStateChange={data => checkResponce(data)}
               startInLoadingState={true}
             />
-          </ScrollView>
-          <View style={{paddingHorizontal:30,paddingVertical:15}}>
-            <RoundedDarkButton
-                label={'BOOK NOW'}
-                onPress={bookNow}
+          )}
+        </ScrollView>
+        <View style={styles.footer}>
+          <Text style={styles.smallPara}>
+            THOSE WHO ARRIVE 5 MINS AFTER THE START OF THE CLASS WILL NOT BE
+            PERMITTED TO ENTER
+          </Text>
+          {item && renderButton()}
+        </View>
+      </View>
+
+      <ModalView
+        visible={cancelModal}
+        heading="CANCEL BOOKING"
+        setVisible={() => setCancelModal(false)}
+        style={{ height: 'auto', marginTop: 260, justifyContent:'flex-end',marginBottom:0}}
+        >
+        <View style={styles.summeryBox}>
+          <View style={styles.modalTotalBox}>
+            <Text style={{fontSize:14,textAlign:'center'}}>Are you sure ? you want to cancel your booking.</Text>
+          </View>
+
+          <View style={{display:'flex',flexDirection:'row',justifyContent:'flex-end',marginTop:25}}>
+           
+            <RoundedOutlineButton
+                label={'NO'}
+                onPress={() => setCancelModal(false)}
+                style={{width: 100, marginLeft: 5, marginTop: 5}}
+            />
+             <RoundedGreyButton
+                label={'YES'}
+                onPress={() => cancelBooking()}
+                style={{width: 100, marginLeft: 5, marginTop: 5}}
             />
           </View>
-          
+
+
+          </View>
+      </ModalView>
+
+
+      <ModalView
+        visible={payModal}
+        heading="PROCEED TO CHECKOUT"
+        setVisible={() => setPayModal(false)}
+        style={{
+          height: 'auto',
+          marginTop: 260,
+          justifyContent: 'flex-end',
+          marginBottom: 0,
+          zIndex: 999,
+        }}>
+        <View style={styles.summeryBox}>
+          <View style={styles.modalTotalBox}>
+            <Text style={styles.priceText}>SEAT</Text>
+            <Text style={styles.priceText}>{selectedSeat}</Text>
+          </View>
+          {item?.priceType === 'Amount' && (
+            <View style={styles.modalTotalBox}>
+              <Text style={styles.priceText}>Amount</Text>
+              <Text style={styles.priceText}>{item?.price} QR</Text>
+            </View>
+          )}
+
+          {item?.priceType === 'Amount' && (
+            <TouchableOpacity
+              style={styles.checkoutBtn}
+              onPress={() => Checkout('Wallet')}>
+              <Text style={styles.btnText}>Pay from wallet</Text>
+              <Text style={styles.btnText}>{item?.price} QR</Text>
+            </TouchableOpacity>
+          )}
+          {item?.priceType === 'Free' && (
+            <TouchableOpacity
+              style={styles.checkoutBtn}
+              onPress={() => Checkout('Free')}>
+              <Text style={styles.btnText}>Free Checkout</Text>
+              <Text style={styles.btnText}>0 QR</Text>
+            </TouchableOpacity>
+          )}
+          {item?.priceType === 'Credit' && (
+            <View>
+              <Text
+                style={[{marginTop: 10, marginBottom: 0, textAlign: 'center'}]}>
+                BOOK FROM PACKAGES
+              </Text>
+
+              {userPackages &&
+                userPackages.map((item1, index) => (
+                  <TouchableOpacity
+                    key={index + 'btn'}
+                    style={styles.checkoutBtn}
+                    onPress={() => CheckoutFromPackage(item1)}>
+                    <Text style={styles.btnText}>{item1.attributes.name}</Text>
+                    {item.attributes.remaining_rides === 'unlimited' ? (
+                      <Text style={styles.btnText}>
+                        {item1.attributes.remaining_rides}{' '}
+                        <Text style={{}}>CLASS</Text>
+                      </Text>
+                    ) : (
+                      <Text style={styles.btnText}>
+                        {item1.attributes.remaining_rides}{' '}
+                        <Text style={{}}>CLASS</Text>
+                      </Text>
+                    )}
+                  </TouchableOpacity>
+                ))}
+            </View>
+          )}
         </View>
-      </Modal>
-
-
-      
+      </ModalView>
     </>
   );
 };
 export default ClassDetail;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  smallPara: {
+    fontSize: 10,
+    fontFamily: 'Gotham Black',
+    maxWidth: width - 200,
+    lineHeight: 12,
+  },
+  footer: {
+    paddingHorizontal: 30,
+    paddingVertical: 15,
+    display: 'flex',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+  },
+  checkoutBtn: {
+    backgroundColor: '#161415',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 15,
+    borderRadius: 12,
+    marginTop: 20,
+  },
+  btnText: {
+    color: '#fff',
+    fontSize: 16,
+    textTransform: 'uppercase',
+  },
+  priceText: {
+    fontSize: 16,
+    fontFamily: 'Gotham-Medium',
+    textTransform: 'uppercase',
+  },
+  modalTotalBox: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+    marginTop: 20,
+  },
+  summeryBox: {
+    width: width - 70,
+    alignSelf: 'center',
+    marginBottom: 100,
+  },
+});

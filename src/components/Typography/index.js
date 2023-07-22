@@ -18,8 +18,10 @@ export const Heading2 = ({children}, props) => {
 const styles = StyleSheet.create({
   Heading: {
     textTransform: 'uppercase',
-    fontSize: 18,
+    fontSize: 14,
     marginHorizontal:5,
+    fontFamily:'Gotham-Book',
+    color:'#000',
   },
   Heading2: {
     textTransform: 'uppercase',

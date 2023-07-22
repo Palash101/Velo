@@ -45,9 +45,10 @@ const ProfileEdit = ({navigation}) => {
     setLastName(result.user.last_name);
     setEmail(result.user.email);
     setPhone(result.user.phone);
-    setDob(result.user.dob);
-    const db = moment(new Date(result.user.dob)).format('YYYY-MM-DD');
-    console.log(moment('Jul').format('MM'), 'dbb');
+   // setDob(result.user.dob);
+
+   // const db = moment(new Date(result.user.dob)).format('YYYY-MM-DD');
+  //  console.log(db, 'dbb');
     setLoading(false);
   };
 
@@ -78,20 +79,16 @@ const ProfileEdit = ({navigation}) => {
         if (errors.phone) {
           var value = errors.phone + ' ,';
           toast.show(value);
-        }
-        else if (errors.email) {
+        } else if (errors.email) {
           value = value + errors.email;
           toast.show(value);
-        }
-        else if (errors.dob) {
+        } else if (errors.dob) {
           value = value + errors.dob;
           toast.show(value);
         }
-        
+
         setLoading(false);
-       
       }
-     
     } else {
       toast.show('Please fill all details');
     }
@@ -137,14 +134,14 @@ const ProfileEdit = ({navigation}) => {
               <DatePicker
                 style={{
                   borderBottomWidth: 1.5,
-                  borderColor: '#000',
+                  borderColor: '#000000',
                   width: '100%',
                   paddingTop: 0,
                 }}
                 placeholder="Birth Date"
                 date={dob}
                 mode="date"
-                format="DD MMM YYYY"
+                format="YYYY-MM-DD"
                 maxDate="2010-01-01"
                 confirmBtnText="Confirm"
                 cancelBtnText="Cancel"
@@ -154,14 +151,14 @@ const ProfileEdit = ({navigation}) => {
                   },
 
                   dateText: {
-                    fontSize: 16,
-                    color: '#000',
+                    fontSize: 14,
+                    color: '#000000',
                     paddingLeft: 15,
                     paddingBottom: 0,
                   },
                   dateInput: {
-                    fontSize: 18,
-                    color: '#000',
+                    fontSize: 14,
+                    color: '#000000',
                     marginTop: 0,
                     borderWidth: 0,
                     alignItems: 'flex-start',
@@ -220,7 +217,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     textAlign: 'center',
-    color: '#000',
+    color: '#161415',
   },
   email: {
     fontSize: 12,

@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
 
     paddingBottom: 10,
     fontSize: 22,
-    color: '#000',
+    color: '#161415',
     fontFamily: 'Gotham-Medium',
     textTransform: 'uppercase',
   },

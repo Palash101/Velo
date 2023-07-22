@@ -10,7 +10,11 @@ import {
   View,
 } from 'react-native';
 import {PageContainer} from '../../components/Container';
-import {RoundedDarkButton, RoundedThemeButton} from '../../components/Buttons';
+import {
+  RoundedDarkButton,
+  RoundedGreyButton,
+  RoundedThemeButton,
+} from '../../components/Buttons';
 import {FlatList} from 'react-native-gesture-handler';
 import {useState} from 'react';
 import {PackageItem} from '../../components/PackageItem';
@@ -30,7 +34,7 @@ const Buy = ({navigation}) => {
   const [loading, setLoading] = useState(true);
 
   const [data, setData] = useState([]);
-  const [userPackages, setUserPackages] = useState([{}]);
+  const [userPackages, setUserPackages] = useState();
   const [errorMessage, setErrorMessage] = useState('');
   const [cartModal, setCartModal] = useState(false);
   const [paymentModal, setPaymentModal] = useState(false);
@@ -66,11 +70,11 @@ const Buy = ({navigation}) => {
     const token = await getToken();
     const instance = new BuyContoller();
     const result = await instance.getUserPackages(token);
-    console.log(result);
-    if (result?.length) {
-      setUserPackages(result);
-    } else {
+    console.log(result, 'userpackage');
+    if (result.status === 'error') {
       setErrorMessage(result.msg);
+    } else {
+      setUserPackages(result);
     }
   };
 
@@ -80,7 +84,7 @@ const Buy = ({navigation}) => {
   };
 
   const checkResponse = data => {
-    if (data.url === API_SUCCESS +'/package/paymentsuccess') {
+    if (data.url === API_SUCCESS + '/package/paymentsuccess') {
       setPaymentModal(false);
       toast.show('Package purchased successfully');
       navigation.navigate('Buy');
@@ -137,7 +141,7 @@ const Buy = ({navigation}) => {
       getUserAllPackages();
       setActive('My');
       setLoading(false);
-      setPayLoading2(false)
+      setPayLoading2(false);
     } else {
       if (result.checkout_link) {
         setPaymentUrl(result.checkout_link);
@@ -147,7 +151,7 @@ const Buy = ({navigation}) => {
         toast.show(result.msg);
       }
       setLoading(false);
-      setPayLoading2(false)
+      setPayLoading2(false);
     }
   };
 
@@ -168,32 +172,32 @@ const Buy = ({navigation}) => {
             </View>
 
             <View style={styles.summaryLine}>
-              <Text style={styles.stext1}>Rides</Text>
+              <Text style={styles.stext1}>CLASS</Text>
               <Text style={styles.stext2}>
                 {selectedItem.attributes.rides}{' '}
               </Text>
             </View>
             <View style={styles.summaryLine}>
-              <Text style={styles.stext1}>Validity</Text>
+              <Text style={styles.stext1}>VALIDITY</Text>
               <Text style={styles.stext2}>
-                {selectedItem.attributes.validity} Days{' '}
+                {selectedItem.attributes.validity} DAYS{' '}
               </Text>
             </View>
 
             <View style={styles.summaryLineTotal}>
-              <Text style={styles.stext1Bold}>Total</Text>
+              <Text style={styles.stext1Bold}>TOTAL</Text>
               <Text style={styles.stext2Bold}>
                 {selectedItem.attributes.amount} QR
               </Text>
             </View>
           </View>
           <View style={styles.payBtnBox}>
-            <RoundedDarkButton
+            <RoundedGreyButton
               label="PAY FROM CREDIT/DEBIT CARD"
               loading={payLoading1}
               onPress={() => PayFromCard()}
             />
-            <RoundedDarkButton
+            <RoundedGreyButton
               label="PAY FROM WALLET"
               loading={payLoading2}
               onPress={() => PayFromWallet()}
@@ -208,12 +212,12 @@ const Buy = ({navigation}) => {
 
   return (
     <>
-    <PageLoader loading={loading} />
+      <PageLoader loading={loading} />
       <PageContainer>
         <View style={{paddingHorizontal: 10}}>
           <View style={styles.tab}>
             {active === 'All' ? (
-              <RoundedDarkButton label={'ALL PACKAGES'} style={styles.tabBtn} />
+              <RoundedGreyButton label={'ALL PACKAGES'} style={styles.tabBtn} />
             ) : (
               <RoundedThemeButton
                 label={'ALL PACKAGES'}
@@ -222,7 +226,7 @@ const Buy = ({navigation}) => {
               />
             )}
             {active === 'My' ? (
-              <RoundedDarkButton label={'My PACKAGES'} style={styles.tabBtn} />
+              <RoundedGreyButton label={'My PACKAGES'} style={styles.tabBtn} />
             ) : (
               <RoundedThemeButton
                 label={'MY PACKAGES'}
@@ -250,19 +254,9 @@ const Buy = ({navigation}) => {
           ) : (
             <View style={styles.classesList}>
               {userPackages?.length ? (
-                <FlatList
-                  data={userPackages}
-                  pagingEnabled
-                  numColumns={2}
-                  showsVerticalScrollIndicator={false}
-                  decelerationRate={'normal'}
-                  columnWrapperStyle={{
-                    justifyContent: 'space-between',
-                  }}
-                  renderItem={({item}, key) => (
-                    <ActivePackageItem key={key} item={item} />
-                  )}
-                />
+                userPackages.map((item, index) => (
+                  <ActivePackageItem key={index + 'my'} item={item} />
+                ))
               ) : (
                 <View style={styles.errorBox}>
                   <Text style={styles.errorText}>{errorMessage}</Text>
@@ -344,7 +338,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingTop: 30,
     fontSize: 22,
-    color: '#000',
+    color: '#161415',
     fontFamily: 'Gotham-Medium',
     textTransform: 'uppercase',
   },
@@ -356,7 +350,7 @@ const styles = StyleSheet.create({
   closeText: {
     fontWeight: 'bold',
     fontSize: 20,
-    color: '#000',
+    color: '#161415',
   },
   modalContent: {
     padding: 10,
@@ -368,7 +362,7 @@ const styles = StyleSheet.create({
     padding: 10,
     bottom: 0,
     height: 'auto',
-    minHeight:400,
+    minHeight: 400,
     backgroundColor: '#ffffff',
   },
   errorText: {
@@ -416,7 +410,7 @@ const styles = StyleSheet.create({
     lineHeight: 40,
     fontSize: 14,
     fontFamily: 'Gotham-Medium',
-    color: '#000',
+    color: '#161415',
     marginTop: 0,
   },
   stext3: {
@@ -426,7 +420,7 @@ const styles = StyleSheet.create({
   },
   stext1: {
     lineHeight: 40,
-    color: '#000',
+    color: '#161415',
     fontSize: 14,
     marginTop: 0,
     fontFamily: 'Gotham-Medium',

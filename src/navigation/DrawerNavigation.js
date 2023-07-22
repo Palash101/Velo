@@ -5,46 +5,35 @@ import {
   DrawerItemList,
   createDrawerNavigator,
 } from '@react-navigation/drawer';
-import Home from '../screens/Home';
-import Classes from '../screens/Classes';
-import Planner from '../screens/Planner';
-import Buy from '../screens/Buy';
-import Journey from '../screens/Journey';
 import BottomTab from './BottomTab';
 import {Image, TouchableOpacity, Text, View} from 'react-native';
 import {assets} from '../config/AssetsConfig';
 import {useNavigation} from '@react-navigation/native';
 import {UserContext} from '../../context/UserContext';
-import Profile from '../screens/Profile';
 import Achievements from '../screens/Achievements';
 import Support from '../screens/Support';
 import Terms from '../screens/Terms';
-import StackNavigation from './StackNavigation';
-import { GreyBox } from '../components/GreBox';
-import DoubleJoy from '../screens/DoubleJoy';
+import {GreyBox} from '../components/GreBox';
 import Store from '../screens/Store';
-import ProfileEdit from '../screens/Profile/ProfileEdit';
-import ChangePassword from '../screens/Profile/ChangePassword';
-import MyWallet from '../screens/Profile/MyWallet';
-import DoubleJoyDetail from '../screens/DoubleJoy/detail';
-import DoubleJoyCheckout from '../screens/Checkout/DoubleJouCheckout';
+import ProfileNavigation from './ProfileNavigation';
+import DoubleJoyStack from './DoubleJoyStack';
+import StoreStack from './StoreStack';
+import Notification from '../screens/Notification';
+import ClassesStack from './ClassesStack';
 import ClassDetail from '../screens/ClassDetail';
 
 const Drawer = createDrawerNavigator();
-
-
 
 function CustomDrawerContent(props) {
   const userCtx = React.useContext(UserContext);
 
   const logout = () => {
     userCtx.signOut();
-    props.navigation.navigate('Login');
   };
 
   return (
     <DrawerContentScrollView style={{position: 'relative'}} {...props}>
-      <DrawerItemList {...props} />
+      {/* <DrawerItemList {...props} /> */}
       {/* <DrawerItem
         label="Close drawer"
         onPress={() => props.navigation.closeDrawer()}
@@ -81,9 +70,9 @@ function CustomDrawerContent(props) {
 
       }}>
         <Image source={assets.logo} style={{
-          width: 150, 
+          width: 150,
           height: 60,
-         
+
           }} />
       </View> */}
     </DrawerContentScrollView>
@@ -95,11 +84,15 @@ function LogoTitle() {
 }
 
 function NotificationIcon() {
+  const navigation = useNavigation();
   return (
+    <TouchableOpacity onPress={() => navigation.navigate('Notification')}>
+    
     <Image
       source={assets.bell}
       style={{width: 24, height: 24, marginRight: 15}}
     />
+    </TouchableOpacity>
   );
 }
 
@@ -125,17 +118,6 @@ function BackIcon() {
     </TouchableOpacity>
   );
 }
-function EditIcon() {
-  const navigation = useNavigation();
-  return (
-    <TouchableOpacity onPress={() => navigation.navigate('ProfileEdit')}>
-      <Image
-        source={assets.edit}
-        style={{width: 24, height: 24, marginRight: 15}}
-      />
-    </TouchableOpacity>
-  );
-}
 
 export default function DrawerNavigation() {
   return (
@@ -145,7 +127,6 @@ export default function DrawerNavigation() {
         headerRight: () => <NotificationIcon />,
       }}
       drawerContent={props => <CustomDrawerContent {...props} />}>
-      
       <Drawer.Screen
         name="Home"
         component={BottomTab}
@@ -155,43 +136,36 @@ export default function DrawerNavigation() {
       />
 
       <Drawer.Screen
+        name="DoubleJoy"
+        component={DoubleJoyStack}
+        options={{
+          headerShown: false,
+        }}
+      />
+       <Drawer.Screen
+        name="ClassDetail"
+        component={ClassDetail}
+        options={{
+          cardStyle: {backgroundColor: '#ffffff'},
+          headerLeft: () => <BackIcon />,
+          headerTitle: props => <LogoTitle {...props} />,
+        }}
+      />
+      <Drawer.Screen
+        name="Store"
+        component={StoreStack}
+        options={{
+          headerShown: false,
+        }}
+      />
+
+      <Drawer.Screen
         name="Profile"
-        component={Profile}
+        component={ProfileNavigation}
         options={{
-          headerLeft: () => <BackIcon />,
-          headerTitle: props => <LogoTitle {...props} />,
-          headerRight: () => <EditIcon />,
+          headerShown: false,
         }}
       />
-      <Drawer.Screen
-        name="ProfileEdit"
-        component={ProfileEdit}
-        options={{
-          headerLeft: () => <BackIcon />,
-          headerTitle: props => <></>,
-          headerRight: () => <></>,
-        }}
-      />
-
-      <Drawer.Screen
-        name="ChangePassword"
-        component={ChangePassword}
-        options={{
-          headerLeft: () => <BackIcon />,
-          headerTitle: props => <></>,
-          headerRight: () => <></>,
-        }}
-      />
-
-      <Drawer.Screen
-        name="MyWallet"
-        component={MyWallet}
-        options={{
-          headerLeft: () => <BackIcon />,
-          headerTitle: props => <LogoTitle {...props} />,
-        }}
-      />
-
 
       <Drawer.Screen
         name="Support"
@@ -209,13 +183,6 @@ export default function DrawerNavigation() {
           headerTitle: props => <LogoTitle {...props} />,
         }}
       />
-       <Drawer.Screen
-        name="ClassDetail"
-        component={ClassDetail}
-        options={{
-          headerShown: false
-        }}
-      />
 
       <Drawer.Screen
         name="Achievement"
@@ -226,37 +193,13 @@ export default function DrawerNavigation() {
         }}
       />
       <Drawer.Screen
-        name="DoubleJoy"
-        component={DoubleJoy}
+        name="Notification"
+        component={Notification}
         options={{
           headerLeft: () => <BackIcon />,
           headerTitle: props => <LogoTitle {...props} />,
         }}
       />
-      <Drawer.Screen
-        name="DoubleJoyDetail"
-        component={DoubleJoyDetail}
-        options={{
-          headerShown: false
-        }}
-      />
-      <Drawer.Screen
-        name="DoubleJoyCheckout"
-        component={DoubleJoyCheckout}
-        options={{
-          headerShown: false
-        }}
-      />
-
-       <Drawer.Screen
-        name="Store"
-        component={Store}
-        options={{
-          headerLeft: () => <BackIcon />,
-          headerTitle: props => <LogoTitle {...props} />,
-        }}
-      />
-  
     </Drawer.Navigator>
   );
 }

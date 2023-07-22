@@ -18,24 +18,24 @@ import UserProvider, {UserConsumer} from './context/UserContext';
 import { ErrorBoundary } from './src/ErrorBoundary';
 
 const App = () => {
-  // useEffect(() => {
-  //   const unsubscribe = messaging().onMessage(async remoteMessage => {
-  //     console.log(remoteMessage, 'remoteMessage');
-  //     Alert.alert(
-  //       remoteMessage.notification.title,
-  //       remoteMessage.notification.body,
-  //     );
-  //   });
-  //   return unsubscribe;
-  // }, []);
+  useEffect(() => {
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      console.log(remoteMessage, 'remoteMessage');
+      Alert.alert(
+        remoteMessage.notification.title,
+        remoteMessage.notification.body,
+      );
+    });
+    return unsubscribe;
+  }, []);
 
-  // useEffect(() => {
-  //   registerAppWithFCM();
-  // }, []);
+  useEffect(() => {
+    registerAppWithFCM();
+  }, []);
 
-  // const registerAppWithFCM = async () => {
-  //   await messaging().registerDeviceForRemoteMessages();
-  // };
+  const registerAppWithFCM = async () => {
+    await messaging().registerDeviceForRemoteMessages();
+  };
 
   return (
     <>

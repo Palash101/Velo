@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Image,
   ScrollView,
@@ -7,11 +7,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { PageContainer } from '../../components/Container';
-import { assets } from '../../config/AssetsConfig';
-import { SupportController } from '../../controllers/SupportController';
+import {PageContainer} from '../../components/Container';
+import {assets} from '../../config/AssetsConfig';
+import {SupportController} from '../../controllers/SupportController';
 
-const Support = ({ navigation }) => {
+const Support = ({navigation}) => {
   const Faqs = [
     {
       id: 1,
@@ -43,44 +43,47 @@ const Support = ({ navigation }) => {
   const [supportData, setSupportData] = useState();
   const [active, setActive] = useState({});
 
-  const toggleActive = async (item) => {
+  const toggleActive = async item => {
     if (active.id === item.id) {
-      setActive('')
+      setActive('');
+    } else {
+      setActive(item);
     }
-    else {
-      setActive(item)
-    }
-  }
+  };
 
   useEffect(() => {
-    getSupportData()
-  }, [])
+    getSupportData();
+  }, []);
 
   const getSupportData = async () => {
     const instance = new SupportController();
     const result = await instance.getSupport();
     if (result.status === 'success') {
-      console.log(result.contact_us, 'result.contact_us')
+      console.log(result.contact_us, 'result.contact_us');
       setSupportData(result.contact_us);
     }
-  }
-
+  };
 
   return (
     <PageContainer>
-      <ScrollView contentContainerStyle={{ paddingBottom: 50 }}>
-        <Text style={{ paddingLeft: 15, height: 30, textTransform: 'uppercase' }}>
-          FAQ
-        </Text>
+      <ScrollView contentContainerStyle={{paddingBottom: 50}}>
+        <Text style={styles.heading}>FAQ</Text>
 
         <View style={styles.allFaq}>
           {data.map((item, index) => (
-            <View style={styles.faqItem}>
+            <View style={styles.faqItem} key={index + 'faq'}>
               <TouchableOpacity
                 style={styles.faqTitle}
                 onPress={() => toggleActive(item)}>
                 <Text style={styles.titleText}>{item.question}</Text>
-                <Image source={assets.chevron} style={active.id !== item.id ? styles.chevronImage : styles.chevronImageOpen} />
+                <Image
+                  source={assets.chevron}
+                  style={
+                    active.id !== item.id
+                      ? styles.chevronImage
+                      : styles.chevronImageOpen
+                  }
+                />
               </TouchableOpacity>
               {active.id === item.id && (
                 <View style={styles.faqPara}>
@@ -90,9 +93,10 @@ const Support = ({ navigation }) => {
             </View>
           ))}
         </View>
-        {supportData &&
+        {supportData && (
           <>
-            <Text style={{ paddingLeft: 15, height: 30, textTransform: 'uppercase' }}>
+            <Text
+              style={{paddingLeft: 15, height: 30, textTransform: 'uppercase'}}>
               {supportData.heading}
             </Text>
 
@@ -100,7 +104,7 @@ const Support = ({ navigation }) => {
               <Text style={styles.supportText}>{supportData.description}</Text>
             </View>
           </>
-        }
+        )}
       </ScrollView>
     </PageContainer>
   );
@@ -113,46 +117,55 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
   },
-  support:{
-    padding:15,
+  heading: {
+    paddingLeft: 15,
+    fontSize: 16,
+    lineHeight: 20,
+    marginTop: 10,
+    textTransform: 'uppercase',
+    fontFamily: 'Gotham-Book',
   },
-  supportText:{
-    fontSize:14,
-    fontFamily:'Gotham-Book',
-    lineHeight:18,
+  support: {
+    padding: 15,
+  },
+  supportText: {
+    fontSize: 14,
+    fontFamily: 'Gotham-Book',
+    lineHeight: 18,
   },
   faqTitle: {
     backgroundColor: '#f2f2f2',
     padding: 20,
     borderRadius: 16,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    marginVertical: 10,
+    shadowOffset: {width: 4, height: 5},
+    shadowOpacity: 0.4,
+    shadowRadius: 4,
+    fontFamily: 'Gotham-Book',
+    marginBottom: 10,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  titleText:{
-    fontFamily:'Gotham-Book',
-    lineHeight:16,
-    fontSize:14,
+  titleText: {
+    fontFamily: 'Gotham-Book',
+    lineHeight: 16,
+    fontSize: 14,
   },
-  paraText:{
-    fontFamily:'Gotham-Book',
-    lineHeight:16,
-    fontSize:14,
+  paraText: {
+    fontFamily: 'Gotham-Book',
+    lineHeight: 16,
+    fontSize: 14,
   },
   faqPara: {
     backgroundColor: '#fff',
     padding: 20,
     borderRadius: 16,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    fontFamily:'Gotham-Book',
+    shadowOffset: {width: 4, height: 5},
+    shadowOpacity: 0.4,
+    shadowRadius: 4,
+    fontFamily: 'Gotham-Book',
   },
   chevronImage: {
     width: 22,
@@ -161,6 +174,6 @@ const styles = StyleSheet.create({
   chevronImageOpen: {
     width: 22,
     height: 22,
-    transform: [{ rotate: '180deg' }],
+    transform: [{rotate: '180deg'}],
   },
 });

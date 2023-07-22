@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   forgetText: {
-    color: '#000',
+    color: '#161415',
     textAlign: 'center',
   },
  
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     right: 0,
   },
   skipText: {
-    color: '#000',
+    color: '#161415',
     textAlign: 'center',
     fontSize: 16,
     textTransform: 'uppercase',

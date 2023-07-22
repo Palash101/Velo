@@ -1,26 +1,22 @@
-import React, {useRef} from 'react';
-import {
-  Text,
-  View,
-  Image,
-  FlatList,
-  Animated,
-  Dimensions,
-  ScrollView,
-} from 'react-native';
+import React, {useContext, useEffect, useRef, useState} from 'react';
+import {View, FlatList, Animated, Dimensions, ScrollView} from 'react-native';
 import {PageContainer} from '../../components/Container';
 import {Heading} from '../../components/Typography';
 import {TraingBox} from '../../components/TrainingBox';
-import {trainings} from '../../data/traings';
 import {assets} from '../../config/AssetsConfig';
 import {ExpandingDot} from 'react-native-animated-pagination-dots';
+import {UserContext} from '../../../context/UserContext';
+import {ClassContoller} from '../../controllers/ClassController';
+import {useNavigation} from '@react-navigation/native';
 
 const width = Dimensions.get('window').width;
 
-const Home = ({navigation}) => {
+const Home = () => {
   console.log(assets, 'trainingstrainings');
 
   const scrollX = useRef(new Animated.Value(0)).current;
+  const {getToken} = useContext(UserContext);
+  const [allData, setAllData] = useState([]);
 
   const list = [
     {
@@ -37,19 +33,39 @@ const Home = ({navigation}) => {
     },
   ];
 
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const getData = async () => {
+    const token = await getToken();
+    const instance = new ClassContoller();
+    const result = await instance.getAllClasses(token);
+    setAllData(result.locations);
+  };
+
   return (
     <>
-
       <PageContainer>
         <ScrollView contentContainerStyle={{paddingBottom: 100}}>
           <Heading>Training</Heading>
 
-          {trainings.map((item, key) => (
-            <TraingBox
-              title={item.name}
-              bg={require('../../../assets/images/bg.png')}
-              key={key}
-            />
+          {allData?.map((item, key) => (
+            <>
+              {key < 3 && (
+                <View key={key + 'taining'}>
+                  <TraingBox
+                    title={item.name}
+                    bg={require('../../../assets/images/bg.png')}
+                    onPress={() =>
+                      navigation.navigate('classes', {activeId: item.id})
+                    }
+                  />
+                </View>
+              )}
+            </>
           ))}
 
           <View style={{marginTop: 10}}>
@@ -69,16 +85,17 @@ const Home = ({navigation}) => {
               decelerationRate={'normal'}
               scrollEventThrottle={16}
               renderItem={({item}, key) => (
-                <TraingBox
-                  title={''}
-                  bg={item.img}
-                  key={key}
-                  style={{
-                    width: width / 2 - 15,
-                    marginRight: 8,
-                    height: 100,
-                  }}
-                />
+                <View key={key + 'happening'}>
+                  <TraingBox
+                    title={''}
+                    bg={item.img}
+                    style={{
+                      width: width / 2 - 15,
+                      marginRight: 8,
+                      height: 95,
+                    }}
+                  />
+                </View>
               )}
             />
             <ExpandingDot
@@ -92,8 +109,8 @@ const Home = ({navigation}) => {
                 borderRadius: 5,
                 marginHorizontal: 5,
               }}
-              activeDotColor='#000'
-              inActiveDotColor='#888'
+              activeDotColor="#606060"
+              inActiveDotColor="#888"
               containerStyle={{
                 top: 145,
                 left: '50%',
@@ -109,7 +126,7 @@ const Home = ({navigation}) => {
             <TraingBox
               title={''}
               bg={require('../../../assets/images/bg.png')}
-              style={{marginHorizontal: 8, height: 140}}
+              style={{marginHorizontal: 8, height: 150}}
               onPress={() => navigation.navigate('DoubleJoy')}
             />
           </View>
@@ -118,7 +135,7 @@ const Home = ({navigation}) => {
             <TraingBox
               title={''}
               bg={require('../../../assets/images/bg.png')}
-              style={{marginHorizontal: 8, height: 140}}
+              style={{marginHorizontal: 8, height: 150}}
               onPress={() => navigation.navigate('Store')}
             />
           </View>

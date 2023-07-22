@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     marginTop: 7,
   },
   incrementBox: {
-    backgroundColor: '#000',
+    backgroundColor: '#161415',
     padding: 3,
     height: 24,
     width: 24,
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     lineHeight: 17,
   },
   decrementBox: {
-    backgroundColor: '#000',
+    backgroundColor: '#161415',
     padding: 3,
     height: 24,
     width: 24,

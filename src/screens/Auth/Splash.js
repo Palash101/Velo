@@ -44,7 +44,7 @@ const Splash = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#000" />
+      <StatusBar barStyle="light-content" backgroundColor="#161415" />
       <Image source={assets.splash} style={styles.logo} />
     </View>
   );

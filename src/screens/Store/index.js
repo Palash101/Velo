@@ -83,6 +83,7 @@ const styles = StyleSheet.create({
   },
   classesList: {
     marginBottom: 100,
+    marginTop:10,
   },
   calander: {
     marginBottom: 20,

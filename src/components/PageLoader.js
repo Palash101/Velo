@@ -18,7 +18,7 @@ const PageLoader = ({loading}) => {
             zIndex: 999,
           }}>
           <ActivityIndicator
-            color={'#000'}
+            color={'#161415'}
             size={42}
             style={{
               position: 'absolute',

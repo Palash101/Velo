@@ -1,6 +1,6 @@
 import React from 'react';
-import {StyleSheet, View, Text, Dimensions} from 'react-native';
-import {RoundedDarkButton} from '../Buttons';
+import {StyleSheet, View, Text, Dimensions, TouchableOpacity} from 'react-native';
+import {RoundedDarkButton, RoundedGreyButton} from '../Buttons';
 
 const width = Dimensions.get('window').width;
 
@@ -13,11 +13,11 @@ export const PackageItem = ({item, onPress}) => {
       <Text style={styles.validity}>
         {item?.attributes?.validity} days validity
       </Text>
-      <RoundedDarkButton
+      <TouchableOpacity
         style={styles.buyBtn}
-        label={'BUY NOW'}
-        onPress={() => onPress(item)}
-      />
+        onPress={() => onPress(item)}>
+          <Text style={styles.btnText}>BUY NOW</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -35,14 +35,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     textTransform: 'uppercase',
-    fontFamily: 'Gotham-Medium',
-    fontWeight:'800',
+    fontFamily: 'Gotham-Black',
   },
   price: {
-    fontSize: 22,
+    fontSize: 20,
     textAlign: 'center',
     marginVertical: 10,
-    fontFamily: 'Gotham-Book',
+    fontFamily: 'Gotham-Medium',
   },
   class: {
     fontWeight: '600',
@@ -62,5 +61,16 @@ const styles = StyleSheet.create({
   buyBtn: {
     width: 130,
     alignSelf: 'center',
+    backgroundColor:'#000',
+    paddingVertical:8,
+    paddingHorizontal:10,
+    width:100,
+    borderRadius:20
   },
+  btnText:{
+    color:'#fff',
+    fontFamily:'Gotham-Black',
+    textAlign:'center',
+    fontSize:12,
+  }
 });

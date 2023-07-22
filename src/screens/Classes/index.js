@@ -13,7 +13,7 @@ import {UserContext} from '../../../context/UserContext';
 import {ClassContoller} from '../../controllers/ClassController';
 import PageLoader from '../../components/PageLoader';
 
-const Classes = () => {
+const Classes = (props) => {
   const [classes, setClasses] = useState();
   const [allData, setAllData] = useState([]);
   const {getToken} = useContext(UserContext);
@@ -34,15 +34,25 @@ const Classes = () => {
     } else {
       setGlobalIndex(0);
     }
-  }, []);
+  }, [props.route.params]);
 
   const getData = async () => {
+    setLoading(true)
     const token = await getToken();
     const instance = new ClassContoller();
     const result = await instance.getAllClasses(token);
     setAllData(result.locations);
+    console.log('reload')
+   if(props.route.params?.activeId){
+    const activeLocation = result.locations.filter(item => item.id === props.route.params?.activeId)
+    setActive(activeLocation[0]);
+    setFilteredClass(activeLocation[0].classess);
+  }
+  else{
     setActive(result.locations[0]);
     setFilteredClass(result.locations[0].classess);
+  }
+
   };
 
   const setFilteredClass = async activeData => {
@@ -51,7 +61,6 @@ const Classes = () => {
     const date = new Date();
     let activeDate = '';
     const result = await AsyncStorage.getItem('di');
-    console.log(result, 'resres');
     if (result) {
       activeDate = moment(date, 'YYYY-MM-DD')
         .add(result, 'days')
@@ -65,7 +74,6 @@ const Classes = () => {
     const filterData = newData.filter(item =>
       moment(item.start_date).isSame(activeDate),
     );
-    console.log(filterData, 'filterData');
     setClasses(filterData);
     setLoading(false);
   };
@@ -82,6 +90,7 @@ const Classes = () => {
     setClasses(filterData);
     setLoading(false);
   };
+ 
 
   const selectCategory = async item => {
     setActive(item);
@@ -162,7 +171,7 @@ const styles = StyleSheet.create({
   tabBtn: {
     width: width / 3 - 20,
     marginRight: 10,
-    marginVertical: 10,
+    marginVertical: 10
   },
   classesList: {
     marginBottom: 270,

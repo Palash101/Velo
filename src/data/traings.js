@@ -2,15 +2,15 @@ import {assets} from '../config/AssetsConfig';
 
 export const trainings = [
   {
-    name: 'CYCLING',
+    name: 'CYCLE',
     image: '../../../assets/images/bg.png',
   },
   {
-    name: 'STRENGTH',
+    name: 'RACK',
     image: '../../../assets/images/bg.png',
   },
   {
-    name: 'YOGA',
+    name: 'FORM',
     image: '../../../assets/images/bg.png',
   },
 ];

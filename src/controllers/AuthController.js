@@ -40,6 +40,9 @@ export class AuthContoller {
       console.log(newdata,'newdata')
     return fetch(API_BASE + '/auth/register', {
       method: 'POST',
+      headers: {
+        Accept: 'application/json',
+      },
       body: newdata,
     })
       .then(response => response.json())

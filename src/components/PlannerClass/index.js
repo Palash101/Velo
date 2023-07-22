@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
   dateText: {
     fontSize: 8,
     fontWeight: '400',
-    color: '#000',
+    color: '#161415',
   },
   centerBox: {
     justifyContent: 'center',

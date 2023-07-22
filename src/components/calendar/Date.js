@@ -95,26 +95,30 @@ const styles = {
     borderRadius:10,
     marginTop:5,
     borderWidth:1,
-    borderColor:'#000'
+    borderColor:'#161415'
   },
   containerActive: {
-    backgroundColor:'#000'
+    backgroundColor:'#161415'
   },
   day: {
     fontSize: 10,
-    fontWeight:'500'
+    fontWeight:'500',
+    fontFamily:'Gotham-Medium',
   },
   date: {
     fontSize: 12,
-    fontWeight:'500'
+    fontWeight:'500',
+    fontFamily:'Gotham-Medium',
   },
   text: {
-    color: '#000',
+    color: '#161415',
     textAlign: 'center',
+    fontFamily:'Gotham-Medium',
   },
   textActive: {
     color: '#fff',
-    fontWeight:'600'
+    fontWeight:'600',
+     fontFamily:'Gotham-Medium',
 
   },
 };

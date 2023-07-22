@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    color:'#000',
+    color:'#161415',
     textTransform:'uppercase',
     fontFamily:'Gotham-Book',
   },

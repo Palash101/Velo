@@ -8,7 +8,7 @@ export const ThemeButton = props => {
       contentStyle={styles.buttonText}
       onPress={() => props.onPress()}
       {...props}>
-        <Text style={{fontSize:18,color:'#000',fontFamily: 'Gotham-Medium',}}>{props.label}</Text>
+        <Text style={styles.themeBtnText}>{props.label}</Text>
      
     </Button>
   );
@@ -35,9 +35,47 @@ export const RoundedDarkButton = props => {
       mode="elevated"
       contentStyle={styles.RoundedDarkButton}
       onPress={() => props.onPress()}
+     
+      {...props}>
+        <Text style={{fontSize:12,color:'#fff',lineHeight:16,fontFamily: 'Gotham-Medium',textTransform:'uppercase'}}>{props.label}</Text>
+    </Button>
+  );
+};
+export const RoundedRedButton = props => {
+  return (
+    <Button
+      mode="elevated"
+      contentStyle={styles.RoundedRedButton}
+      onPress={() => props.onPress()}
+     
+      {...props}>
+        <Text style={{fontSize:12,color:'#fff',lineHeight:16,fontFamily: 'Gotham-Medium',textTransform:'uppercase'}}>{props.label}</Text>
+    </Button>
+  );
+};
+
+export const RoundedGreyButton = props => {
+  return (
+    <Button
+      mode="elevated"
+      contentStyle={[styles.RoundedDarkButton,{backgroundColor:'#161415'}]}
+      onPress={() => props.onPress()}
       {...props}>
       {/* {props.loading !== true ? ( */}
-        <Text style={{fontSize:14,color:'#fff',lineHeight:16,fontFamily: 'Gotham-Medium',textTransform:'uppercase'}}>{props.label}</Text>
+        <Text style={{fontSize:12,color:'#fff',lineHeight:16,fontFamily: 'Gotham-Medium',textTransform:'uppercase'}}>{props.label}</Text>
+      
+    </Button>
+  );
+};
+export const RoundedOutlineButton = props => {
+  return (
+    <Button
+      mode="outlined"
+      contentStyle={[styles.RoundedDarkButton,{backgroundColor:'transparent'}]}
+      onPress={() => props.onPress()}
+      {...props}>
+      {/* {props.loading !== true ? ( */}
+        <Text style={{fontSize:14,color:'#000',lineHeight:16,fontFamily: 'Gotham-Medium',textTransform:'uppercase'}}>{props.label}</Text>
       
     </Button>
   );
@@ -61,7 +99,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     alignSelf: 'center',
-    width: 220,
+    width: '100%',
     height: 55,
 
   },
@@ -82,6 +120,17 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: '100%',
     height: 36,
+    padding:0,
+  },
+  RoundedRedButton:{
+    fontFamily: 'Gotham-Black',
+    fontWeight: '800',
+    backgroundColor: '#f50e02',
+    alignItems: 'center',
+    alignSelf: 'center',
+    width: '100%',
+    height: 36,
+    padding:0,
   },
   RoundedThemeButton:{
     fontFamily: 'Gotham-Black',
@@ -95,4 +144,10 @@ const styles = StyleSheet.create({
   loader: {
     marginTop: 8,
   },
+  themeBtnText:{
+    fontSize:18,
+    color:'#000',
+    fontFamily: 'Gotham-Light',
+    fontWeight:400,
+  }
 });

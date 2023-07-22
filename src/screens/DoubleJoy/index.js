@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native';
 import {PageContainer} from '../../components/Container';
-import {RoundedDarkButton, RoundedThemeButton} from '../../components/Buttons';
+import {RoundedDarkButton, RoundedGreyButton, RoundedThemeButton} from '../../components/Buttons';
 import {FlatList} from 'react-native-gesture-handler';
 import {useState} from 'react';
 import {PackageItem} from '../../components/PackageItem';
@@ -43,7 +43,7 @@ const DoubleJoy = () => {
           <Text style={styles.mainHeading}>Double Joy</Text>
           <View style={styles.tab}>
             {active === 'Shakes' ? (
-              <RoundedDarkButton label={'SHAKES'} style={styles.tabBtn} />
+              <RoundedGreyButton label={'SHAKES'} style={styles.tabBtn} />
             ) : (
               <RoundedThemeButton
                 label={'SHAKES'}
@@ -52,7 +52,7 @@ const DoubleJoy = () => {
               />
             )}
             {active === 'Coffee' ? (
-              <RoundedDarkButton label={'COFFEE'} style={styles.tabBtn} />
+              <RoundedGreyButton label={'COFFEE'} style={styles.tabBtn} />
             ) : (
               <RoundedThemeButton
                 label={'COFFEE'}
@@ -61,7 +61,7 @@ const DoubleJoy = () => {
               />
             )}
             {active === 'Snacks' ? (
-              <RoundedDarkButton label={'SNACKS'} style={styles.tabBtn} />
+              <RoundedGreyButton label={'SNACKS'} style={styles.tabBtn} />
             ) : (
               <RoundedThemeButton
                 label={'SNACKS'}
@@ -98,9 +98,9 @@ const width = Dimensions.get('window').width;
 const styles = StyleSheet.create({
   mainHeading: {
     fontSize: 20,
-    fontWeight: '700',
     textAlign: 'center',
     marginTop: 10,
+    fontFamily:'Gotham-Medium'
   },
   tab: {
     display: 'flex',

@@ -34,7 +34,7 @@ const Profile = ({navigation}) => {
           <GreyBox
             label="My Packages"
             textStyle={{textAlign: 'center'}}
-            onPress={() => navigation.navigate('Buy')}
+            onPress={() => navigation.push('Buy')}
           />
           <GreyBox
             label="Change password"
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 18,
     textAlign: 'center',
-    color: '#000',
+    color: '#161415',
     textTransform:'uppercase',
     fontFamily:'Gotham-Medium'
   },

@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     padding: 20,
     borderRadius: 16,
-    shadowColor: '#000',
+    shadowColor: '#161415',
     shadowOffset: {width: 2, height: 12},
     shadowOpacity: 0.3,
     shadowRadius: 10,

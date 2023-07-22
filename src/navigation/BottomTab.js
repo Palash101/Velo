@@ -8,7 +8,8 @@ import Classes from '../screens/Classes';
 import Planner from '../screens/Planner';
 import Buy from '../screens/Buy';
 import Journey from '../screens/Journey';
-import { NavigationDrawerStructure } from './NavigationDrawerStructure';
+import ClassesStack from './ClassesStack';
+import HomeStack from './DoubleJoyStack';
 
 const Tab = createBottomTabNavigator();
 
@@ -22,11 +23,17 @@ const BottomTab = ({navigation}) => {
           options={{
             tabBarLabel: bottomMenu[0].label,
             headerShown: false,
-            // headerLeft: () => (
-            //   <NavigationDrawerStructure navigationProps={navigation} />
-            // ),
           }}
         />
+       
+        {/* <Tab.Screen
+          name={bottomMenu[1].name}
+          component={Classes}
+          options={{
+            tabBarLabel: bottomMenu[1].label,
+            headerShown: false,
+          }}
+        /> */}
         <Tab.Screen
           name={bottomMenu[1].name}
           component={Classes}
@@ -99,13 +106,13 @@ function MyTabBar({state, navigation}) {
             <Image
               source={isFocused ? active : inActive}
               style={{
-                tintColor: isFocused ? '#000' : '#888',
+                tintColor: isFocused ? '#161415' : '#888',
                 width: 20,
                 height: 20,
               }}
             />
             {!!label && (
-              <Text style={{color: isFocused ? '#000' : '#888', fontSize: 12}}>
+              <Text style={{color: isFocused ? '#161415' : '#888', fontSize: 12}}>
                 {label}
               </Text>
             )}

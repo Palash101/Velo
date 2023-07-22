@@ -201,7 +201,7 @@ export default class Calendar extends PureComponent {
 
         </ScrollView>
         {/* <TouchableOpacity onPress={this.onSelectDay1} style={{flexDirection:'row',display:'flex',marginTop:8,marginLeft:10}}>
-            <Text style={{borderWidth:1,borderColor:'#000',padding:2,fontSize:10}}>Today</Text>
+            <Text style={{borderWidth:1,borderColor:'#161415',padding:2,fontSize:10}}>Today</Text>
         </TouchableOpacity> */}
       </View>
     );

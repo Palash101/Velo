@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   checkoutBtn: {
-    backgroundColor: '#000',
+    backgroundColor: '#161415',
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -182,12 +182,12 @@ const styles = StyleSheet.create({
   methodBtnImage:{
         width: 24,
         height: 24,
-        tintColor: '#000',
+        tintColor: '#161415',
         transform: [{rotate: '-90deg'}],
       
   },
   methodBtnText: {
-    color: '#000',
+    color: '#161415',
     fontSize: 16,
   },
   totalBox: {
@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
     marginBottom:20,
   },
   payBtn:{
-    backgroundColor: '#000',
+    backgroundColor: '#161415',
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',

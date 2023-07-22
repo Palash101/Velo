@@ -134,13 +134,13 @@ const MyWallet = ({navigation}) => {
             style={{
               flexDirection: 'row',
               borderBottomWidth: 1,
-              borderColor: '#000',
+              borderColor: '#161415',
             }}>
             <Text
               style={{
                 padding: 15,
                 fontSize: 16,
-                color: '#000',
+                color: '#161415',
                 fontFamily: 'Gotham-Medium',
               }}>
               WALLET RECHARGE
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingVertical: 70,
     borderRadius: 24,
-    shadowColor: '#000',
+    shadowColor: '#161415',
     shadowOffset: {width: 0, height: 6},
     shadowOpacity: 0.2,
     shadowRadius: 10,

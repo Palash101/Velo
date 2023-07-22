@@ -46,7 +46,6 @@ const Login = () => {
           userCtx.setUser(result.user);
           setToken(result.access_token);
           setAuth(true);
-          navigation.navigate('Drawer');
           toast.show('Welcome to velo');
           setLoading(false);
         } else {
@@ -92,11 +91,6 @@ const Login = () => {
                 <Text style={styles.forgetText}>Forgot Password </Text>
               </TouchableOpacity>
 
-              <TouchableOpacity
-                style={styles.skip}
-                onPress={() => console.log()}>
-                <Text style={styles.skipText}>Skip Now </Text>
-              </TouchableOpacity>
             </View>
           </View>
         </ScrollView>
@@ -104,10 +98,11 @@ const Login = () => {
         <View style={styles.alreadyBox}>
           <Text
             style={{
-              color: '#000',
+              color: '#161415',
               fontFamily: 'Gotham-Medium',
               opacity: 1,
-              fontSize: 16,
+              fontSize: 14,
+              fontWeight:'400',
               textTransform: 'uppercase',
             }}>
             Don't have account?{' '}
@@ -131,7 +126,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 15,
     fontFamily: 'Gotham-Medium',
-    color: '#000',
+    color: '#000000',
     marginTop: 20,
   },
   loader: {
@@ -145,18 +140,19 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   forgetText: {
-    color: '#000',
+    color: '#161415',
     textAlign: 'center',
     textTransform: 'uppercase',
-    fontSize: 16,
-    fontFamily: 'Gotham-Medium',
+    fontSize: 14,
+    fontFamily: 'Gotham-Light',
+    fontWeight:'400'
   },
   input: {
     fontSize: 26,
     fontFamily: 'Gotham-Medium',
-    color: '#000',
+    color: '#000000',
     borderWidth: 1,
-    borderColor: '#000',
+    borderColor: '#000000',
     marginTop: 30,
     marginLeft: 20,
     marginRight: 20,
@@ -183,7 +179,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   belowText: {
-    color: '#000',
+    color: '#000000',
     alignItems: 'center',
     textAlign: 'center',
     fontSize: 12,
@@ -200,7 +196,7 @@ const styles = StyleSheet.create({
     right: 0,
   },
   skipText: {
-    color: '#000',
+    color: '#000000',
     textAlign: 'center',
     textTransform: 'uppercase',
     fontSize: 14,
@@ -213,12 +209,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   AlreadyText: {
-    color: '#000',
+    color: '#000000',
     textTransform: 'uppercase',
     lineHeight: 16,
     marginTop: 10,
-    fontSize: 16,
-    fontFamily: 'Gotham-Black',
+    fontSize: 14,
+    fontFamily: 'Gotham-Medium',
   },
 });
 export default Login;
