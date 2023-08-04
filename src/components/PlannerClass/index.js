@@ -5,38 +5,42 @@ import {assets} from '../../config/AssetsConfig';
 
 const width = Dimensions.get('window').width;
 export const PlannerClass = props => {
+
+  const {item} = props;
+  console.log(item,'item')
+
   return (
     <>
       <View style={styles.outerBox}>
         <View style={styles.imageBox}>
           <Image
-            source={require('../../../assets/images/bg.png')}
+            source={{uri: item.relation.classes.relations.trainer.attributes.image}}
             style={styles.mainImage}
           />
         </View>
         <View style={styles.centerBox}>
           <Text style={styles.title} ellipsizeMode="tail" numberOfLines={1}>
-            CYCLE
+            {item.relation.classes.attributes.title}
           </Text>
           <Text style={styles.subTitle}>Justin bieber</Text>
-          <Text style={styles.trainerName}>PAOLA</Text>
+          <Text style={styles.trainerName}>{item.relation.classes.relations.trainer.attributes.first_name}</Text>
         </View>
         <View style={styles.dateBox}>
                 <View style={styles.timeBox}>
                     <Image source={assets.clock} style={styles.timeImage} />
-                    <Text style={styles.dateText}>THU, 04 MAY 2023</Text>
+                    <Text style={styles.dateText}>{item.relation.classes.attributes.start_date}</Text>
                 </View>
                 <View style={styles.timeBox}>
                     <Image source={assets.clock} style={styles.timeImage} />
-                    <Text style={styles.dateText}>09:15 AM - 10:00 AM</Text>
+                    <Text style={styles.dateText}>{item.attributes.timing}</Text>
                 </View>
                 <View style={styles.timeBox}>
                     <Image source={assets.clock} style={styles.timeImage} />
-                    <Text style={styles.dateText}>BIKE - 28</Text>
+                    <Text style={styles.dateText}>BIKE - {item.attributes.seat}</Text>
                 </View>
         </View>
         <View style={styles.lastBox}>
-          <Badge style={[styles.bedge,{backgroundColor:'green'}]}>Go to Class</Badge>
+          <Badge style={[styles.bedge,{backgroundColor:'#3aae4c'}]}>Go to Class</Badge>
           <Badge style={[styles.bedge,{backgroundColor:'red'}]}>Cancel Booking</Badge>
         </View>
       </View>
@@ -48,11 +52,12 @@ const styles = StyleSheet.create({
   outerBox: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    justifyContent: 'space-around',
     backgroundColor: '#f2f2f2',
     marginVertical: 5,
     borderRadius: 14,
-    padding: 10,
+    padding: 0,
+    padding:5
   },
   imageBox: {
     width: 60,
@@ -100,23 +105,29 @@ const styles = StyleSheet.create({
     fontSize: 8,
     fontWeight: '400',
     color: '#161415',
+    textTransform: 'uppercase'
   },
   centerBox: {
     justifyContent: 'center',
     marginLeft: 5,
   },
   trainerName: {
-    fontSize: 10,
+    fontSize: 8,
+    fontFamily:'Gotham-Light',
+    maxWidth:110,
+    textTransform:'uppercase',
+    overflow:'hidden'
   },
   title: {
-    fontSize: 16,
-    fontWeight: '700',
+    fontSize: 14,
+    fontFamily:'Gotham-Black',
     overflow: 'hidden',
+    textTransform:'uppercase'
   },
   subTitle: {
     fontSize: 8,
     lineHeight: 16,
-    fontWeight: '500',
+    fontFamily:'Gotham-Book',
     justifyContent: 'center',
     textTransform: 'uppercase',
   },

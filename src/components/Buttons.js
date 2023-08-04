@@ -1,4 +1,4 @@
-import {ActivityIndicator, StyleSheet, Text} from 'react-native';
+import {ActivityIndicator, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {Button} from 'react-native-paper';
 
 export const ThemeButton = props => {
@@ -41,16 +41,25 @@ export const RoundedDarkButton = props => {
     </Button>
   );
 };
+
+
+export const RoundedDarkButton2 = props => {
+  return (
+    <TouchableOpacity
+      style={[styles.RoundedDarkButton2,props.style]}
+      onPress={() => props.onPress()}>
+        <Text style={{fontSize:12,color:'#fff',lineHeight:16,fontFamily: 'Gotham-Medium',textTransform:'uppercase'}}>{props.label}</Text>
+    </TouchableOpacity>
+  );
+};
+
 export const RoundedRedButton = props => {
   return (
-    <Button
-      mode="elevated"
-      contentStyle={styles.RoundedRedButton}
-      onPress={() => props.onPress()}
-     
-      {...props}>
+      <TouchableOpacity
+      style={[styles.RoundedRedButton,props.style]}
+      onPress={() => props.onPress()}>
         <Text style={{fontSize:12,color:'#fff',lineHeight:16,fontFamily: 'Gotham-Medium',textTransform:'uppercase'}}>{props.label}</Text>
-    </Button>
+    </TouchableOpacity>
   );
 };
 
@@ -63,6 +72,21 @@ export const RoundedGreyButton = props => {
       {...props}>
       {/* {props.loading !== true ? ( */}
         <Text style={{fontSize:12,color:'#fff',lineHeight:16,fontFamily: 'Gotham-Medium',textTransform:'uppercase'}}>{props.label}</Text>
+      
+    </Button>
+  );
+};
+
+export const CurvedGreyButton = props => {
+  return (
+    <Button
+      mode="elevated"
+      contentStyle={[styles.CurvedButton]}
+      onPress={() => props.onPress()}
+      style={{borderRadius:12,...props.style}}
+      {...props}>
+      {/* {props.loading !== true ? ( */}
+        <Text style={{fontSize:22,color:'#fff',lineHeight:26,fontFamily: 'Gotham-Black',textTransform:'uppercase'}}>{props.label}</Text>
       
     </Button>
   );
@@ -92,6 +116,18 @@ export const RoundedThemeButton = props => {
     </Button>
   );
 };
+export const RoundedThemeLightButton = props => {
+  return (
+    <Button
+      mode="elevated"
+      contentStyle={styles.RoundedThemeButton}
+      onPress={() => props.onPress()}
+      {...props}>
+        <Text style={{fontSize:12,color:'#000',fontFamily: 'Gotham-Light',lineHeight:16,textTransform:'uppercase'}}>{props.label}</Text>
+     
+    </Button>
+  );
+};
 const styles = StyleSheet.create({
   buttonText: {
     fontFamily: 'Gotham-Black',
@@ -112,6 +148,14 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 55,
   },
+  CurvedButton:{
+    fontFamily: 'Gotham-Black',
+    fontWeight: '800',
+    backgroundColor: '#161415',
+    alignItems: 'center',
+    alignSelf: 'center',
+    width: '100%',
+  },
   RoundedDarkButton:{
     fontFamily: 'Gotham-Black',
     fontWeight: '800',
@@ -122,15 +166,26 @@ const styles = StyleSheet.create({
     height: 36,
     padding:0,
   },
-  RoundedRedButton:{
+  RoundedDarkButton2:{
     fontFamily: 'Gotham-Black',
     fontWeight: '800',
-    backgroundColor: '#f50e02',
+    backgroundColor: '#000',
     alignItems: 'center',
     alignSelf: 'center',
-    width: '100%',
-    height: 36,
-    padding:0,
+    width: 'auto',
+    padding:5,
+    borderRadius:20
+  },
+  RoundedRedButton:{
+    backgroundColor: '#f50e02',
+    fontFamily: 'Gotham-Black',
+    fontWeight: '800',
+    alignItems: 'center',
+    alignSelf: 'center',
+    width: 'auto',
+    padding:5,
+    borderRadius:20
+
   },
   RoundedThemeButton:{
     fontFamily: 'Gotham-Black',

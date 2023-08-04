@@ -63,4 +63,34 @@ export class BuyContoller {
         return error;
       });
   }
+
+  async executePayment(data, type, token) {
+    var myHeaders = new Headers();
+    myHeaders.append('Accept', 'application/json');
+    myHeaders.append('Authorization', 'Bearer ' + token);
+
+    var formdata = new FormData();
+    formdata.append('type', type);
+    formdata.append('amount', data.attributes.amount);
+    // formdata.append('PaymentMethodId', '2');
+    formdata.append('package_id', data.id);
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: formdata,
+      redirect: 'follow',
+    };
+
+    return fetch(API_BASE + '/packages/purchase', requestOptions)
+      .then(response => response.text())
+      .then(result => {
+        return JSON.parse(result);
+      })
+      .catch(error => {
+        return error;
+      });
+
+    
+  }
 }

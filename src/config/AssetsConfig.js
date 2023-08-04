@@ -14,4 +14,12 @@ export const assets = {
   forgetBg: require('../../assets/images/forgot_bg.jpeg'),
   clock: require('../../assets/icons/clock.png'),
   shake: require('../../assets/images/shake.png'),
+  apple: require('../../assets/icons/apple.png'),
+  lock: require('../../assets/icons/lock.png'),
+  phone: require('../../assets/icons/phone-call.png'),
+  instagram: require('../../assets/icons/instagram.png'),
+  email: require('../../assets/icons/email.png'),
+  whatsapp: require('../../assets/icons/whatsapp.png'),
+  refresh: require('../../assets/icons/refresh.png'),
+  google: require('../../assets/icons/google.png'),
 };

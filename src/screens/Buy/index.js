@@ -2,6 +2,7 @@ import React, {useContext, useEffect} from 'react';
 import {
   Alert,
   Dimensions,
+  Image,
   Platform,
   ScrollView,
   StyleSheet,
@@ -11,6 +12,7 @@ import {
 } from 'react-native';
 import {PageContainer} from '../../components/Container';
 import {
+  CurvedGreyButton,
   RoundedDarkButton,
   RoundedGreyButton,
   RoundedThemeButton,
@@ -26,9 +28,11 @@ import {useToast} from 'react-native-toast-notifications';
 import {API_BASE, API_SUCCESS} from '../../config/ApiConfig';
 import {ActivePackageItem} from '../../components/PackageItem/ActivePackageItem';
 import PageLoader from '../../components/PageLoader';
+import { assets } from '../../config/AssetsConfig';
+import { useNavigation } from '@react-navigation/native';
 const height = Dimensions.get('window').height;
 
-const Buy = ({navigation}) => {
+const Buy = (props) => {
   const [active, setActive] = useState('All');
   const {getToken} = useContext(UserContext);
   const [loading, setLoading] = useState(true);
@@ -37,28 +41,42 @@ const Buy = ({navigation}) => {
   const [userPackages, setUserPackages] = useState();
   const [errorMessage, setErrorMessage] = useState('');
   const [cartModal, setCartModal] = useState(false);
-  const [paymentModal, setPaymentModal] = useState(false);
   const [paymentUrl, setPaymentUrl] = useState('');
   const [selectedItem, setSelectedItem] = useState({});
   const [payLoading1, setPayLoading1] = useState(false);
   const [payLoading2, setPayLoading2] = useState(false);
+  const [payModal, setPayModal] = useState(false);
+  const [refresh, setRefresh] = useState(false);
+  const navigation = useNavigation();
 
   const toast = useToast();
 
   useEffect(() => {
-    getPackages();
-    getUserAllPackages();
-  }, []);
+    const focusHandler = navigation.addListener('focus', () => {
 
-  const getUserToken = async () => {
-    return await getToken();
-  };
+      
+      if(props.route.params !== undefined){
+        setActive('My')
+        ();
+      }
+      getPackages();
+      getUserAllPackages();
+    });
+    return focusHandler;
+  }, [props]);
+
+  useEffect(() => {
+        getUserAllPackages();
+        getPackages();
+  }, [refresh]);
+
 
   const getPackages = async () => {
     const token = await getToken();
     const instance = new BuyContoller();
     const result = await instance.getAllPackages(token);
     if (result?.data?.length) {
+      console.log(result.data,'package')
       setData(result.data);
       setLoading(false);
     } else {
@@ -83,87 +101,21 @@ const Buy = ({navigation}) => {
     setCartModal(true);
   };
 
-  const checkResponse = data => {
-    if (data.url === API_SUCCESS + '/package/paymentsuccess') {
-      setPaymentModal(false);
-      toast.show('Package purchased successfully');
-      navigation.navigate('Buy');
-    } else if (data.url.includes('transaction_cancelled')) {
-      setPaymentModal(false);
-    }
-  };
-
-  const PayFromCard = async () => {
-    const payurl =
-      API_BASE +
-      '/packages/purchase?package_id=' +
-      selectedItem.id +
-      '&type=Prepaid&device=mobile';
-    setPaymentUrl(payurl);
-    setCartModal(false);
-    setPaymentModal(true);
-  };
-
-  const PayFromWallet = async () => {
-    Alert.alert(
-      'Confirm',
-      'You want to book package from wallet?',
-      [
-        {
-          text: 'No',
-          onPress: () => {},
-        },
-        {
-          text: 'Yes',
-          onPress: () => {
-            setLoading(true);
-            setPayLoading2(true);
-            completePayment();
-          },
-        },
-      ],
-      {cancelable: false},
-    );
-  };
-
-  const completePayment = async () => {
-    const data = {
-      id: selectedItem.id,
-      type: 'wallet',
-    };
-    const token = await getToken();
-    const instance = new BuyContoller();
-    const result = await instance.purchasePackage(data, token);
-    console.log(result, 'resss');
-    if (result.status === 'success') {
-      toast.show(result.msg);
-      setCartModal(false);
-      getUserAllPackages();
-      setActive('My');
-      setLoading(false);
-      setPayLoading2(false);
-    } else {
-      if (result.checkout_link) {
-        setPaymentUrl(result.checkout_link);
-        setCartModal(true);
-      } else {
-        console.log(result, 'resjj');
-        toast.show(result.msg);
-      }
-      setLoading(false);
-      setPayLoading2(false);
-    }
-  };
 
   const bookingSummery = () => {
     if (selectedItem && selectedItem.attributes) {
       return (
         <View>
           <View style={styles.summary}>
-            <Text style={[styles.hding, {marginTop: 0, marginBottom: 10}]}>
+            {/* <Text style={[styles.hding, {marginTop: 0, marginBottom: 10}]}>
               Booking Summary
-            </Text>
-
+            </Text> */}
+            <View style={styles.summaryLine}>
+              <Text style={styles.stext1}>{selectedItem.attributes.type !== 'unlimited' ? selectedItem.attributes.type : <></>}</Text>
+              <Text style={styles.stext2}>
+                {selectedItem.attributes.rides}{' '}
+              </Text>
+            </View>
             <View style={styles.summaryLine}>
               <Text style={styles.stext1}>{selectedItem.attributes.name}</Text>
               <Text style={styles.stext2}>
@@ -171,12 +123,7 @@ const Buy = ({navigation}) => {
               </Text>
             </View>
 
-            <View style={styles.summaryLine}>
-              <Text style={styles.stext1}>CLASS</Text>
-              <Text style={styles.stext2}>
-                {selectedItem.attributes.rides}{' '}
-              </Text>
-            </View>
+            
             <View style={styles.summaryLine}>
               <Text style={styles.stext1}>VALIDITY</Text>
               <Text style={styles.stext2}>
@@ -192,7 +139,23 @@ const Buy = ({navigation}) => {
             </View>
           </View>
           <View style={styles.payBtnBox}>
-            <RoundedGreyButton
+          {/* <RoundedGreyButton
+              label="GO TO CHECKOUT"
+              loading={payLoading2}
+              onPress={() => {
+                // setCartModal(false);
+                // setPayModal(true);
+                navigation.navigate('Pay', {item: selectedItem})
+              }}
+            /> */}
+             <TouchableOpacity
+              style={styles.checkoutBtn}
+              onPress={() => navigation.navigate('Pay', {item: selectedItem})}>
+              <Text style={styles.btnText}>GO TO CHECKOUT</Text>
+              <Image source={assets.chevron} style={styles.btnImage} />
+            </TouchableOpacity>
+
+            {/* <RoundedGreyButton
               label="PAY FROM CREDIT/DEBIT CARD"
               loading={payLoading1}
               onPress={() => PayFromCard()}
@@ -201,7 +164,7 @@ const Buy = ({navigation}) => {
               label="PAY FROM WALLET"
               loading={payLoading2}
               onPress={() => PayFromWallet()}
-            />
+            /> */}
           </View>
         </View>
       );
@@ -217,7 +180,7 @@ const Buy = ({navigation}) => {
         <View style={{paddingHorizontal: 10}}>
           <View style={styles.tab}>
             {active === 'All' ? (
-              <RoundedGreyButton label={'ALL PACKAGES'} style={styles.tabBtn} />
+              <RoundedGreyButton label={'ALL PACKAGES'} onPress={() => console.log()}  style={styles.tabBtn} />
             ) : (
               <RoundedThemeButton
                 label={'ALL PACKAGES'}
@@ -226,7 +189,7 @@ const Buy = ({navigation}) => {
               />
             )}
             {active === 'My' ? (
-              <RoundedGreyButton label={'My PACKAGES'} style={styles.tabBtn} />
+              <RoundedGreyButton label={'My PACKAGES'}  onPress={() => console.log()} style={styles.tabBtn} />
             ) : (
               <RoundedThemeButton
                 label={'MY PACKAGES'}
@@ -253,10 +216,13 @@ const Buy = ({navigation}) => {
             </View>
           ) : (
             <View style={styles.classesList}>
+              
               {userPackages?.length ? (
-                userPackages.map((item, index) => (
+                <ScrollView contentContainerStyle={{}}  onScrollBeginDrag={() => setRefresh(!refresh)}>
+                {userPackages.map((item, index) => (
                   <ActivePackageItem key={index + 'my'} item={item} />
-                ))
+                ))}
+                </ScrollView>
               ) : (
                 <View style={styles.errorBox}>
                   <Text style={styles.errorText}>{errorMessage}</Text>
@@ -270,11 +236,11 @@ const Buy = ({navigation}) => {
       <Modal
         visible={cartModal}
         onDismiss={() => setCartModal(false)}
-        style={{height: 'auto', marginTop: 260}}>
+        style={{ height: 'auto', justifyContent:'flex-end',marginBottom:0}}>
         <View style={styles.modalBox}>
-          <View style={styles.titleHeading}>
+          {/* <View style={styles.titleHeading}>
             <Text style={styles.titleText}>CHECKOUT</Text>
-          </View>
+          </View> */}
 
           <ScrollView contentContainerStyle={styles.modalContent1}>
             {bookingSummery()}
@@ -282,30 +248,7 @@ const Buy = ({navigation}) => {
         </View>
       </Modal>
 
-      <Modal
-        visible={paymentModal}
-        onDismiss={() => setPaymentModal(false)}
-        style={{height: 'auto', marginTop: 60}}>
-        <View style={styles.modalBox1}>
-          <View style={styles.titleHeading}>
-            <Text style={styles.titleText}>Package Payment</Text>
-          </View>
-
-          <ScrollView contentContainerStyle={styles.modalContent}>
-            <WebView
-              source={{
-                uri: paymentUrl,
-                headers: {
-                  Authorization: 'Bearer ' + getUserToken(),
-                  Accept: 'application/json',
-                },
-              }}
-              onNavigationStateChange={data => checkResponse(data)}
-              startInLoadingState={true}
-            />
-          </ScrollView>
-        </View>
-      </Modal>
+     
     </>
   );
 };
@@ -323,6 +266,10 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 36,
     borderTopRightRadius: 36,
     //  marginTop: 160,
+  },
+  modalBoxFull: {
+    paddingTop: Platform.OS === 'ios' ? 30 : 30,
+    backgroundColor: '#fff',
   },
   modalBox1: {
     paddingTop: Platform.OS === 'ios' ? 0 : 0,
@@ -362,7 +309,6 @@ const styles = StyleSheet.create({
     padding: 10,
     bottom: 0,
     height: 'auto',
-    minHeight: 400,
     backgroundColor: '#ffffff',
   },
   errorText: {
@@ -374,14 +320,14 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 40,
+    marginTop: 10,
     marginBottom: 10,
   },
   tabBtn: {
     width: width / 2 - 30,
   },
   classesList: {
-    marginBottom: 170,
+    paddingBottom: 150,
   },
   calander: {
     marginBottom: 20,
@@ -412,6 +358,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Gotham-Medium',
     color: '#161415',
     marginTop: 0,
+    textTransform:'uppercase'
   },
   stext3: {
     position: 'absolute',
@@ -424,11 +371,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 0,
     fontFamily: 'Gotham-Medium',
+    textTransform:'uppercase',
+    minHeight:40
   },
   stext1Bold: {
     lineHeight: 40,
     fontWeight: 'bold',
     fontFamily: 'Gotham-Medium',
+    textTransform:'uppercase'
   },
   stext2Bold: {
     position: 'absolute',
@@ -436,9 +386,28 @@ const styles = StyleSheet.create({
     lineHeight: 40,
     fontWeight: 'bold',
     fontFamily: 'Gotham-Medium',
+    textTransform:'uppercase'
   },
   payBtnBox: {
-    height: 100,
     justifyContent: 'space-around',
+    marginBottom:50,
+  },
+  checkoutBtn: {
+    backgroundColor: '#161415',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 15,
+    borderRadius: 12,
+  },
+  btnImage: {
+    width: 24,
+    height: 24,
+    tintColor: '#fff',
+    transform: [{rotate: '-90deg'}],
+  },
+  btnText: {
+    color: '#fff',
+    fontSize: 16,
   },
 });

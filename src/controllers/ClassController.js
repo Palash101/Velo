@@ -91,6 +91,7 @@ export class ClassContoller {
   async CancelClass(data, token){
     const newdata = new FormData();
     newdata.append('booking_id', data.booking_id);
+    console.log(data.booking_id,token,'tttt')
     const url = API_BASE + '/booking/cancel';
     return fetch(url, {
       method: 'POST',

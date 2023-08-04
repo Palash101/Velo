@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {
   Image,
+  Linking,
   ScrollView,
   StyleSheet,
   Text,
@@ -93,7 +94,56 @@ const Support = ({navigation}) => {
             </View>
           ))}
         </View>
-        {supportData && (
+        <>
+          <Text
+            style={{
+              paddingLeft: 15,
+              height: 30,
+              marginTop: 50,
+              textTransform: 'uppercase',
+            }}>
+            Support
+          </Text>
+
+          <View style={styles.supportData}>
+            <TouchableOpacity
+              onPress={() => Linking.openURL('wahtsapp://veloqatar')}
+              style={styles.supportList}>
+              <View style={styles.iconBox}>
+                <Image source={assets.whatsapp} style={styles.supportIcon} />
+              </View>
+              <Text style={styles.supportText}>+974 4480 0204</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => Linking.openURL('telprompt:${+97444800204}')}
+              style={styles.supportList}>
+              <View style={styles.iconBox}>
+                <Image source={assets.phone} style={styles.supportIcon} />
+              </View>
+              <Text style={styles.supportText}>+974 4480 0204</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => Linking.openURL('mailto:info@valo.qa')}
+              style={styles.supportList}>
+              <View style={styles.iconBox}>
+                <Image source={assets.email} style={styles.supportIcon} />
+              </View>
+              <Text style={styles.supportText}>info@valo.qa</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() =>
+                Linking.openURL('instagram://veloqatar')
+              }
+              style={styles.supportList}>
+              <View style={styles.iconBox}>
+                <Image source={assets.instagram} style={styles.supportIcon} />
+              </View>
+              <Text style={styles.supportText}>@veloqatar</Text>
+            </TouchableOpacity>
+          </View>
+        </>
+
+        {/* {supportData && (
           <>
             <Text
               style={{paddingLeft: 15, height: 30, textTransform: 'uppercase'}}>
@@ -104,7 +154,7 @@ const Support = ({navigation}) => {
               <Text style={styles.supportText}>{supportData.description}</Text>
             </View>
           </>
-        )}
+        )} */}
       </ScrollView>
     </PageContainer>
   );
@@ -175,5 +225,32 @@ const styles = StyleSheet.create({
     width: 22,
     height: 22,
     transform: [{rotate: '180deg'}],
+  },
+  supportList: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 5,
+    marginBottom: 15,
+  },
+  iconBox: {
+    width: 22,
+    height: 22,
+    backgroundColor:'#000',
+    padding:4,
+    borderRadius:20
+  },
+  supportIcon: {
+    width: 14,
+    height: 14,
+    tintColor:'#fff',
+  },
+  supportText: {
+    lineHeight: 24,
+    fontSize: 16,
+    fontFamily: 'Gotham-medium',
+  },
+  supportData: {
+    marginLeft: '25%',
+    marginTop: 15,
   },
 });

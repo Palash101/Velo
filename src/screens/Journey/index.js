@@ -46,7 +46,7 @@ const Journey = ({navigation}) => {
         <View style={styles.achBoxes}>
           {data.map((item, index) => (
             <View style={styles.achBox} key={index}>
-              <Image source={assets.vlogo} style={styles.achImg} />
+              <Image source={assets.lock} style={styles.achImg} />
             </View>
           ))}
         </View>
@@ -120,11 +120,12 @@ const styles = StyleSheet.create({
   },
   achBox: {
     backgroundColor: '#f2f2f2',
-    padding: 20,
+    padding: 24,
     borderRadius: 16,
   },
   achImg: {
-    width: 38,
-    height: 38,
+    width: 28,
+    height: 28,
+    tintColor:'#161415'
   },
 });

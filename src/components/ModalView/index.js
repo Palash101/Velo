@@ -48,9 +48,9 @@ const styles = StyleSheet.create({
     paddingTop: 20,
 
     paddingBottom: 10,
-    fontSize: 22,
+    fontSize: 20,
     color: '#161415',
-    fontFamily: 'Gotham-Medium',
+    fontFamily: 'Gotham-Black',
     textTransform: 'uppercase',
   },
 });

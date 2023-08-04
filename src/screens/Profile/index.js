@@ -3,30 +3,45 @@ import {Image, StyleSheet, Text, View} from 'react-native';
 import {PageContainer} from '../../components/Container';
 import {assets} from '../../config/AssetsConfig';
 import {GreyBox} from '../../components/GreBox';
-import { UserContext } from '../../../context/UserContext';
-import { ProfileController } from '../../controllers/ProfileController';
+import {UserContext} from '../../../context/UserContext';
+import {ProfileController} from '../../controllers/ProfileController';
+import {API_BASE, API_SUCCESS} from '../../config/ApiConfig';
+import { useNavigation } from '@react-navigation/native';
 
 const Profile = ({navigation}) => {
   const {getToken} = useContext(UserContext);
   const [user, setUser] = useState({});
-  
-  useEffect(() => {
-    getDetail()
-  },[])
 
-  const getDetail = async()=> {
+  useEffect(() => {
+    const focusHandler = navigation.addListener('focus', () => {
+      getDetail();
+    });
+    return focusHandler;
+  }, [navigation]);
+
+
+  const getDetail = async () => {
     const token = await getToken();
     const instance = new ProfileController();
     const result = await instance.getUserDetail(token);
     setUser(result.user);
-  }
-
+  };
 
   return (
     <PageContainer>
       <View>
-        <Image source={assets.bg} style={styles.prImg} />
-        <Text style={styles.name}>{user?.first_name} {user?.last_name}</Text>
+        {user?.image == '' ? (
+          <Image source={assets.bg} style={styles.prImg} />
+        ) : (
+          <Image
+            source={{uri: API_SUCCESS + '/' + user.image}}
+            style={styles.prImg}
+          />
+        )}
+
+        <Text style={styles.name}>
+          {user?.first_name} {user?.last_name}
+        </Text>
         <Text style={styles.email}>{user?.email}</Text>
         <Text style={styles.phone}>{user?.phone}</Text>
 
@@ -71,8 +86,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: 'center',
     color: '#161415',
-    textTransform:'uppercase',
-    fontFamily:'Gotham-Medium'
+    textTransform: 'uppercase',
+    fontFamily: 'Gotham-Medium',
   },
   email: {
     fontSize: 12,
@@ -80,7 +95,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 20,
     color: '#333',
-    fontFamily:'Gotham-Medium'
+    fontFamily: 'Gotham-Medium',
   },
   phone: {
     fontSize: 12,
@@ -88,6 +103,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 20,
     color: '#333',
-    fontFamily:'Gotham-Medium'
+    fontFamily: 'Gotham-Medium',
   },
 });

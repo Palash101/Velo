@@ -9,7 +9,7 @@ export const PackageItem = ({item, onPress}) => {
     <View style={styles.box}>
       <Text style={styles.title}>{item?.attributes?.name}</Text>
       <Text style={styles.price}>{item?.attributes?.amount} QR</Text>
-      <Text style={styles.class}>{item?.attributes?.rides} class</Text>
+      <Text style={styles.class}>{item?.attributes?.rides} {item?.attributes?.type !== 'unlimited' ? item?.attributes?.type : <></>}</Text>
       <Text style={styles.validity}>
         {item?.attributes?.validity} days validity
       </Text>

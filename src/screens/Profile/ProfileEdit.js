@@ -6,6 +6,7 @@ import {
   View,
   ScrollView,
   Dimensions,
+  TouchableOpacity,
 } from 'react-native';
 import {PageContainer} from '../../components/Container';
 import {assets} from '../../config/AssetsConfig';
@@ -18,6 +19,8 @@ import {useToast} from 'react-native-toast-notifications';
 import PageLoader from '../../components/PageLoader';
 import DatePicker from 'react-native-datepicker';
 import moment from 'moment';
+import DocumentPicker from 'react-native-document-picker';
+import { API_SUCCESS } from '../../config/ApiConfig';
 
 const ProfileEdit = ({navigation}) => {
   const [email, setEmail] = useState('');
@@ -25,15 +28,52 @@ const ProfileEdit = ({navigation}) => {
   const [last_name, setLastName] = useState('');
   const [phone, setPhone] = useState('');
   const [dob, setDob] = useState('');
+  const [image, setImage] = useState('');
   const [loading, setLoading] = useState(true);
   const {getToken} = useContext(UserContext);
   const [user, setUser] = useState({});
   const toast = useToast();
   const userCtx = useContext(UserContext);
+  const [singleFile, setSingleFile] = useState('');
 
   useEffect(() => {
     getDetail();
   }, []);
+
+  const selectOneFile = async () => {
+    //Opening Document Picker for selection of one file
+    try {
+      const res = await DocumentPicker.pick({
+        type: [DocumentPicker.types.images],
+        //There can me more options as well
+        // DocumentPicker.types.allFiles
+        // DocumentPicker.types.images
+        // DocumentPicker.types.plainText
+        // DocumentPicker.types.audio
+        // DocumentPicker.types.pdf
+      });
+      //Printing the log realted to the file
+      console.log('res : ' + JSON.stringify(res[0]));
+      console.log('URI : ' + res[0].uri);
+      console.log('Type : ' + res[0].type);
+      console.log('File Name : ' + res[0].name);
+      console.log('File Size : ' + res[0].size);
+      setImage(res[0].uri);
+      //Setting the state to show single file attributes
+      setSingleFile(res[0]);
+    } catch (err) {
+      //Handling any exception (If any)
+      if (DocumentPicker.isCancel(err)) {
+        //If user canceled the document selection
+        alert('Canceled');
+      } else {
+        //For Unknown Error
+        alert('Unknown Error: ' + JSON.stringify(err));
+        throw err;
+      }
+    }
+  };
+
 
   const getDetail = async () => {
     const token = await getToken();
@@ -45,17 +85,15 @@ const ProfileEdit = ({navigation}) => {
     setLastName(result.user.last_name);
     setEmail(result.user.email);
     setPhone(result.user.phone);
-   // setDob(result.user.dob);
-
-   // const db = moment(new Date(result.user.dob)).format('YYYY-MM-DD');
-  //  console.log(db, 'dbb');
+    setDob(result.user.dob);
+    setImage(API_SUCCESS+'/'+result.user.image)
     setLoading(false);
   };
 
   const submit = async () => {
     if (first_name !== '' && last_name !== '' && email !== '' && phone !== '') {
       setLoading(true);
-      const data = {
+      let data = {
         ...user,
         first_name: first_name,
         last_name: last_name,
@@ -63,6 +101,9 @@ const ProfileEdit = ({navigation}) => {
         phone: phone,
         dob: moment(dob).format('YYYY-MM-DD'),
       };
+      if(singleFile?.uri){
+        data.image = {uri: singleFile.uri, type: singleFile.uri, name: singleFile.name}
+      }
       console.log(data, 'data');
       const token = await getToken();
       const instance = new ProfileController();
@@ -70,9 +111,9 @@ const ProfileEdit = ({navigation}) => {
       console.log(result, 'result');
       if (result.status === 'success') {
         toast.show(result.message);
-        userCtx.setUser({...user.data, ...data});
+        userCtx.setUser({...user.data, ...result.user});
         setLoading(false);
-        navigation.navigate('Profile');
+        navigation.navigate('Profile',{upload: true });
       } else {
         var errors = result.errors;
         var value = '';
@@ -100,7 +141,18 @@ const ProfileEdit = ({navigation}) => {
       <PageContainer>
         <ScrollView contentContainerStyle={{flex: 1}}>
           <Text style={{paddingLeft: 15}}>EDIT PROFILE</Text>
-          <Image source={assets.bg} style={styles.prImg} />
+          <TouchableOpacity onPress={() => selectOneFile()}>
+            {image == '' ? 
+            <Image source={assets.bg} style={styles.prImg} />
+            :
+            <Image source={{uri:image}} style={styles.prImg} />
+            }
+
+            <View style={styles.editBox}>
+              <Image source={assets.edit} style={styles.editIcon} />
+            </View>
+          
+          </TouchableOpacity>
 
           <View style={styles.form}>
             <Input
@@ -233,4 +285,19 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     color: '#333',
   },
+  editBox:{
+    backgroundColor:'#000',
+    width:28,
+    height:28,
+    borderRadius:20,
+    padding:5,
+    position:'absolute',
+    right:width/2 + 20,
+    marginTop:140
+  },
+  editIcon:{
+    tintColor:'#fff',
+    width:18,
+    height:18,
+  }
 });

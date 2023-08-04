@@ -8,6 +8,7 @@ import ChangePassword from '../screens/Profile/ChangePassword';
 import MyWallet from '../screens/Profile/MyWallet';
 import Journey from '../screens/Journey';
 import Buy from '../screens/Buy';
+import WalletPay from '../screens/Profile/WalletPay';
 const {createStackNavigator} = require('@react-navigation/stack');
 
 const ProfileNavigation = ({navigation}) => {
@@ -93,6 +94,13 @@ const ProfileNavigation = ({navigation}) => {
         options={{
           headerLeft: () => <BackIcon />,
           headerTitle: props => <LogoTitle {...props} />,
+        }}
+      />
+      <Stack.Screen
+        name="WalletPay"
+        component={WalletPay}
+        options={{
+         headerShown:false
         }}
       />
     </Stack.Navigator>

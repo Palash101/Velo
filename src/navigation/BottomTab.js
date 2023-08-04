@@ -107,12 +107,12 @@ function MyTabBar({state, navigation}) {
               source={isFocused ? active : inActive}
               style={{
                 tintColor: isFocused ? '#161415' : '#888',
-                width: 20,
-                height: 20,
+                width: 16,
+                height: 16,
               }}
             />
             {!!label && (
-              <Text style={{color: isFocused ? '#161415' : '#888', fontSize: 12}}>
+              <Text style={{color: isFocused ? '#161415' : '#888', fontSize: 10,marginTop:4,fontFamily:'Gotham-Medium'}}>
                 {label}
               </Text>
             )}

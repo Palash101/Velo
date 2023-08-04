@@ -7,6 +7,8 @@ import {
   Dimensions,
   Modal,
   Platform,
+  Image,
+  TouchableOpacity,
 } from 'react-native';
 import {PageContainer} from '../../components/Container';
 import {RoundedDarkButton} from '../../components/Buttons';
@@ -18,6 +20,7 @@ import {Input} from '../../components/Input/input';
 import {useToast} from 'react-native-toast-notifications';
 import {API_BASE, API_SUCCESS} from '../../config/ApiConfig';
 import WebView from 'react-native-webview';
+import {assets} from '../../config/AssetsConfig';
 
 const height = Dimensions.get('window').height;
 const MyWallet = ({navigation}) => {
@@ -26,20 +29,14 @@ const MyWallet = ({navigation}) => {
   const [balance, setBalance] = useState(0);
   const [open, setOpen] = useState(false);
   const [amount, setAmount] = useState(0);
-  const [paymentModal, setPaymentModal] = useState(false);
-  const [qnbUrl, setQnbUrl] = useState('');
   const toast = useToast();
-  const [token, setToken] = useState();
-  
 
   useEffect(() => {
     getMyBanance();
   }, []);
 
-
   const getMyBanance = async () => {
     const token = await getToken();
-    setToken(token);
     const instance = new WalletController();
     const result = await instance.getBalance(token);
     console.log(result, 'ress');
@@ -53,25 +50,13 @@ const MyWallet = ({navigation}) => {
     setOpen(true);
   };
 
-  const checkqnbresponse = data => {
-    console.log('resback', data.url);
-    if (data.url === API_SUCCESS + '/wallet/paymentsuccess') {
-      setPaymentModal(false);
-      getMyBanance();
-    } else if (data.url.includes('transaction_cancelled')) {
-      setPaymentModal(false);
-      toast.show('Your transaction has been cancelled.');
-    }
-  };
 
-  const openPaymentMethod = async () => {
-    if (amount == '' || amount == 0) {
-      toast.show('Please enter valid amount');
-    } else {
-      const paymentURL = API_BASE + '/wallet/add/balance?amount=' + amount;
-      setQnbUrl(paymentURL);
-      setOpen(false);
-      setPaymentModal(true);
+  const payNow = () => {
+    if (amount > 0) {
+      navigation.navigate('WalletPay', {amount: amount});
+    }
+    else{
+      toast.show("Please enter amount")
     }
   };
 
@@ -116,57 +101,12 @@ const MyWallet = ({navigation}) => {
             onChang={setAmount}
             keyboardType="numeric"
           />
-
-          <RoundedDarkButton
-            label="PAY FROM CREDIT/DEBIT CART"
-            style={{marginTop: 30}}
-            onPress={openPaymentMethod}
-          />
+          <TouchableOpacity style={styles.checkoutBtn} onPress={() => payNow()}>
+            <Text style={styles.btnText}>GO TO CHECKOUT</Text>
+            <Image source={assets.chevron} style={styles.btnImage} />
+          </TouchableOpacity>
         </View>
       </ModalView>
-
-      <Modal
-        visible={paymentModal}
-        onRequestClose={() => setPaymentModal(false)}
-        animationType="slide">
-        <View style={{paddingTop: Platform.OS === 'ios' ? 40 : 0}}>
-          <View
-            style={{
-              flexDirection: 'row',
-              borderBottomWidth: 1,
-              borderColor: '#161415',
-            }}>
-            <Text
-              style={{
-                padding: 15,
-                fontSize: 16,
-                color: '#161415',
-                fontFamily: 'Gotham-Medium',
-              }}>
-              WALLET RECHARGE
-            </Text>
-          </View>
-          <ScrollView
-            contentContainerStyle={{
-              padding: 10,
-              bottom: 0,
-              height: height - 140,
-              backgroundColor: '#f9f9f9',
-            }}>
-            <WebView
-              source={{
-                uri: qnbUrl,
-                headers: {
-                  Authorization: 'Bearer ' + token,
-                  Accept: 'application/json',
-                },
-              }}
-              onNavigationStateChange={data => checkqnbresponse(data)}
-              startInLoadingState={true}
-            />
-          </ScrollView>
-        </View>
-      </Modal>
     </>
   );
 };
@@ -201,5 +141,24 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: '700',
     textAlign: 'center',
+  },
+  checkoutBtn: {
+    backgroundColor: '#161415',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 15,
+    borderRadius: 12,
+    marginTop: 20,
+  },
+  btnImage: {
+    width: 24,
+    height: 24,
+    tintColor: '#fff',
+    transform: [{rotate: '-90deg'}],
+  },
+  btnText: {
+    color: '#fff',
+    fontSize: 16,
   },
 });

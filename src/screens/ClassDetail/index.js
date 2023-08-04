@@ -1,5 +1,6 @@
 import React, {useContext, useEffect} from 'react';
 import {
+  Alert,
   Dimensions,
   Image,
   Modal,
@@ -14,6 +15,7 @@ import {PageContainer} from '../../components/Container';
 import TopBar from '../../components/TopBar';
 import {
   RoundedDarkButton,
+  RoundedDarkButton2,
   RoundedGreyButton,
   RoundedOutlineButton,
   RoundedRedButton,
@@ -31,7 +33,7 @@ import {API_LAYOUT, API_SUCCESS} from '../../config/ApiConfig';
 import {useNavigation} from '@react-navigation/native';
 import {useToast} from 'react-native-toast-notifications';
 import {assets} from '../../config/AssetsConfig';
-import {UserConsumer} from '../../../context/UserContext';
+import {UserContext} from '../../../context/UserContext';
 import {ModalView} from '../../components/ModalView';
 import {ClassContoller} from '../../controllers/ClassController';
 import {BuyContoller} from '../../controllers/BuyController';
@@ -44,30 +46,47 @@ const ClassDetail = props => {
   const [loading, setLoading] = useState(true);
   const [selectedSeat, setSelectedSeat] = useState();
   const [pageUrl, setPageUrl] = useState('');
-  const {getToken} = useContext(UserConsumer);
+  const {getToken} = useContext(UserContext);
   const toast = useToast();
   const navigation = useNavigation();
   const [payModal, setPayModal] = useState(false);
   const [item, setItem] = useState();
   const [userPackages, setUserPackages] = useState();
   const [forceReload, setForseReload] = useState(false);
-  const [cancelModal, setCancelModal] = useState(false)
-
-  React.useEffect(() => {
-    const focusHandler = navigation.addListener('focus', () => {
-      console.log('Refreshed');
-      setForseReload(!forceReload);
-    });
-    return focusHandler;
-  }, [navigation]);
+  const [cancelModal, setCancelModal] = useState(false);
+  const [loadFooter, setLoadFooter] = useState(false);
+  const [refresh, setRefresh] = useState(true)
 
   useEffect(() => {
-    loadClassLayout();
-    getDetail();
-    getUserAllPackages();
-  }, [props.route.params]);
+    const focusHandler = navigation.addListener('focus', () => {
+      console.log('Refreshed');
+      setPageUrl('');
+      setItem();
+      setSelectedSeat();
+      setForseReload(!forceReload);
+      loadClassLayout();
+      getDetail();
+      getUserAllPackages();
+    });
+    return focusHandler;
+  }, [props.route.params, navigation]);
 
-  useEffect(() => {}, [setItem]);
+  useEffect(() => {
+      console.log('Refreshed');
+      setPageUrl('');
+      setItem();
+      setSelectedSeat();
+      setForseReload(!forceReload);
+      loadClassLayout();
+      getDetail();
+      getUserAllPackages();
+  }, [refresh]);
+
+  useEffect(() => {
+    console.log(item?.id, 'itemm');
+  }, [setItem, item]);
+
+  
 
   const getUserAllPackages = async () => {
     const token = await getToken();
@@ -178,7 +197,7 @@ const ClassDetail = props => {
       if (result.status === 'success') {
         toast.show(result.msg);
         setLoading(false);
-        navigation.goBack();
+        setRefresh(!refresh);
       } else {
         toast.show(result.msg);
         setLoading(false);
@@ -200,7 +219,7 @@ const ClassDetail = props => {
     if (result.status === 'success') {
       toast.show(result.msg);
       setLoading(false);
-      setCancelModal(false)
+      setCancelModal(false);
       navigation.goBack();
     } else {
       toast.show(result.msg);
@@ -213,33 +232,33 @@ const ClassDetail = props => {
   const bookNowInWaing = async () => {};
 
   const renderButton = () => {
-    if (item && item?.attributes) {
+    if (item?.attributes) {
       if (
         item?.attributes?.mine_booking === true &&
         item?.attributes?.user_waiting === false
       ) {
         return (
           <View
-            style={{textAlign: 'center', alignItems: 'center', marginTop: -65}}>
+            style={{textAlign: 'center', alignItems: 'center', marginTop: -40}}>
             <Text style={{fontSize: 12}}>Booked</Text>
             <RoundedRedButton
               label={'CANCEL'}
               onPress={() => setCancelModal(true)}
-              style={{width: 150, marginLeft: 5, marginTop: 5}}
+              style={{width: 120, marginLeft: 5, marginTop: 5}}
             />
-            <RoundedDarkButton
+            <RoundedDarkButton2
               label={'UPDATE BIKE'}
               onPress={updateBooking}
-              style={{width: 150, marginLeft: 5, marginTop: 5}}
+              style={{width: 120, marginLeft: 5,marginTop:5}}
             />
           </View>
         );
       } else if (item?.attributes?.user_waiting === true) {
         return (
-          <RoundedDarkButton
+          <RoundedDarkButton2
             label={'LEAVE WAITLIST'}
             onPress={leaveWaitlist}
-            style={{width: 150, marginLeft: 5}}
+            style={{width: 120, marginLeft: 5}}
           />
         );
       } else if (
@@ -257,11 +276,13 @@ const ClassDetail = props => {
           />
         );
       } else {
-        <RoundedDarkButton
-          label={'BOOK NOW'}
-          onPress={bookNow}
-          style={{width: 150, marginLeft: 5}}
-        />;
+        return (
+          <RoundedDarkButton2
+            label={'BOOK NOW'}
+            onPress={bookNow}
+            style={{width: 120, marginLeft: 5}}
+          />
+        );
       }
     }
   };
@@ -280,7 +301,10 @@ const ClassDetail = props => {
             bottom: 0,
             height: height - 180,
             backgroundColor: '#fff',
-          }}>
+          }}
+         
+          
+          >
           {pageUrl && (
             <WebView
               source={{
@@ -295,47 +319,60 @@ const ClassDetail = props => {
               }}
               onNavigationStateChange={data => checkResponce(data)}
               startInLoadingState={true}
+              onLoadEnd={() => setLoadFooter(true)}
             />
           )}
         </ScrollView>
-        <View style={styles.footer}>
-          <Text style={styles.smallPara}>
-            THOSE WHO ARRIVE 5 MINS AFTER THE START OF THE CLASS WILL NOT BE
-            PERMITTED TO ENTER
-          </Text>
-          {item && renderButton()}
-        </View>
+        {loadFooter === true && item ? (
+          <View style={styles.footer}>
+            <Text style={styles.smallPara}>
+              THOSE WHO ARRIVE 5 MINS AFTER THE START OF THE CLASS WILL NOT BE
+              PERMITTED TO ENTER
+            </Text>
+            {renderButton()}
+          </View>
+        ) : (
+          <></>
+        )}
       </View>
 
       <ModalView
         visible={cancelModal}
         heading="CANCEL BOOKING"
         setVisible={() => setCancelModal(false)}
-        style={{ height: 'auto', marginTop: 260, justifyContent:'flex-end',marginBottom:0}}
-        >
+        style={{
+          height: 'auto',
+          marginTop: 260,
+          justifyContent: 'flex-end',
+          marginBottom: 0,
+        }}>
         <View style={styles.summeryBox}>
           <View style={styles.modalTotalBox}>
-            <Text style={{fontSize:14,textAlign:'center'}}>Are you sure ? you want to cancel your booking.</Text>
+            <Text style={{fontSize: 14, textAlign: 'center'}}>
+            Are you sure you want to cancel your booking?
+            </Text>
           </View>
 
-          <View style={{display:'flex',flexDirection:'row',justifyContent:'flex-end',marginTop:25}}>
-           
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'flex-end',
+              marginTop: 25,
+            }}>
             <RoundedOutlineButton
-                label={'NO'}
-                onPress={() => setCancelModal(false)}
-                style={{width: 100, marginLeft: 5, marginTop: 5}}
+              label={'NO'}
+              onPress={() => setCancelModal(false)}
+              style={{width: 100, marginLeft: 5, marginTop: 5}}
             />
-             <RoundedGreyButton
-                label={'YES'}
-                onPress={() => cancelBooking()}
-                style={{width: 100, marginLeft: 5, marginTop: 5}}
+            <RoundedGreyButton
+              label={'YES'}
+              onPress={() => cancelBooking()}
+              style={{width: 100, marginLeft: 5, marginTop: 5}}
             />
           </View>
-
-
-          </View>
+        </View>
       </ModalView>
-
 
       <ModalView
         visible={payModal}
@@ -350,7 +387,7 @@ const ClassDetail = props => {
         }}>
         <View style={styles.summeryBox}>
           <View style={styles.modalTotalBox}>
-            <Text style={styles.priceText}>SEAT</Text>
+            <Text style={styles.priceText}>{item?.location.spot_name}</Text>
             <Text style={styles.priceText}>{selectedSeat}</Text>
           </View>
           {item?.priceType === 'Amount' && (
@@ -376,33 +413,43 @@ const ClassDetail = props => {
               <Text style={styles.btnText}>0 QR</Text>
             </TouchableOpacity>
           )}
-          {item?.priceType === 'Credit' && (
+          {item?.priceType === 'Credit' && userPackages && (
             <View>
               <Text
-                style={[{marginTop: 10, marginBottom: 0, textAlign: 'center'}]}>
+                style={[
+                  {
+                    marginTop: 10,
+                    marginBottom: 0,
+                    fontSize: 10,
+                    textAlign: 'center',
+                  },
+                ]}>
                 BOOK FROM PACKAGES
               </Text>
 
-              {userPackages &&
-                userPackages.map((item1, index) => (
-                  <TouchableOpacity
-                    key={index + 'btn'}
-                    style={styles.checkoutBtn}
-                    onPress={() => CheckoutFromPackage(item1)}>
-                    <Text style={styles.btnText}>{item1.attributes.name}</Text>
-                    {item.attributes.remaining_rides === 'unlimited' ? (
-                      <Text style={styles.btnText}>
-                        {item1.attributes.remaining_rides}{' '}
-                        <Text style={{}}>CLASS</Text>
-                      </Text>
-                    ) : (
-                      <Text style={styles.btnText}>
-                        {item1.attributes.remaining_rides}{' '}
-                        <Text style={{}}>CLASS</Text>
-                      </Text>
-                    )}
-                  </TouchableOpacity>
-                ))}
+              {userPackages.map((item1, index) => (
+                <TouchableOpacity
+                  key={index + 'btn'}
+                  style={styles.checkoutBtn}
+                  onPress={() => CheckoutFromPackage(item1)}>
+                  <Text style={styles.btnText}>{item1.attributes.name}</Text>
+                  {item.attributes.remaining_rides === 'unlimited' ? (
+                    <Text style={styles.btnText}>
+                      {item1.attributes.remaining_rides}{' '}
+                      {item1.attributes.type !== 'unlimited' && 
+                      <Text style={{}}>{item1.attributes.type}</Text>
+                      }
+                    </Text>
+                  ) : (
+                    <Text style={styles.btnText}>
+                      {item1.attributes.remaining_rides}{' '}
+                      {item1.attributes.type !== 'unlimited' && 
+                      <Text style={{}}>{item1.attributes.type}</Text>
+                      }
+                    </Text>
+                  )}
+                </TouchableOpacity>
+              ))}
             </View>
           )}
         </View>
@@ -414,13 +461,13 @@ export default ClassDetail;
 
 const styles = StyleSheet.create({
   smallPara: {
-    fontSize: 10,
-    fontFamily: 'Gotham Black',
-    maxWidth: width - 200,
+    fontSize: 8,
+    fontFamily: 'Gotham-Medium',
+    maxWidth: width - 180,
     lineHeight: 12,
   },
   footer: {
-    paddingHorizontal: 30,
+    paddingHorizontal: 15,
     paddingVertical: 15,
     display: 'flex',
     justifyContent: 'space-between',
@@ -433,15 +480,15 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 15,
     borderRadius: 12,
-    marginTop: 20,
+    marginTop: 15,
   },
   btnText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 14,
     textTransform: 'uppercase',
   },
   priceText: {
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: 'Gotham-Medium',
     textTransform: 'uppercase',
   },

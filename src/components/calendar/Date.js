@@ -1,5 +1,5 @@
 import React, {PureComponent} from 'react';
-import {Text, TouchableOpacity} from 'react-native';
+import {Text, TouchableOpacity, View} from 'react-native';
 
 import moment from 'moment';
 
@@ -26,6 +26,14 @@ export default class Date extends PureComponent {
       : styles.container),
     ...(this.props.isActive ? styles.containerActive : {}),
   });
+
+  isToday = date => {
+    if (date.format('DD') === moment(new Date()).format('DD')) {
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   getDayStyle = () => ({
     ...styles.text,
@@ -63,15 +71,28 @@ export default class Date extends PureComponent {
   render() {
     const {date} = this.props;
     return (
-      <TouchableOpacity
-        style={this.getContainerStyle(date)}
-        onLayout={this.onLayout}
-        onPress={this.onPress}>
-        <Text style={this.getDayStyle()}>
-          {date.format('ddd').toUpperCase()}
-        </Text>
-        <Text style={this.getDateStyle()}>{date.format('DD')}</Text>
-      </TouchableOpacity>
+      <>
+        <TouchableOpacity
+          style={this.getContainerStyle(date)}
+          onLayout={this.onLayout}
+          onPress={this.onPress}>
+          <Text style={this.getDayStyle()}>
+            {date.format('ddd').toUpperCase()}
+          </Text>
+          <Text style={this.getDateStyle()}>{date.format('DD')}</Text>
+        </TouchableOpacity>
+        {this.isToday(date) === true && (
+          <View
+            style={{
+              height: 2,
+              backgroundColor: '#000',
+              marginTop: 4,
+              width: 30,
+              alignSelf: 'center',
+              borderRadius: 20,
+            }}></View>
+        )}
+      </>
     );
   }
 }
@@ -80,45 +101,43 @@ const styles = {
   container: {
     paddingHorizontal: 7,
     paddingVertical: 4,
-    backgroundColor:'#f2f2f2',
-    marginHorizontal:2,
-    borderRadius:10,
-    marginTop:5,
-    borderWidth:1,
-    borderColor:'transparent'
+    backgroundColor: '#f2f2f2',
+    marginHorizontal: 2,
+    borderRadius: 10,
+    marginTop: 5,
+    borderWidth: 1,
+    borderColor: 'transparent',
   },
   container2: {
     paddingHorizontal: 7,
     paddingVertical: 4,
-    backgroundColor:'#f2f2f2',
-    marginHorizontal:2,
-    borderRadius:10,
-    marginTop:5,
-    borderWidth:1,
-    borderColor:'#161415'
+    backgroundColor: '#f2f2f2',
+    marginHorizontal: 2,
+    borderRadius: 10,
+    marginTop: 5,
+    borderWidth: 1,
+    borderColor: '#161415',
   },
   containerActive: {
-    backgroundColor:'#161415'
+    backgroundColor: '#161415',
   },
   day: {
-    fontSize: 10,
-    fontWeight:'500',
-    fontFamily:'Gotham-Medium',
+    fontSize: 9,
+    fontFamily: 'Gotham-Medium',
   },
   date: {
-    fontSize: 12,
-    fontWeight:'500',
-    fontFamily:'Gotham-Medium',
+    fontSize: 10,
+    color: '#000',
+    fontFamily: 'Gotham-Medium',
+    marginTop: 2,
   },
   text: {
     color: '#161415',
     textAlign: 'center',
-    fontFamily:'Gotham-Medium',
+    fontFamily: 'Gotham-Medium',
   },
   textActive: {
     color: '#fff',
-    fontWeight:'600',
-     fontFamily:'Gotham-Medium',
-
+    fontFamily: 'Gotham-Medium',
   },
 };

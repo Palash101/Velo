@@ -21,6 +21,8 @@ import StoreStack from './StoreStack';
 import Notification from '../screens/Notification';
 import ClassesStack from './ClassesStack';
 import ClassDetail from '../screens/ClassDetail';
+import Pay from '../screens/Buy/pay';
+import Buy from '../screens/Buy';
 
 const Drawer = createDrawerNavigator();
 
@@ -46,7 +48,7 @@ function CustomDrawerContent(props) {
       <GreyBox
         label="Profile"
         {...props}
-        active={true}
+        active={false}
         onPress={() => props.navigation.navigate('Profile')}
       />
       <GreyBox
@@ -199,6 +201,21 @@ export default function DrawerNavigation() {
           headerLeft: () => <BackIcon />,
           headerTitle: props => <LogoTitle {...props} />,
         }}
+      />
+
+
+      <Drawer.Screen
+        name="Pay"
+        component={Pay}
+        options={{
+          headerShown:false,
+          // headerLeft: () => <BackIcon />,
+          // headerTitle: props => <LogoTitle {...props} />,
+        }}
+      />
+      <Drawer.Screen
+        name="Buy"
+        component={Buy}
       />
     </Drawer.Navigator>
   );

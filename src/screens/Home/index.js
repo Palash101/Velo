@@ -50,7 +50,7 @@ const Home = () => {
     <>
       <PageContainer>
         <ScrollView contentContainerStyle={{paddingBottom: 100}}>
-          <Heading>Training</Heading>
+          <Heading>Train</Heading>
 
           {allData?.map((item, key) => (
             <>

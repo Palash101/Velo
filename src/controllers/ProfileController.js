@@ -6,8 +6,8 @@ export class ProfileController {
     return fetch(API_BASE + '/auth/profile', {
       method: 'GET',
       headers: {
-        Authorization: 'Bearer ' + token,
-        Accept: 'application/json',
+        'Authorization': 'Bearer ' + token,
+        'Accept': 'application/json',
       },
     })
       .then(response => response.json())
@@ -57,6 +57,10 @@ export class ProfileController {
     newdata.append('phone', data.phone);
     newdata.append('dob', data.dob);
     newdata.append('gender', data.gender);
+    if(data.image){
+      newdata.append('image', data.image);
+
+    }
 
     console.log(newdata,'newdata')
 
@@ -66,6 +70,7 @@ export class ProfileController {
       headers: {
         Authorization: 'Bearer ' + token,
         Accept: 'application/json',
+        'Content-Type': 'multipart/form-data',
       },
     })
       .then(response => response.json())
