@@ -26,7 +26,7 @@ const Splash = () => {
         } else {
           navigation.navigate('Welcome');
         }
-      }, 2000);
+      }, 3000);
     });
     BackHandler.addEventListener('hardwareBackPress', handleBackButton);
   }, []);

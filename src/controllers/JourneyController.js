@@ -3,7 +3,7 @@ import {API_BASE} from '../config/ApiConfig';
 export class JourneyContoller {
 
   async getAllBooking(token) {
-    return fetch(API_BASE + '/packages/get', {
+    return fetch(API_BASE + '/booking/attended', {
       method: 'GET',
       headers: {
         Authorization: 'Bearer ' + token,

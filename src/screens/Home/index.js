@@ -8,6 +8,7 @@ import {ExpandingDot} from 'react-native-animated-pagination-dots';
 import {UserContext} from '../../../context/UserContext';
 import {ClassContoller} from '../../controllers/ClassController';
 import {useNavigation} from '@react-navigation/native';
+import { SkeltonBlackCard } from '../../components/Skelton';
 
 const width = Dimensions.get('window').width;
 
@@ -17,26 +18,14 @@ const Home = () => {
   const scrollX = useRef(new Animated.Value(0)).current;
   const {getToken} = useContext(UserContext);
   const [allData, setAllData] = useState([]);
-
-  const list = [
-    {
-      img: require('../../../assets/images/bg.png'),
-    },
-    {
-      img: require('../../../assets/images/bg.png'),
-    },
-    {
-      img: require('../../../assets/images/bg.png'),
-    },
-    {
-      img: require('../../../assets/images/bg.png'),
-    },
-  ];
+  const [list, setList] = useState([]);
+  const [scrollData, setScrollData] = useState([]);
 
   const navigation = useNavigation();
 
   useEffect(() => {
     getData();
+    getList();
   }, []);
 
   const getData = async () => {
@@ -46,12 +35,46 @@ const Home = () => {
     setAllData(result.locations);
   };
 
+  const getList = async () => {
+    const data = [
+      {
+        img: require('../../../assets/images/bg.png'),
+      },
+      {
+        img: require('../../../assets/images/bg.png'),
+      },
+      {
+        img: require('../../../assets/images/bg.png'),
+      },
+      {
+        img: require('../../../assets/images/bg.png'),
+      },
+      {
+        img: require('../../../assets/images/bg.png'),
+      },
+    ];
+    setList(data);
+    const half = Math.ceil(data.length / 2);
+    const firstHalf = data.slice(0, half);
+    setScrollData(firstHalf);
+  };
+
   return (
     <>
       <PageContainer>
         <ScrollView contentContainerStyle={{paddingBottom: 100}}>
-          <Heading>Train</Heading>
+          <Heading style={{marginBottom: 15, marginTop: 5}}>Train</Heading>
+          {!allData?.length ? (
 
+            <>
+            <SkeltonBlackCard />
+            <SkeltonBlackCard />
+            <SkeltonBlackCard />
+            </>
+
+          )
+          :(
+            <>
           {allData?.map((item, key) => (
             <>
               {key < 3 && (
@@ -67,9 +90,12 @@ const Home = () => {
               )}
             </>
           ))}
-
+      </>
+      )}
           <View style={{marginTop: 10}}>
-            <Heading style={{marginBottom: 5}}>HAPPENING NOW</Heading>
+            <Heading style={{marginBottom: 5, marginTop: 10}}>
+              HAPPENING NOW
+            </Heading>
 
             <FlatList
               horizontal={true}
@@ -99,7 +125,7 @@ const Home = () => {
               )}
             />
             <ExpandingDot
-              data={list}
+              data={scrollData}
               expandingDotWidth={30}
               scrollX={scrollX}
               inActiveDotOpacity={0.6}
@@ -131,7 +157,7 @@ const Home = () => {
             />
           </View>
           <View style={{marginTop: 15}}>
-            <Heading style={{marginBottom: 5}}>STORE</Heading>
+            <Heading style={{marginBottom: 5, marginTop: 10}}>STORE</Heading>
             <TraingBox
               title={''}
               bg={require('../../../assets/images/bg.png')}

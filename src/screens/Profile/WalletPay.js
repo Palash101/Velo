@@ -56,7 +56,7 @@ const WalletPay = props => {
   };
 
   const checkResponse = data => {
-    if (data.url === API_SUCCESS + '/package/paymentsuccess') {
+    if (data.url.includes('/payment/success')) {
       setPaymentModal(false);
       toast.show('Wallet recharged successfully');
       navigation.navigate('MyWallet');
@@ -69,7 +69,7 @@ const WalletPay = props => {
 
   const payNow = val => {
     if (val === 'debit') {
-      completePaymentDebit('Package');
+      completePaymentDebit('VISA');
     } else if (val === 'apple') {
       completePaymentDebit('ApplePay');
     } else if (val === 'gpay') {
@@ -86,7 +86,7 @@ const WalletPay = props => {
       console.log(result.Data.PaymentURL);
       setPaymentUrl(result.Data.PaymentURL);
       setPaymentModal(true);
-      toast.show(result.Message);
+      // toast.show(result.Message);
       setLoading(false);
     } else {
       toast.show(result.Message);

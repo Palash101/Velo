@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   Image,
   ScrollView,
@@ -9,49 +9,80 @@ import {
 } from 'react-native';
 import {PageContainer} from '../../components/Container';
 import {assets} from '../../config/AssetsConfig';
+import {UserContext} from '../../../context/UserContext';
+import {JourneyContoller} from '../../controllers/JourneyController';
+import PageLoader from '../../components/PageLoader';
 
 const Journey = ({navigation}) => {
   const [data, setData] = useState([{}, {}, {}]);
+  const [locations, setLocations] = useState([]);
+  const {getToken} = useContext(UserContext);
+  const [loading, setLoading] = useState(false);
+  const [total, setTotal] = useState(0);
+
+  useEffect(() => {
+    const focusHandler = navigation.addListener('focus', () => {
+      getBookings();
+    });
+    return focusHandler;
+  }, []);
+
+  const getBookings = async () => {
+    setLoading(true);
+    const token = await getToken();
+    const instance = new JourneyContoller();
+    const result = await instance.getAllBooking(token);
+    console.log(result, 'result');
+    setLoading(false);
+    setLocations(result.locations);
+    setTotal(getTotal(result.locations));
+  };
+
+  const getTotal = allLocation => {
+    let totalVal = 0;
+    allLocation.forEach(element => {
+      totalVal = totalVal + element.bookings_count;
+    });
+    return totalVal;
+  };
 
   return (
-    <PageContainer>
-      <ScrollView contentContainerStyle={{paddingHorizontal: 10}}>
-        <View style={styles.totalClass}>
-          <Text style={styles.subTitle}>Your Journey</Text>
-          <Text style={styles.title}>750</Text>
-          <Text style={styles.para}>Total Classes</Text>
-        </View>
-        <View style={styles.rideBoxes}>
-          <View style={styles.rideBox}>
-            <Text style={styles.rideText1}>Cycle</Text>
-            <Text style={styles.count}>250</Text>
+    <>
+      <PageLoader loading={loading} />
+      <PageContainer>
+        <ScrollView contentContainerStyle={{paddingHorizontal: 10}}>
+          <View style={styles.totalClass}>
+            <Text style={styles.subTitle}>Your Journey</Text>
+            <Text style={styles.title}>{total}</Text>
+            <Text style={styles.para}>Total Classes</Text>
           </View>
-          <View style={styles.rideBox}>
-            <Text style={styles.rideText1}>Cycle</Text>
-            <Text style={styles.count}>250</Text>
+          <View style={styles.rideBoxes}>
+            {locations.map((item, index) => (
+              <View style={styles.rideBox}>
+                <Text style={styles.rideText1}>{item.name}</Text>
+                <Text style={styles.count}>{item.bookings_count}</Text>
+              </View>
+            ))}
           </View>
-          <View style={styles.rideBox}>
-            <Text style={styles.rideText1}>Cycle</Text>
-            <Text style={styles.count}>250</Text>
-          </View>
-        </View>
 
-        <View style={styles.achBoxTitle}>
-          <Text style={styles.achTitle}>Achievements</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Achievement')}>
-            <Text style={styles.achTitle}>See all</Text>
-          </TouchableOpacity>
-        </View>
+          <View style={styles.achBoxTitle}>
+            <Text style={styles.achTitle}>Achievements</Text>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Achievement')}>
+              <Text style={styles.achTitle}>See all</Text>
+            </TouchableOpacity>
+          </View>
 
-        <View style={styles.achBoxes}>
-          {data.map((item, index) => (
-            <View style={styles.achBox} key={index}>
-              <Image source={assets.lock} style={styles.achImg} />
-            </View>
-          ))}
-        </View>
-      </ScrollView>
-    </PageContainer>
+          <View style={styles.achBoxes}>
+            {data.map((item, index) => (
+              <View style={styles.achBox} key={index}>
+                <Image source={assets.lock} style={styles.achImg} />
+              </View>
+            ))}
+          </View>
+        </ScrollView>
+      </PageContainer>
+    </>
   );
 };
 export default Journey;
@@ -62,20 +93,20 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 82,
-    fontWeight: '600',
+    fontFamily: 'Gotham-medium',
     lineHeight: 82,
-    marginVertical: 10,
+    marginTop: 5,
   },
   subTitle: {
     fontSize: 16,
     textTransform: 'uppercase',
-    fontWeight: '600',
+    fontFamily: 'Gotham-medium',
   },
   para: {
     fontSize: 12,
     textTransform: 'uppercase',
-    fontWeight: '600',
-    marginTop: -20,
+    fontFamily: 'Gotham-Book',
+    marginTop: -5,
   },
   rideBoxes: {
     display: 'flex',
@@ -96,11 +127,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     textTransform: 'uppercase',
-    fontWeight: '600',
+    fontFamily: 'Gotham-medium',
   },
   count: {
     fontSize: 32,
-    fontWeight: '700',
+    fontFamily: 'Gotham-Medium',
+    textAlign: 'center',
+    marginTop: 5,
   },
   achBoxes: {
     display: 'flex',
@@ -115,8 +148,9 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   achTitle: {
-    fontSize: 14,
+    fontSize: 12,
     textTransform: 'uppercase',
+    fontFamily: 'Gotham-Book',
   },
   achBox: {
     backgroundColor: '#f2f2f2',
@@ -126,6 +160,6 @@ const styles = StyleSheet.create({
   achImg: {
     width: 28,
     height: 28,
-    tintColor:'#161415'
+    tintColor: '#161415',
   },
 });

@@ -27,6 +27,8 @@ import {ClassContoller} from '../../controllers/ClassController';
 import PageLoader from '../../components/PageLoader';
 import {useNavigation} from '@react-navigation/native';
 import {assets} from '../../config/AssetsConfig';
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+import {SkeltonCard, SkeltonStudio} from '../../components/Skelton';
 
 const Classes = props => {
   const [classes, setClasses] = useState();
@@ -40,6 +42,7 @@ const Classes = props => {
   const navigation = useNavigation();
   const [activeStudios, setActiveStudios] = useState([]);
   const [refresh, setRefresh] = useState(true);
+  const [catIndex, setCatIndex] = useState([]);
 
   React.useEffect(() => {
     const focusHandler = navigation.addListener('focus', () => {
@@ -84,6 +87,9 @@ const Classes = props => {
     const result = await instance.getAllClasses(token);
     setAllData(result.locations);
     console.log('reload');
+    const aStudio = await AsyncStorage.getItem('activeStudio');
+
+
     if (props.route.params?.activeId) {
       const activeLocation = result.locations.filter(
         item => item.id === props.route.params?.activeId,
@@ -92,9 +98,34 @@ const Classes = props => {
       setActive(activeLocation[0]?.classess);
       setFilteredClass(activeLocation[0].classess);
     } else {
-      setActiveStudios([result.locations[0]]);
-      setActive(result.locations[0]?.classess);
-      setFilteredClass(result.locations[0].classess);
+
+      if (aStudio?.length) {
+
+        const allCatIndex = JSON.parse(aStudio);
+        setCatIndex(allCatIndex);
+       
+        let studios = [];
+        result.locations.forEach((item,index) => {
+          const exist = allCatIndex.filter(item => item === index);
+          if(exist.length){
+            studios.push(item)
+          }
+        })
+       
+
+        setActiveStudios(studios);
+        const allClasses = getAllFilteredClassess(studios);
+        setActive(allClasses);
+        setFilteredClass(allClasses);
+
+
+      } else {
+        setActiveStudios([result.locations[0]]);
+        setActive(result.locations[0]?.classess);
+        setFilteredClass(result.locations[0].classess);
+      }
+
+     
     }
   };
 
@@ -134,36 +165,46 @@ const Classes = props => {
     setLoading(false);
   };
 
-  const selectCategory = async item => {
+  const selectCategory = async (item, index) => {
     const filterData = activeStudios.filter(item1 => item1.id === item.id);
+    
 
     if (filterData.length) {
       const filterData1 = activeStudios.filter(item1 => item1.id !== item.id);
+      const filterData2 = catIndex.filter(item1 => item1 !== index);
+
       setActiveStudios(filterData1);
 
-      let allClasses = [];
-      filterData1.forEach((val, index) => {
-        val.classess.forEach((classVal, index2) => {
-          allClasses.push(classVal);
-        });
-      });
-      console.log(allClasses, 'allClasses');
+      setCatIndex(filterData2)
+      AsyncStorage.setItem('activeStudio', JSON.stringify(filterData2));
+      setCatIndex(filterData2)
+      let allClasses = getAllFilteredClassess(filterData1);
       setActive(allClasses);
       setFilteredClass(allClasses);
     } else {
       const allData = [...activeStudios, item];
       setActiveStudios(allData);
 
-      let allClasses = [];
-      allData.forEach((val, index) => {
-        val.classess.forEach((classVal, index2) => {
-          allClasses.push(classVal);
-        });
-      });
-      console.log(allClasses, 'allClasses');
+      const catIndexData = [...catIndex, index];
+      console.log(catIndexData,'ttt');
+      setCatIndex(catIndexData)
+      AsyncStorage.setItem('activeStudio', JSON.stringify(catIndexData));
+
+      let allClasses = getAllFilteredClassess(allData);
+
       setActive(allClasses);
       setFilteredClass(allClasses);
     }
+  };
+
+  const getAllFilteredClassess = allStudioData => {
+    let allClasses = [];
+    allStudioData.forEach((val, index) => {
+      val.classess.forEach((classVal, index2) => {
+        allClasses.push(classVal);
+      });
+    });
+    return allClasses;
   };
 
   const isInclude = id => {
@@ -179,35 +220,39 @@ const Classes = props => {
       <PageContainer>
         <View style={{paddingHorizontal: 10}}>
           <View style={styles.tab}>
-            <FlatList
-              data={allData}
-              pagingEnabled
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-              decelerationRate={'normal'}
-              renderItem={({item}, key) => (
-                <>
-                  {isInclude(item.id) ? (
-                    <RoundedDarkButton
-                      label={item.name}
-                      onPress={() => selectCategory(item)}
-                      style={styles.tabBtn}
-                    />
-                  ) : (
-                    <RoundedThemeLightButton
-                      label={item.name}
-                      onPress={() => selectCategory(item)}
-                      style={styles.tabBtn}
-                    />
-                  )}
-                </>
-              )}
-            />
+            {!allData?.length ? (
+              <SkeltonStudio />
+            ) : (
+              <FlatList
+                data={allData}
+                pagingEnabled
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                decelerationRate={'normal'}
+                renderItem={({item, index}) => (
+                  <>
+                    {isInclude(item.id) ? (
+                      <RoundedDarkButton
+                        label={item.name}
+                        onPress={() => selectCategory(item, index)}
+                        style={styles.tabBtn}
+                      />
+                    ) : (
+                      <RoundedThemeLightButton
+                        label={item.name}
+                        onPress={() => selectCategory(item, index)}
+                        style={styles.tabBtn}
+                      />
+                    )}
+                  </>
+                )}
+              />
+            )}
           </View>
           <View style={styles.refreshIcon}>
-              <TouchableOpacity onPress={() => setRefresh(!refresh)}>
-                <Image source={assets.refresh} style={{width: 24, height: 24}} />
-              </TouchableOpacity>
+            <TouchableOpacity onPress={() => setRefresh(!refresh)}>
+              <Image source={assets.refresh} style={{width: 24, height: 24}} />
+            </TouchableOpacity>
           </View>
           <View style={styles.calander}>
             <Calendar onSelectDate={onSelectDate} globalIndex={globalIndex} />
@@ -225,7 +270,16 @@ const Classes = props => {
                 )}
               />
             ) : (
-              <Text style={styles.noData}>No data available</Text>
+              <>
+                {!classes ? (
+                  <>
+                    <SkeltonCard />
+                    <SkeltonCard />
+                  </>
+                ) : (
+                  <Text style={styles.noData}>No data available</Text>
+                )}
+              </>
             )}
           </View>
         </View>

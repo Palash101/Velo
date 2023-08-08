@@ -102,11 +102,7 @@ const Pay = props => {
     );
   };
 
-  // const completeApplePay = async(type) => {
-  //   const url = 'https://demo.MyFatoorah.com/En/KWT/PayInvoice/Checkout?invoiceKey=01072256130140-bce80f80&paymentGatewayId=21';
-  //   setPaymentUrl(url);
-  //   setPaymentModal(true);
-  // }
+
 
   const completePaymentDebit = async (type) => {
     const token = await getToken();

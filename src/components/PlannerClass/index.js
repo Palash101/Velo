@@ -2,12 +2,14 @@ import React from 'react';
 import {StyleSheet, View, Image, Text, Dimensions} from 'react-native';
 import {Badge} from 'react-native-paper';
 import {assets} from '../../config/AssetsConfig';
+import { useNavigation } from '@react-navigation/native';
 
 const width = Dimensions.get('window').width;
 export const PlannerClass = props => {
 
   const {item} = props;
-  console.log(item,'item')
+
+  const navigation = useNavigation();
 
   return (
     <>
@@ -22,7 +24,7 @@ export const PlannerClass = props => {
           <Text style={styles.title} ellipsizeMode="tail" numberOfLines={1}>
             {item.relation.classes.attributes.title}
           </Text>
-          <Text style={styles.subTitle}>Justin bieber</Text>
+          <Text style={styles.subTitle}>{item.relation.classes.attributes.theme_name}</Text>
           <Text style={styles.trainerName}>{item.relation.classes.relations.trainer.attributes.first_name}</Text>
         </View>
         <View style={styles.dateBox}>
@@ -36,12 +38,12 @@ export const PlannerClass = props => {
                 </View>
                 <View style={styles.timeBox}>
                     <Image source={assets.clock} style={styles.timeImage} />
-                    <Text style={styles.dateText}>BIKE - {item.attributes.seat}</Text>
+                    <Text style={styles.dateText}>{item.relation.classes.relations.location.attributes.spot_name} - {item.attributes.seat}</Text>
                 </View>
         </View>
         <View style={styles.lastBox}>
-          <Badge style={[styles.bedge,{backgroundColor:'#3aae4c'}]}>Go to Class</Badge>
-          <Badge style={[styles.bedge,{backgroundColor:'red'}]}>Cancel Booking</Badge>
+          <Badge style={[styles.bedge,{backgroundColor:'#3aae4c'}]} onPress={() => navigation.navigate('ClassDetail', {item: item.relation.classes})}>Go to Class</Badge>
+          <Badge style={[styles.bedge,{backgroundColor:'red'}]} onPress={() => props.cancelModalOpen(item.id)}>Cancel Booking</Badge>
         </View>
       </View>
     </>

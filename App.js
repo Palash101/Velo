@@ -9,6 +9,16 @@ import DrawerNavigation from './src/navigation/DrawerNavigation';
 import AuthNavigationStack from './src/navigation/AuthNavigation';
 import UserProvider, {UserConsumer} from './context/UserContext';
 import {ErrorBoundary} from './src/ErrorBoundary';
+import firebase from '@react-native-firebase/app';
+
+const RNfirebaseConfig = {
+  apiKey: '........',
+  authDomain: 'note-app-rn.firebaseapp.com',
+  projectId: 'note-app-rn',
+  storageBucket: 'note-app-rn.appspot.com',
+  messagingSenderId: '.....',
+  appId: '......',
+};
 
 const App = () => {
   useEffect(() => {
@@ -23,6 +33,12 @@ const App = () => {
   }, []);
 
   useEffect(() => {
+    // let app;
+    // if (firebase.apps.length === 0) {
+    //  firebase.initializeApp();
+    // } else {
+    //   app = firebase.app();
+    // }
     registerAppWithFCM();
   }, []);
 
