@@ -29,11 +29,12 @@ import {useNavigation} from '@react-navigation/native';
 import {assets} from '../../config/AssetsConfig';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import {SkeltonCard, SkeltonStudio} from '../../components/Skelton';
+import analytics from '@react-native-firebase/analytics';
 
 const Classes = props => {
   const [classes, setClasses] = useState();
   const [allData, setAllData] = useState([]);
-  const {getToken} = useContext(UserContext);
+  const {getToken, getUser} = useContext(UserContext);
   const [globalIndex, setGlobalIndex] = useState(0);
   const [selectedDate, setSelectedDate] = useState('');
   const [active, setActive] = useState();
@@ -214,6 +215,14 @@ const Classes = props => {
     }
   };
 
+  const logCustomeEvent = async (eventName, name) => {
+    const {gender} = await getUser();
+    await analytics().logEvent(eventName, {
+      name: name,
+      gender: gender,
+    })
+  };
+
   return (
     <>
       {/* <PageLoader loading={loading} /> */}
@@ -240,7 +249,9 @@ const Classes = props => {
                     ) : (
                       <RoundedThemeLightButton
                         label={item.name}
-                        onPress={() => selectCategory(item, index)}
+                        onPress={() => {
+                          logCustomeEvent('MostStudioClicked', item.name);
+                          selectCategory(item, index)}}
                         style={styles.tabBtn}
                       />
                     )}

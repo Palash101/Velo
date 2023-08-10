@@ -28,13 +28,15 @@ import {useToast} from 'react-native-toast-notifications';
 import {API_BASE, API_SUCCESS} from '../../config/ApiConfig';
 import {ActivePackageItem} from '../../components/PackageItem/ActivePackageItem';
 import PageLoader from '../../components/PageLoader';
-import { assets } from '../../config/AssetsConfig';
-import { useNavigation } from '@react-navigation/native';
+import {assets} from '../../config/AssetsConfig';
+import {useNavigation} from '@react-navigation/native';
+import analytics from '@react-native-firebase/analytics';
+
 const height = Dimensions.get('window').height;
 
-const Buy = (props) => {
+const Buy = props => {
   const [active, setActive] = useState('All');
-  const {getToken} = useContext(UserContext);
+  const {getToken, getUser} = useContext(UserContext);
   const [loading, setLoading] = useState(true);
 
   const [data, setData] = useState([]);
@@ -53,11 +55,8 @@ const Buy = (props) => {
 
   useEffect(() => {
     const focusHandler = navigation.addListener('focus', () => {
-
-      
-      if(props.route.params !== undefined){
-        setActive('My')
-        ();
+      if (props.route.params !== undefined) {
+        setActive('My')();
       }
       getPackages();
       getUserAllPackages();
@@ -66,17 +65,16 @@ const Buy = (props) => {
   }, [props]);
 
   useEffect(() => {
-        getUserAllPackages();
-        getPackages();
+    getUserAllPackages();
+    getPackages();
   }, [refresh]);
-
 
   const getPackages = async () => {
     const token = await getToken();
     const instance = new BuyContoller();
     const result = await instance.getAllPackages(token);
     if (result?.data?.length) {
-      console.log(result.data,'package')
+      console.log(result.data, 'package');
       setData(result.data);
       setLoading(false);
     } else {
@@ -96,11 +94,24 @@ const Buy = (props) => {
     }
   };
 
+  const logCustomeEvent = async (eventName, name, amount) => {
+    const {gender} = await getUser();
+    await analytics().logEvent(eventName, {
+      name: name,
+      amount: amount,
+      gender: gender,
+    });
+  };
+
   const selectItem = item => {
+    logCustomeEvent(
+      'MostPackageClicked',
+      item?.attributes?.name,
+      item?.attributes?.amount,
+    );
     setSelectedItem(item);
     setCartModal(true);
   };
-
 
   const bookingSummery = () => {
     if (selectedItem && selectedItem.attributes) {
@@ -111,7 +122,13 @@ const Buy = (props) => {
               Booking Summary
             </Text> */}
             <View style={styles.summaryLine}>
-              <Text style={styles.stext1}>{selectedItem.attributes.type !== 'unlimited' ? selectedItem.attributes.type : <></>}</Text>
+              <Text style={styles.stext1}>
+                {selectedItem.attributes.type !== 'unlimited' ? (
+                  selectedItem.attributes.type
+                ) : (
+                  <></>
+                )}
+              </Text>
               <Text style={styles.stext2}>
                 {selectedItem.attributes.rides}{' '}
               </Text>
@@ -123,7 +140,6 @@ const Buy = (props) => {
               </Text>
             </View>
 
-            
             <View style={styles.summaryLine}>
               <Text style={styles.stext1}>VALIDITY</Text>
               <Text style={styles.stext2}>
@@ -139,7 +155,7 @@ const Buy = (props) => {
             </View>
           </View>
           <View style={styles.payBtnBox}>
-          {/* <RoundedGreyButton
+            {/* <RoundedGreyButton
               label="GO TO CHECKOUT"
               loading={payLoading2}
               onPress={() => {
@@ -148,7 +164,7 @@ const Buy = (props) => {
                 navigation.navigate('Pay', {item: selectedItem})
               }}
             /> */}
-             <TouchableOpacity
+            <TouchableOpacity
               style={styles.checkoutBtn}
               onPress={() => navigation.navigate('Pay', {item: selectedItem})}>
               <Text style={styles.btnText}>GO TO CHECKOUT</Text>
@@ -180,7 +196,11 @@ const Buy = (props) => {
         <View style={{paddingHorizontal: 10}}>
           <View style={styles.tab}>
             {active === 'All' ? (
-              <RoundedGreyButton label={'ALL PACKAGES'} onPress={() => console.log()}  style={styles.tabBtn} />
+              <RoundedGreyButton
+                label={'ALL PACKAGES'}
+                onPress={() => console.log()}
+                style={styles.tabBtn}
+              />
             ) : (
               <RoundedThemeButton
                 label={'ALL PACKAGES'}
@@ -189,7 +209,11 @@ const Buy = (props) => {
               />
             )}
             {active === 'My' ? (
-              <RoundedGreyButton label={'My PACKAGES'}  onPress={() => console.log()} style={styles.tabBtn} />
+              <RoundedGreyButton
+                label={'My PACKAGES'}
+                onPress={() => console.log()}
+                style={styles.tabBtn}
+              />
             ) : (
               <RoundedThemeButton
                 label={'MY PACKAGES'}
@@ -216,12 +240,13 @@ const Buy = (props) => {
             </View>
           ) : (
             <View style={styles.classesList}>
-              
               {userPackages?.length ? (
-                <ScrollView contentContainerStyle={{}}  onScrollBeginDrag={() => setRefresh(!refresh)}>
-                {userPackages.map((item, index) => (
-                  <ActivePackageItem key={index + 'my'} item={item} />
-                ))}
+                <ScrollView
+                  contentContainerStyle={{}}
+                  onScrollBeginDrag={() => setRefresh(!refresh)}>
+                  {userPackages.map((item, index) => (
+                    <ActivePackageItem key={index + 'my'} item={item} />
+                  ))}
                 </ScrollView>
               ) : (
                 <View style={styles.errorBox}>
@@ -236,7 +261,7 @@ const Buy = (props) => {
       <Modal
         visible={cartModal}
         onDismiss={() => setCartModal(false)}
-        style={{ height: 'auto', justifyContent:'flex-end',marginBottom:0}}>
+        style={{height: 'auto', justifyContent: 'flex-end', marginBottom: 0}}>
         <View style={styles.modalBox}>
           {/* <View style={styles.titleHeading}>
             <Text style={styles.titleText}>CHECKOUT</Text>
@@ -247,8 +272,6 @@ const Buy = (props) => {
           </ScrollView>
         </View>
       </Modal>
-
-     
     </>
   );
 };
@@ -358,7 +381,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Gotham-Medium',
     color: '#161415',
     marginTop: 0,
-    textTransform:'uppercase'
+    textTransform: 'uppercase',
   },
   stext3: {
     position: 'absolute',
@@ -371,14 +394,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 0,
     fontFamily: 'Gotham-Medium',
-    textTransform:'uppercase',
-    minHeight:40
+    textTransform: 'uppercase',
+    minHeight: 40,
   },
   stext1Bold: {
     lineHeight: 40,
     fontWeight: 'bold',
     fontFamily: 'Gotham-Medium',
-    textTransform:'uppercase'
+    textTransform: 'uppercase',
   },
   stext2Bold: {
     position: 'absolute',
@@ -386,11 +409,11 @@ const styles = StyleSheet.create({
     lineHeight: 40,
     fontWeight: 'bold',
     fontFamily: 'Gotham-Medium',
-    textTransform:'uppercase'
+    textTransform: 'uppercase',
   },
   payBtnBox: {
     justifyContent: 'space-around',
-    marginBottom:50,
+    marginBottom: 50,
   },
   checkoutBtn: {
     backgroundColor: '#161415',

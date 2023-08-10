@@ -8,7 +8,8 @@ import {ExpandingDot} from 'react-native-animated-pagination-dots';
 import {UserContext} from '../../../context/UserContext';
 import {ClassContoller} from '../../controllers/ClassController';
 import {useNavigation} from '@react-navigation/native';
-import { SkeltonBlackCard } from '../../components/Skelton';
+import {SkeltonBlackCard} from '../../components/Skelton';
+import analytics from '@react-native-firebase/analytics';
 
 const width = Dimensions.get('window').width;
 
@@ -16,7 +17,7 @@ const Home = () => {
   console.log(assets, 'trainingstrainings');
 
   const scrollX = useRef(new Animated.Value(0)).current;
-  const {getToken} = useContext(UserContext);
+  const {getToken, getUser} = useContext(UserContext);
   const [allData, setAllData] = useState([]);
   const [list, setList] = useState([]);
   const [scrollData, setScrollData] = useState([]);
@@ -59,39 +60,45 @@ const Home = () => {
     setScrollData(firstHalf);
   };
 
+  const logCustomeEvent = async (eventName, name) => {
+    const {gender} = await getUser();
+    await analytics().logEvent(eventName, {
+      name: name,
+      gender: gender,
+    })
+  };
+
   return (
     <>
       <PageContainer>
         <ScrollView contentContainerStyle={{paddingBottom: 100}}>
           <Heading style={{marginBottom: 15, marginTop: 5}}>Train</Heading>
           {!allData?.length ? (
-
             <>
-            <SkeltonBlackCard />
-            <SkeltonBlackCard />
-            <SkeltonBlackCard />
+              <SkeltonBlackCard />
+              <SkeltonBlackCard />
+              <SkeltonBlackCard />
             </>
-
-          )
-          :(
+          ) : (
             <>
-          {allData?.map((item, key) => (
-            <>
-              {key < 3 && (
-                <View key={key + 'taining'}>
-                  <TraingBox
-                    title={item.name}
-                    bg={require('../../../assets/images/bg.png')}
-                    onPress={() =>
-                      navigation.navigate('classes', {activeId: item.id})
-                    }
-                  />
-                </View>
-              )}
+              {allData?.map((item, key) => (
+                <>
+                  {key < 3 && (
+                    <View key={key + 'taining'}>
+                      <TraingBox
+                        title={item.name}
+                        bg={require('../../../assets/images/bg.png')}
+                        onPress={() => {
+                          logCustomeEvent('MostStudioClicked', item.name);
+                          navigation.navigate('classes', {activeId: item.id});
+                        }}
+                      />
+                    </View>
+                  )}
+                </>
+              ))}
             </>
-          ))}
-      </>
-      )}
+          )}
           <View style={{marginTop: 10}}>
             <Heading style={{marginBottom: 5, marginTop: 10}}>
               HAPPENING NOW

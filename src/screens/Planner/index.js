@@ -118,6 +118,7 @@ const Planner = () => {
                     </Heading>
                     {item.data.map((item, key) => (
                       <PlannerClass
+                        key={key+'plan'}
                         item={item}
                         cancelModalOpen={cancelModalOpen}
                       />

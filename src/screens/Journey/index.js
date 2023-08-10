@@ -1,6 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {
   Image,
+  ImageBackground,
   ScrollView,
   StyleSheet,
   Text,
@@ -12,6 +13,7 @@ import {assets} from '../../config/AssetsConfig';
 import {UserContext} from '../../../context/UserContext';
 import {JourneyContoller} from '../../controllers/JourneyController';
 import PageLoader from '../../components/PageLoader';
+import { API_SUCCESS } from '../../config/ApiConfig';
 
 const Journey = ({navigation}) => {
   const [data, setData] = useState([{}, {}, {}]);
@@ -19,10 +21,12 @@ const Journey = ({navigation}) => {
   const {getToken} = useContext(UserContext);
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
+  const [bedges, setBedges] = useState([]);
 
   useEffect(() => {
     const focusHandler = navigation.addListener('focus', () => {
       getBookings();
+      getBadges()
     });
     return focusHandler;
   }, []);
@@ -36,6 +40,18 @@ const Journey = ({navigation}) => {
     setLoading(false);
     setLocations(result.locations);
     setTotal(getTotal(result.locations));
+  };
+
+
+  const getBadges = async () => {
+    setLoading(true);
+    const token = await getToken();
+    const instance = new JourneyContoller();
+    const result = await instance.getAllBedges(token);
+    console.log(result, 'result');
+    setLoading(false);
+    const mybedge = result.badges.filter(item => item?.status === true);
+    setBedges(mybedge);
   };
 
   const getTotal = allLocation => {
@@ -58,7 +74,7 @@ const Journey = ({navigation}) => {
           </View>
           <View style={styles.rideBoxes}>
             {locations.map((item, index) => (
-              <View style={styles.rideBox}>
+              <View style={styles.rideBox} key={index+'booking'}>
                 <Text style={styles.rideText1}>{item.name}</Text>
                 <Text style={styles.count}>{item.bookings_count}</Text>
               </View>
@@ -74,9 +90,15 @@ const Journey = ({navigation}) => {
           </View>
 
           <View style={styles.achBoxes}>
-            {data.map((item, index) => (
-              <View style={styles.achBox} key={index}>
-                <Image source={assets.lock} style={styles.achImg} />
+            {bedges?.map((item, index) => (
+              <View key={index+'ach'}>
+              {index < 3 && 
+             <View style={styles.achBox} >
+                <ImageBackground source={{uri: API_SUCCESS+'/'+item.image}} resizeMode="contain" style={styles.image}>
+                  
+               </ImageBackground>
+           </View>
+              }
               </View>
             ))}
           </View>
@@ -154,12 +176,24 @@ const styles = StyleSheet.create({
   },
   achBox: {
     backgroundColor: '#f2f2f2',
-    padding: 24,
+    width:72,
+    height:72,
     borderRadius: 16,
+    marginBottom: 30,
+    borderWidth:1,
+    borderColor: '#f2f2f2',
+    overflow:'hidden'
   },
   achImg: {
     width: 28,
     height: 28,
-    tintColor: '#161415',
+    tintColor: '#000',
+    alignSelf:'center'
   },
+  image:{
+    flex: 1,
+    justifyContent: 'center',
+    borderRadius: 16,
+    overflow:'hidden'
+  }
 });

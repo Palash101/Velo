@@ -14,6 +14,8 @@ PODS:
     - ReactCommon/turbomodule/core (= 0.71.10)
   - Firebase (10.10.0):
     - Firebase/Core (= 10.10.0)
+  - Firebase/Analytics (10.10.0):
+    - Firebase/Core
   - Firebase/Core (10.10.0):
     - Firebase/CoreOnly
     - FirebaseAnalytics (~> 10.10.0)
@@ -544,6 +546,10 @@ PODS:
     - React-Core
   - RNDateTimePicker (7.3.0):
     - React-Core
+  - RNFBAnalytics (18.3.0):
+    - Firebase/Analytics (= 10.10.0)
+    - React-Core
+    - RNFBApp
   - RNFBApp (18.0.0):
     - Firebase/CoreOnly (= 10.10.0)
     - React-Core
@@ -662,6 +668,7 @@ DEPENDENCIES:
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNCMaskedView (from `../node_modules/@react-native-masked-view/masked-view`)"
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
+  - "RNFBAnalytics (from `../node_modules/@react-native-firebase/analytics`)"
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
@@ -781,6 +788,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-masked-view/masked-view"
   RNDateTimePicker:
     :path: "../node_modules/@react-native-community/datetimepicker"
+  RNFBAnalytics:
+    :path: "../node_modules/@react-native-firebase/analytics"
   RNFBApp:
     :path: "../node_modules/@react-native-firebase/app"
   RNFBMessaging:
@@ -862,6 +871,7 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: ddc4ee162bfd41b0d2c68bf2d95acd81dd7f1f93
   RNCMaskedView: 949696f25ec596bfc697fc88e6f95cf0c79669b6
   RNDateTimePicker: 01e6d27ba2e0931cd05049c5bff6171c3c027ea8
+  RNFBAnalytics: 7babe9fc072d8bcac0f21b97808ef028d988f7e9
   RNFBApp: 7da45c10070789f5e4337a5534139976e8d74e0a
   RNFBMessaging: fd543fa2aa4688fac4e88b1ce54e39cac4339b32
   RNGestureHandler: dec4645026e7401a0899f2846d864403478ff6a5
