@@ -42,10 +42,9 @@ const Forgot = () => {
           const instance = new AuthContoller();
           const result = await instance.forgotPassword(email);
 
-          console.log(result, 'resultt');
 
           if (result.status === 'success') {
-            toast.show('', result.message);
+            toast.show(result.message);
             navigation.navigate('Login');
             setLoading(false)
           } else {
@@ -54,14 +53,14 @@ const Forgot = () => {
           }
         }
       } else {
-        toast.show('please enter email.and password');
+        toast.show('please enter your email address.');
       }
     }
   };
 
   return (
     <>
-    <PageLoader loading={loading} />
+    {/* <PageLoader loading={loading} /> */}
       <PageContainer>
         <ScrollView contentContainerStyle={{flex: 1}}>
           <View style={{width: '100%', maxWidth: 320, alignSelf: 'center'}}>
@@ -73,6 +72,7 @@ const Forgot = () => {
                 label={'Reset Password'}
                 onPress={submit}
                 loading={loading}
+                disabled={loading}
                 style={{marginTop: 20}}
               />
 

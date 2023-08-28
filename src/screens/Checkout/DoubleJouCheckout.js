@@ -3,6 +3,7 @@ import {
   Alert,
   Dimensions,
   Image,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -51,10 +52,10 @@ const DoubleJoyCheckout = () => {
               paddingHorizontal: 10,
               display: 'flex',
               justifyContent: 'center',
-              marginTop: 50,
+              marginTop: Platform.OS === 'android' ? 0 : 50,
             }}>
             <Text style={styles.mainHeading}>Double Joy</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('DoubleJoy')}>
+            <TouchableOpacity style={{marginTop:Platform.OS === 'android' ? -20 : 0}} onPress={() => navigation.navigate('DoubleJoy')}>
               <Image source={assets.back} style={{width: 20, height: 20}} />
             </TouchableOpacity>
           </View>
@@ -124,9 +125,10 @@ const width = Dimensions.get('window').width;
 const styles = StyleSheet.create({
   mainHeading: {
     fontSize: 20,
-    fontWeight: '700',
     textAlign: 'center',
     marginTop: 10,
+    color:'#161415',
+    fontFamily:'Gotham-Medium'
   },
   tab: {
     display: 'flex',
@@ -206,7 +208,8 @@ const styles = StyleSheet.create({
   },
   priceText: {
     fontSize: 18,
-    fontFamily: 'Gotham-Black',
+    color:'#161415',
+    fontFamily:'Gotham-Medium'
   },
   payBtnBox:{
     display:'flex',

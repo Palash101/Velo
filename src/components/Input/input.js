@@ -14,9 +14,9 @@ export const Input = props => {
         onChangeText={text => props.onChang(text)}
         activeOutlineColor="#161415"
         outlineColor="transparent"
-        contentStyle={{color: '#161415', textTransform: 'uppercase'}}
+        contentStyle={{color: '#161415',fontFamily:'Gotham-Medium' }}
         textColor="#161415"
-        theme={{colors: {primary: '#161415'}, textTransform: 'uppercase'}}
+        theme={{colors: {primary: '#161415'}}}
         value={props.value ? props.value : ''}
         {...props}
       />
@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     color: '#161415',
     borderBottomColor: '#161415',
     borderBottomWidth: 1,
-    //textTransform: 'uppercase',
+    textTransform: 'uppercase',
     fontSize: 14,
     fontFamily: 'Gotham-Medium',
   },

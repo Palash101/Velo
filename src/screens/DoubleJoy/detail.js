@@ -3,6 +3,7 @@ import {
   Alert,
   Dimensions,
   Image,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -30,7 +31,7 @@ const DoubleJoyDetail = ({navigation}) => {
             justifyContent: 'center',
           }}>
           <Text style={styles.mainHeading}>Double Joy</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('DoubleJoy')}>
+          <TouchableOpacity style={{marginTop:Platform.OS === 'android' ? -20 : 0}} onPress={() => navigation.navigate('DoubleJoy')}>
             <Image source={assets.back} style={{width: 20, height: 20}} />
           </TouchableOpacity>
           <Image source={assets.shake} style={styles.itemImage} />
@@ -89,7 +90,7 @@ const DoubleJoyDetail = ({navigation}) => {
             <RoundedGreyButton
               style={styles.buyBtn}
               label={'ADD NOTE TO ORDER'}
-              onPress={() => console.log('sdf')}
+              onPress={() => console.log('')}
             />
             <RoundedGreyButton
               style={styles.buyBtn}
@@ -110,8 +111,9 @@ const styles = StyleSheet.create({
   mainHeading: {
     fontSize: 20,
     textAlign: 'center',
-    marginTop: 60,
+    marginTop: Platform.OS === 'android' ? 10 : 60,
     fontFamily: 'Gotham-Medium',
+    color:'#161415',
   },
   itemImage: {
     width: 160,
@@ -145,7 +147,6 @@ const styles = StyleSheet.create({
   incText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: '700',
     width: '100%',
     textAlign: 'center',
     lineHeight: 17,
@@ -170,6 +171,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 24,
     width: 24,
+    color:'#161415',
+    fontFamily:'Gotham-Medium'
   },
   buyBtn: {
     marginTop: 20,
@@ -217,17 +220,18 @@ const styles = StyleSheet.create({
     paddingHorizontal:'15%',
   },
   title:{
-    fontSize:21,
+    fontSize:18,
     fontFamily:'Gotham-Medium',
     textTransform:'uppercase',
     marginBottom:5,
+    color:'#161415',
   },
   subTitle:{
     fontSize:10,
     textTransform:'uppercase',
     lineHeight:16,
-    color:'#000',
     fontFamily:'Gotham-Book',
+    color:'#161415',
   },
   
 });

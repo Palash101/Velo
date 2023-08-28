@@ -12,7 +12,6 @@ const Terms = ({navigation}) => {
   const getTerms = async() => {
     const instance = new TermsController();
     const result = await instance.getTermsCondition();
-    console.log(result,'res')
     if(result.status === 'success'){
       setData(result.terms_and_conditions);
     }

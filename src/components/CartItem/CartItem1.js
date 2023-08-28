@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import {RoundedDarkButton} from '../Buttons';
 import {assets} from '../../config/AssetsConfig';
 
 const width = Dimensions.get('window').width;
@@ -21,16 +20,16 @@ export const CartItem1 = ({item, onPress}) => {
       <View style={styles.contBox}>
         <Text style={styles.title}>{item.name}</Text>
         <View style={styles.priceBox}>
-            <Text style={styles.price}>15 QR</Text>
-            <View style={styles.addToCart}>
+          <Text style={styles.price}>15 QR</Text>
+          <View style={styles.addToCart}>
             <TouchableOpacity style={styles.decrementBox}>
-                <Text style={styles.decrText}>-</Text>
+              <Text style={styles.decrText}>-</Text>
             </TouchableOpacity>
             <Text style={styles.qty}>1</Text>
             <TouchableOpacity style={styles.incrementBox}>
-                <Text style={styles.incText}>+</Text>
+              <Text style={styles.incText}>+</Text>
             </TouchableOpacity>
-            </View>
+          </View>
         </View>
       </View>
     </TouchableOpacity>
@@ -44,28 +43,30 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     marginHorizontal: 10,
     width: width - 60,
-    display:'flex',
-    flexDirection:'row'
+    display: 'flex',
+    flexDirection: 'row',
   },
-  imgBox:{
-    width:80,
-    height:80,
-    backgroundColor:'#f2f2f2',
-    borderRadius:12,
-    marginRight:15,
+  imgBox: {
+    width: 80,
+    height: 80,
+    backgroundColor: '#f2f2f2',
+    borderRadius: 12,
+    marginRight: 15,
   },
-  
+
   title: {
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: 16,
     textTransform: 'uppercase',
     marginTop: 10,
+    color: '#161415',
+    fontFamily: 'Gotham-Medium',
   },
   price: {
-    fontSize: 18,
+    fontSize: 16,
     marginVertical: 7,
-    fontWeight: '700',
-    marginRight:20,
+    marginRight: 20,
+    color: '#161415',
+    fontFamily: 'Gotham-Medium',
   },
   itemImage: {
     width: 40,
@@ -121,5 +122,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 24,
     width: 24,
+    color: '#161415',
+    fontFamily: 'Gotham-Medium',
   },
 });

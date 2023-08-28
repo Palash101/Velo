@@ -2,6 +2,7 @@ import React, {useContext, useEffect} from 'react';
 import {Dimensions, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {PageContainer} from '../../components/Container';
 import {
+  RoundedDarkButton,
   RoundedGreyButton,
   RoundedOutlineButton,
   RoundedThemeButton,
@@ -16,7 +17,7 @@ import {ClassContoller} from '../../controllers/ClassController';
 import {ModalView} from '../../components/ModalView';
 import {Heading, Heading2} from '../../components/Typography';
 
-const Planner = () => {
+const Planner = ({navigation}) => {
   const [classes, setClasses] = useState([
     {name: 'CYCLE', data: [{}, {}, {}]},
     {name: 'RACK', data: [{}, {}, {}]},
@@ -30,8 +31,11 @@ const Planner = () => {
   const [cancelModal, setCancelModal] = useState(false);
 
   useEffect(() => {
-    getBookings();
-  }, [refresh]);
+    const focusHandler = navigation.addListener('focus', () => {
+      getBookings();
+    });
+    return focusHandler;
+  }, [refresh, navigation]);
 
   const getBookings = async () => {
     setLoading(true);
@@ -39,10 +43,14 @@ const Planner = () => {
     const token = await getToken();
     const instance = new PlannerContoller();
     const result = await instance.getAllBooking(token);
-    console.log(result, 'result');
     setLoading(false);
+    console.log(result,'result')
+    const result1 = result.data.filter(
+      item => item.attributes.status !== 'Cancelled',
+    );
 
-    const allData = joinGroup(result.data);
+    const allData = joinGroup(result1);
+    console.log(allData,'allData')
     setData(allData);
   };
 
@@ -77,11 +85,9 @@ const Planner = () => {
     const dt = {
       booking_id: cancelId,
     };
-    console.log(dt, 'dtttt');
     const token = await getToken();
     const instance = new ClassContoller();
     const result = await instance.CancelClass(dt, token);
-    console.log(result, 'result');
     if (result.status === 'success') {
       toast.show(result.msg);
       setLoading(false);
@@ -99,7 +105,7 @@ const Planner = () => {
         <View style={styles.tab}>
           <RoundedGreyButton
             label={'UPCOMING'}
-            onPress={() => console.log('hello')}
+            onPress={() => console.log('')}
             style={styles.tabBtn}
           />
         </View>
@@ -107,23 +113,26 @@ const Planner = () => {
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{paddingHorizontal: 10}}>
+            
           <View style={styles.classesList}>
-            {data?.length ? (
+       
+
+            {data?.length > 0 ? (
               <>
                 {data.map((item, key) => (
-                  <>
+                  <View key={key + 'pancat'}>
                     <Heading
                       style={{marginTop: 10, fontFamily: 'Gotham-Medium'}}>
                       {item.name}
                     </Heading>
                     {item.data.map((item, key) => (
                       <PlannerClass
-                        key={key+'plan'}
+                        key={key + 'plan'}
                         item={item}
                         cancelModalOpen={cancelModalOpen}
                       />
                     ))}
-                  </>
+                  </View>
                 ))}
               </>
             ) : (
@@ -136,7 +145,16 @@ const Planner = () => {
                     <SkeltonCard />
                   </>
                 ) : (
-                  <Text style={styles.noData}>No data available</Text>
+                  <View>
+                    <Text style={styles.noData}>
+                      No upcoming bookings available.
+                    </Text>
+                    <RoundedDarkButton
+                      label={'Book Now'}
+                      onPress={() => navigation.navigate('classes')}
+                      style={{width:150,alignSelf:'center'}}
+                    />
+                  </View>
                 )}
               </>
             )}
@@ -209,7 +227,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   classesList: {
-    pasdingBottom: 260,
+    paddingBottom: 10,
   },
   calander: {
     marginBottom: 20,
@@ -218,5 +236,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     alignSelf: 'center',
     marginTop: height / 2 - 200,
+    marginBottom:20
   },
 });

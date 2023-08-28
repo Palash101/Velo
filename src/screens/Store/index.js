@@ -2,6 +2,7 @@ import React, {useEffect} from 'react';
 import {
   Alert,
   Dimensions,
+  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -12,7 +13,8 @@ import {RoundedDarkButton, RoundedThemeButton} from '../../components/Buttons';
 import {FlatList} from 'react-native-gesture-handler';
 import {useState} from 'react';
 import {PackageItem} from '../../components/PackageItem';
-import { CartItem } from '../../components/CartItem';
+import {CartItem} from '../../components/CartItem';
+import {assets} from '../../config/AssetsConfig';
 
 const Store = () => {
   const [active, setActive] = useState('Shakes');
@@ -36,9 +38,22 @@ const Store = () => {
   return (
     <>
       <PageContainer>
-        <View style={{paddingHorizontal: 10}}>
-            <Text style={styles.mainHeading}>Store</Text>
-        
+        <View
+          style={{
+            display: 'flex',
+            flex: 1,
+            textAlign: 'center',
+            width: '100%',
+            justifyContent: 'center',
+          }}>
+          <Image
+            source={assets.comingSoon}
+            style={{alignSelf: 'center', width: 150, height: 100}}
+          />
+        </View>
+
+        {/* <View style={{paddingHorizontal: 10}}>
+          <Text style={styles.mainHeading}>Store</Text>
 
           <View style={styles.classesList}>
             <FlatList
@@ -55,7 +70,7 @@ const Store = () => {
               )}
             />
           </View>
-        </View>
+        </View> */}
       </PageContainer>
     </>
   );
@@ -65,12 +80,13 @@ export default Store;
 const width = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
-    mainHeading:{
-        fontSize:20,
-        fontWeight:'700',
-        textAlign:'center',
-        marginTop:10,
-    },
+  mainHeading: {
+    fontSize: 20,
+    textAlign: 'center',
+    marginTop: 10,
+    fontFamily: 'Gotham-Black',
+    color: '#161415',
+  },
   tab: {
     display: 'flex',
     flexDirection: 'row',
@@ -83,7 +99,7 @@ const styles = StyleSheet.create({
   },
   classesList: {
     marginBottom: 100,
-    marginTop:10,
+    marginTop: 10,
   },
   calander: {
     marginBottom: 20,

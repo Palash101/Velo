@@ -1,4 +1,4 @@
-import React, {Component, useContext, useState} from 'react';
+import React, {Component, useContext, useEffect, useState} from 'react';
 import {
   Image,
   Platform,
@@ -24,15 +24,20 @@ import RadioForm, {
   RadioButtonLabel,
 } from 'react-native-simple-radio-button';
 import DatePicker from 'react-native-datepicker';
+import DateTimePicker from '@react-native-community/datetimepicker';
+
 // import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 import CheckBox from 'react-native-check-box';
+//  import { Checkbox } from 'react-native-paper';
+
 import {ModalView} from '../../components/ModalView';
 import Terms from '../Terms';
 import PrivacyPolicy from '../PrivacyPolicy';
 import {CountryPicker} from 'react-native-country-codes-picker';
 import {assets} from '../../config/AssetsConfig';
 import {UserContext} from '../../../context/UserContext';
+import {Modal} from 'react-native-paper';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -52,7 +57,7 @@ const SignUp = () => {
   const [phone, setPhone] = useState('');
 
   const [terms, setTerms] = useState(false);
-  const [termsModal, setTermsModal] = useState(false);
+  const [termsConditionModal, setTermsConditionModal] = useState(false);
   const [policyModal, setPolicyModal] = useState(false);
   const [code, setCode] = useState('+91');
   const [countryPicker, setCountryPicker] = useState(false);
@@ -80,13 +85,14 @@ const SignUp = () => {
         email: email,
         password: password,
         confirmPassword: confirmPassword,
-        dob: dob,
-        phone: phone,
+        dob: moment(dob).format('YYYY-MM-DD'),
+        phone: code + phone,
         gender: gender,
       };
       const instance = new AuthContoller();
       const result = await instance.signUpUser(data);
-      if (result.status) {
+      setLoading(false);
+      if (result?.status) {
         userCtx.setUser(result.user);
         setToken(result.access_token);
         setAuth(true);
@@ -95,11 +101,14 @@ const SignUp = () => {
       } else {
         var errors = result.errors;
         var value = '';
-        if (errors.phone) {
-           value = errors.phone + ' ,';
+        if (errors?.phone) {
+          value = errors.phone + ' ,';
         }
-        if (errors.email) {
+        if (errors?.email) {
           value = value + errors.email;
+        }
+        if (value === '') {
+          value = JSON.stringify(result.error);
         }
 
         setLoading(false);
@@ -152,7 +161,7 @@ const SignUp = () => {
     return (
       <View style={styles.termsBox}>
         <Text style={styles.normalText}>By signup you agree our </Text>
-        <TouchableOpacity onPress={() => setTermsModal(true)}>
+        <TouchableOpacity onPress={() => setTermsConditionModal(true)}>
           <Text style={styles.mediumText}>Terms and Conditions</Text>
         </TouchableOpacity>
         <Text style={styles.normalText}> and </Text>
@@ -165,9 +174,15 @@ const SignUp = () => {
 
   return (
     <>
-      <PageLoader loading={loading} />
-      <PageContainer>
-        <ScrollView contentContainerStyle={{paddingBottom: 10}}>
+      {/* <PageLoader loading={loading} /> */}
+      <View
+        style={{
+          paddingTop: Platform.OS === 'ios' ? 0 : 0,
+          backgroundColor: '#fff',
+        }}>
+        <ScrollView
+          contentContainerStyle={{paddingBottom: 10}}
+          showsVerticalScrollIndicator={false}>
           <View
             style={{
               width: '100%',
@@ -175,143 +190,185 @@ const SignUp = () => {
               alignSelf: 'center',
             }}>
             <AuthHeader title={'Sign up'} />
+
             <View style={styles.form}>
-              <Input
-                value={first_name}
-                label={'FIRST NAME'}
-                onChang={setFirstName}
-              />
-              <Input
-                value={last_name}
-                label={'LAST NAME'}
-                onChang={setLastName}
-              />
-              <Input
-                value={email}
-                label={'E-MAIL ADDRESS'}
-                onChang={setEmail}
-              />
-
-              <View style={{display: 'flex', flexDirection: 'row'}}>
-                <TouchableOpacity
-                  style={styles.codeInput}
-                  onPress={() => setCountryPicker(true)}>
-                  <Text style={styles.codeText}>
-                    {selectedFlag} {code}
-                  </Text>
-                  <Image
-                    source={assets.chevron}
-                    style={{width: 14, height: 14, marginTop: 7}}
-                  />
-                </TouchableOpacity>
+              <View>
                 <Input
-                  value={phone}
-                  label={'PHONE NUMBER'}
-                  onChang={setPhone}
-                  keyboardType={'numeric'}
-                  style={styles.countryPicker}
+                  value={first_name}
+                  label={'FIRST NAME'}
+                  onChang={setFirstName}
                 />
-              </View>
-
-              <View style={{position: 'relative'}}>
-                <Text
-                  style={{
-                    paddingTop: 15,
-                    fontSize: 12,
-                    color: '#333',
-                    marginLeft: 15,
-                  }}>
-                  BIRTH DATE
-                </Text>
-                {/* <Input
-                  value={moment(dob).format('YYYY-MM-DD')}
-                  onChangeText={() => console.log('')}
-                  label={'BIRTH DATE'}
-                  disabled={true}
+                <Input
+                  value={last_name}
+                  label={'LAST NAME'}
+                  onChang={setLastName}
                 />
-                <TouchableOpacity
-                  style={{
-                    height: 50,
-                    position: 'absolute',
-                    left: 15,
-                    right: 15,
-                    top: 0,
-                  }}
-                  onPress={() => showDatePicker()}></TouchableOpacity> */}
+                <Input
+                  value={email}
+                  label={'E-MAIL ADDRESS'}
+                  onChang={setEmail}
+                />
 
-                <DatePicker
-                  style={{
-                    borderBottomWidth: 1.5,
-                    borderColor: '#000000',
-                    width: '100%',
-                    paddingTop: 0,
-                  }}
-                  placeholder="Birth Date"
-                  date={dob}
-                  mode="date"
-                  format="YYYY-MM-DD"
-                  maxDate="2010-01-01"
-                  confirmBtnText="Confirm"
-                  cancelBtnText="Cancel"
-                  customStyles={{
-                    dateIcon: {
-                      display: 'none',
-                    },
+                <View style={{display: 'flex', flexDirection: 'row'}}>
+                  <TouchableOpacity
+                    style={styles.codeInput}
+                    onPress={() => setCountryPicker(true)}>
+                    <Text style={styles.codeText}>
+                      {selectedFlag} {code}
+                    </Text>
+                    <Image
+                      source={assets.chevron}
+                      style={{width: 14, height: 14, marginTop: 7}}
+                    />
+                  </TouchableOpacity>
+                  <Input
+                    value={phone}
+                    label={'PHONE NUMBER'}
+                    onChang={setPhone}
+                    keyboardType={'numeric'}
+                    style={styles.countryPicker}
+                  />
+                </View>
 
-                    dateText: {
+                <View style={{position: 'relative'}}>
+                  <Text
+                    style={{
+                      paddingTop: 15,
+                      fontSize: 12,
+                      color: '#333',
+                      marginLeft: 15,
+                    }}>
+                    BIRTH DATE
+                  </Text>
+
+                  {Platform.OS === 'android' ? (
+                    <View style={{marginTop: -25}}>
+                      <TouchableOpacity
+                        style={{
+                          height: 50,
+                          position: 'absolute',
+                          left: 0,
+                          right: 0,
+                          top: 10,
+                          zIndex: 999,
+                        }}
+                        onPress={() => showDatePicker()}></TouchableOpacity>
+                      <Input
+                        value={moment(dob).format('YYYY-MM-DD')}
+                        onChangeText={() => console.log('')}
+                        label={' '}
+                        disabled={true}
+                      />
+                    </View>
+                  ) : (
+                    <DatePicker
+                      style={{
+                        borderBottomWidth: 1.5,
+                        borderColor: '#000000',
+                        width: '100%',
+                        paddingTop: 0,
+                      }}
+                      placeholder="Birth Date"
+                      date={dob}
+                      mode="date"
+                      format="YYYY-MM-DD"
+                      maxDate="2010-01-01"
+                      confirmBtnText="Confirm"
+                      cancelBtnText="Cancel"
+                      customStyles={{
+                        dateIcon: {
+                          display: 'none',
+                        },
+
+                        dateText: {
+                          fontSize: 14,
+                          color: '#000000',
+                          paddingLeft: 15,
+                          paddingBottom: 0,
+                        },
+                        dateInput: {
+                          fontSize: 14,
+                          color: '#000000',
+                          marginTop: 0,
+                          borderWidth: 0,
+                          alignItems: 'flex-start',
+                          width: '100%',
+                        },
+                      }}
+                      onDateChange={date => {
+                        setDob(date);
+                      }}
+                    />
+                  )}
+                </View>
+
+                <View style={{marginTop: 15}}>
+                  {/* <RadioForm
+                    radio_props={radio_props}
+                    buttonColor={'#000000'}
+                    formHorizontal={true}
+                    initial={0}
+                    buttonSize={10}
+                    buttonOuterSize={20}
+                    labelStyle={{
                       fontSize: 14,
+                      fontFamily: 'Gotham-Book',
                       color: '#000000',
-                      paddingLeft: 15,
-                      paddingBottom: 0,
-                    },
-                    dateInput: {
-                      fontSize: 14,
-                      color: '#000000',
-                      marginTop: 0,
-                      borderWidth: 0,
-                      alignItems: 'flex-start',
-                      width: '100%',
-                    },
-                  }}
-                  onDateChange={date => {
-                    setDob(date);
-                  }}
+                      paddingRight: 15,
+                      marginBottom: 10,
+                    }}
+                    onPress={value => {
+                      setGender(value);
+                    }}
+                  /> */}
+
+                  <RadioForm
+                    formHorizontal={true}
+                    animation={true}
+                  >
+                  {
+                    radio_props.map((obj, i) => (
+                      <RadioButton labelHorizontal={true} key={i} >
+                        <RadioButtonInput
+                          obj={obj}
+                          index={i}
+                          isSelected={gender === obj.value}
+                          onPress={(value) => setGender(value)}
+                          borderWidth={1}
+                          buttonInnerColor={'#000'}
+                          buttonOuterColor={gender === obj.value ? '#161415' : '#161415'}
+                          buttonSize={10}
+                          buttonOuterSize={18}
+                          buttonStyle={{}}
+                          buttonWrapStyle={{marginLeft: 10}}
+                        />
+                        <RadioButtonLabel
+                          obj={obj}
+                          index={i}
+                          labelHorizontal={true}
+                          onPress={(value) => setGender(value)}
+                          labelStyle={{fontSize: 14, color: '#161415'}}
+                          labelWrapStyle={{}}
+                        />
+                      </RadioButton>
+                    ))
+                  }  
+                </RadioForm>
+                </View>
+
+                <Input
+                  value={password}
+                  label={'PASSWORD'}
+                  onChang={setPassword}
+                  secureTextEntry={true}
+                />
+                <Input
+                  value={confirmPassword}
+                  label={'CONFIRM PASSWORD'}
+                  onChang={setConfirmPassword}
+                  secureTextEntry={true}
                 />
               </View>
-
-              <View style={{marginTop: 15}}>
-                <RadioForm
-                  radio_props={radio_props}
-                  buttonColor={'#000000'}
-                  formHorizontal={true}
-                  initial={0}
-                  buttonSize={10}
-                  buttonOuterSize={20}
-                  labelStyle={{
-                    fontSize: 14,
-                    fontFamily: 'Gotham-Book',
-                    color: '#000000',
-                    paddingRight: 15,
-                    marginBottom: 10,
-                  }}
-                  onPress={value => {
-                    setGender(value);
-                  }}
-                />
-              </View>
-
-              <Input
-                value={password}
-                label={'PASSWORD'}
-                onChang={setPassword}
-                secureTextEntry={true}
-              />
-              <Input
-                value={confirmPassword}
-                label={'CONFIRM PASSWORD'}
-                onChang={setConfirmPassword}
-                secureTextEntry={true}
-              />
 
               <View
                 style={{width: '100%', marginTop: 20, flexDirection: 'row'}}>
@@ -341,6 +398,7 @@ const SignUp = () => {
                 style={{marginTop: 20, backgroundColor: '#000'}}
                 onPress={submit}
                 loading={loading}
+                disabled={loading}
               />
             </View>
 
@@ -358,12 +416,19 @@ const SignUp = () => {
             </View>
           </View>
         </ScrollView>
-      </PageContainer>
+      </View>
 
       <ModalView
-        visible={termsModal}
+        visible={termsConditionModal}
         heading="TERMS AND CONDITION"
-        setVisible={() => setTermsModal(false)}>
+        setVisible={() => setTermsConditionModal(false)}
+        style={{
+          height: 'auto',
+          marginTop: 260,
+          justifyContent: 'flex-end',
+          marginBottom: 0,
+          zIndex: 999,
+        }}>
         <Terms />
       </ModalView>
 
@@ -377,43 +442,23 @@ const SignUp = () => {
       <CountryPicker
         show={countryPicker}
         pickerButtonOnPress={item => {
-          console.log(item, 'item');
           setSelectedFlag(item.flag);
           setCode(item.dial_code);
           setCountryPicker(false);
         }}
       />
 
-      {/* {datePicker && (
-        <View>
-          <DateTimePicker
-            value={dob}
-            mode={'date'}
-            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-            is24Hour={true}
-            onChange={onDateSelected}
-            minimumDate={minDate}
-            maximumDate={maxDate}
-            textColor="#333"
-          />
-          {Platform.OS === 'ios' && (
-            <TouchableOpacity
-              style={{
-                backgroundColor: '#ddd',
-                width: 100,
-                padding: 10,
-                borderRadius: 10,
-                marginBottom: 30,
-                margin: 'auto',
-                alignSelf: 'center',
-                textAlign: 'center',
-              }}
-              onPress={() => setDatePicker(false)}>
-              <Text style={{fontSize: 18, textAlign: 'center'}}>OK!</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-      )} */}
+      {datePicker && (
+        <DateTimePicker
+          value={dob}
+          mode={'date'}
+          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+          is24Hour={true}
+          onChange={onDateSelected}
+          maximumDate={maxDate}
+          textColor="#333"
+        />
+      )}
     </>
   );
 };

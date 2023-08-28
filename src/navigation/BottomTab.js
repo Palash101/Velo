@@ -10,12 +10,13 @@ import Buy from '../screens/Buy';
 import Journey from '../screens/Journey';
 import ClassesStack from './ClassesStack';
 import HomeStack from './DoubleJoyStack';
+import {assets} from '../config/AssetsConfig';
 
 const Tab = createBottomTabNavigator();
 
 const BottomTab = ({navigation}) => {
   return (
-    <View style={{display:'flex',flex:1}}>
+    <View style={{display: 'flex', flex: 1}}>
       <Tab.Navigator tabBar={props => <MyTabBar {...props} />}>
         <Tab.Screen
           name={bottomMenu[0].name}
@@ -25,15 +26,7 @@ const BottomTab = ({navigation}) => {
             headerShown: false,
           }}
         />
-       
-        {/* <Tab.Screen
-          name={bottomMenu[1].name}
-          component={Classes}
-          options={{
-            tabBarLabel: bottomMenu[1].label,
-            headerShown: false,
-          }}
-        /> */}
+
         <Tab.Screen
           name={bottomMenu[1].name}
           component={Classes}
@@ -104,15 +97,22 @@ function MyTabBar({state, navigation}) {
               borderColor: '#ddd',
             }}>
             <Image
-              source={isFocused ? active : inActive}
+              source={assets.circle}
               style={{
-                tintColor: isFocused ? '#161415' : '#888',
-                width: 16,
-                height: 16,
+                tintColor: isFocused ? '#393939' : '#a7a9ac',
+                width: 14,
+                height: 14,
+                marginBottom: 4,
               }}
             />
             {!!label && (
-              <Text style={{color: isFocused ? '#161415' : '#888', fontSize: 10,marginTop:4,fontFamily:'Gotham-Medium'}}>
+              <Text
+                style={{
+                  color: '#161415',
+                  fontSize: 10,
+                  marginTop: 4,
+                  fontFamily: 'Gotham-Medium',
+                }}>
                 {label}
               </Text>
             )}

@@ -46,17 +46,21 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     marginHorizontal: 10,
     width: width / 2 - 40,
+    borderWidth:1,
+    borderColor:'#ddd'
   },
   title: {
     fontSize: 12,
-    fontWeight: '700',
     textTransform: 'uppercase',
     marginTop: 10,
+    color:'#161415',
+    fontFamily:'Gotham-Medium'
   },
   price: {
     fontSize: 18,
     marginVertical: 7,
-    fontWeight: '700',
+    color:'#161415',
+    fontFamily:'Gotham-Medium'
   },
   itemImage: {
     width: 30,
@@ -112,5 +116,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 24,
     width: 24,
+    color:'#161415',
+    fontFamily:'Gotham-Medium'
   },
 });

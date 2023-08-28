@@ -7,7 +7,6 @@ import {
   View,
 } from 'react-native';
 import {assets} from '../../config/AssetsConfig';
-import DrawerNavigation from '../../navigation/DrawerNavigation';
 import { useNavigation } from '@react-navigation/native';
 
 const TopBar = () => {

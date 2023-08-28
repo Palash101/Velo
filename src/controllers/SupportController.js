@@ -18,4 +18,23 @@ export class SupportController {
         return {success: false, error};
       });
   }
+
+  async getFaqs(token) {
+    return fetch(API_BASE + '/faqs', {
+      method: 'GET',
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Accept': 'application/json',
+      },
+    })
+      .then(response => response.json())
+      .then(responseJson => {
+        return responseJson;
+      })
+      .catch(error => {
+        console.log(error);
+        return {success: false, error};
+      });
+  }
+
 }

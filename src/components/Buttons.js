@@ -20,8 +20,11 @@ export const DarkButton = props => {
     style={{width:'100%'}}
       mode="elevated"
       contentStyle={styles.OutlineButtonText}
+      labelStyle={{color:'#fff'}}
+      
       onPress={() => props.onPress()}
-      {...props}>
+      {...props}
+      >
       
         <Text style={{fontSize:18,textTransform:'uppercase',color:'#fff',fontFamily: 'Gotham-Medium',}}>{props.label}</Text>
     
@@ -111,7 +114,7 @@ export const RoundedThemeButton = props => {
       contentStyle={styles.RoundedThemeButton}
       onPress={() => props.onPress()}
       {...props}>
-        <Text style={{fontSize:14,color:'#000',fontFamily: 'Gotham-Medium',lineHeight:16,textTransform:'uppercase'}}>{props.label}</Text>
+        <Text style={{fontSize:12,color:'#000',fontFamily: 'Gotham-Medium',lineHeight:16,textTransform:'uppercase'}}>{props.label}</Text>
      
     </Button>
   );
@@ -123,7 +126,7 @@ export const RoundedThemeLightButton = props => {
       contentStyle={styles.RoundedThemeButton}
       onPress={() => props.onPress()}
       {...props}>
-        <Text style={{fontSize:12,color:'#000',fontFamily: 'Gotham-Light',lineHeight:16,textTransform:'uppercase'}}>{props.label}</Text>
+        <Text style={{fontSize:12,color:'#000',fontFamily: 'Gotham-Medium',lineHeight:16,textTransform:'uppercase'}}>{props.label}</Text>
      
     </Button>
   );
@@ -136,7 +139,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
     width: '100%',
-    height: 55,
+    height: 50,
 
   },
   OutlineButtonText: {
@@ -200,9 +203,9 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   themeBtnText:{
-    fontSize:18,
+    fontSize:16,
     color:'#000',
-    fontFamily: 'Gotham-Light',
+    fontFamily: 'Gotham-Book',
     fontWeight:400,
   }
 });

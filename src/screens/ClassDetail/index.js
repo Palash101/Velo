@@ -37,6 +37,7 @@ import {UserContext} from '../../../context/UserContext';
 import {ModalView} from '../../components/ModalView';
 import {ClassContoller} from '../../controllers/ClassController';
 import {BuyContoller} from '../../controllers/BuyController';
+import {ProfileController} from '../../controllers/ProfileController';
 
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
@@ -55,11 +56,13 @@ const ClassDetail = props => {
   const [forceReload, setForseReload] = useState(false);
   const [cancelModal, setCancelModal] = useState(false);
   const [loadFooter, setLoadFooter] = useState(false);
-  const [refresh, setRefresh] = useState(true)
+  const [refresh, setRefresh] = useState(true);
+  const [waiting, setWaiting] = useState(false);
+  const [uid, setUid] = useState();
+  const [booking, setBooking] = useState();
 
   useEffect(() => {
     const focusHandler = navigation.addListener('focus', () => {
-      console.log('Refreshed');
       setPageUrl('');
       setItem();
       setSelectedSeat();
@@ -72,27 +75,21 @@ const ClassDetail = props => {
   }, [props.route.params, navigation]);
 
   useEffect(() => {
-      console.log('Refreshed');
-      setPageUrl('');
-      setItem();
-      setSelectedSeat();
-      setForseReload(!forceReload);
-      loadClassLayout();
-      getDetail();
-      getUserAllPackages();
+    setPageUrl('');
+    setItem();
+    setSelectedSeat();
+    setForseReload(!forceReload);
+    loadClassLayout();
+    getDetail();
+    getUserAllPackages();
   }, [refresh]);
 
-  useEffect(() => {
-    console.log(item?.id, 'itemm');
-  }, [setItem, item]);
-
-  
+  useEffect(() => {}, [setItem, item]);
 
   const getUserAllPackages = async () => {
     const token = await getToken();
     const instance = new BuyContoller();
     const result = await instance.getUserPackages(token);
-    console.log(result, 'userpackage');
     if (result.status === 'error') {
     } else {
       setUserPackages(result);
@@ -105,24 +102,39 @@ const ClassDetail = props => {
     const id = props.route.params.item.id;
     const instance = new ClassContoller();
     const result = await instance.getClassDetail(id, token);
-    console.log(result, 'pricee');
+
+    const instance1 = new ProfileController();
+    const userDetail = await instance1.getUserDetail(token);
+
+    if (result.class?.attributes?.user_waiting === true) {
+      let users = result.class?.attributes?.waitingUsers.filter(
+        user => user.user_id === userDetail.user.id,
+      );
+      setBooking(users[0]);
+    }
+    console.log(result.class)
     setItem(result.class);
     setLoading(false);
   };
 
   const loadClassLayout = async () => {
     const newToken = await getToken();
-    console.log(props.route.params.item, 'props.route.params');
     const id = props.route.params.item.id;
-    const url = API_LAYOUT + 'app/class-layout?id=' + id + '&token=' + newToken;
-    console.log(url, 'url');
+    const pageHeight = height - 100;
+    const url =
+      API_LAYOUT +
+      'app/class-layout?id=' +
+      id +
+      '&token=' +
+      newToken +
+      '&height=' +
+      pageHeight;
     setPageUrl(url);
     setLoading(false);
     setOpen(true);
   };
 
   const checkResponce = data => {
-    console.log('resback', data.url);
     if (data.url === API_SUCCESS + '/wallet/paymentsuccess') {
       toast.show('Class booked successfully');
       setOpen(false);
@@ -135,8 +147,9 @@ const ClassDetail = props => {
   };
 
   const bookNow = async () => {
-    console.log(selectedSeat, item.priceType, 'selected');
-    if (selectedSeat) {
+    if (item?.indoor === 1 && selectedSeat) {
+      setPayModal(true);
+    } else if (item?.indoor === 0) {
       setPayModal(true);
     } else {
       toast.show('Please select seat.');
@@ -144,25 +157,43 @@ const ClassDetail = props => {
   };
 
   const Checkout = async type => {
-    const data = {
-      classes_id: item.id,
-      type: type,
-      seat: selectedSeat,
-      device: 'mobile',
-    };
-    completeBooking(data);
+    if (waiting === true) {
+      const data = {
+        classes_id: item.id,
+        type: type,
+        device: 'mobile',
+      };
+      completeWaiting(data);
+    } else {
+      const data = {
+        classes_id: item.id,
+        type: type,
+        seat: selectedSeat,
+        device: 'mobile',
+      };
+      completeBooking(data);
+    }
   };
 
   const CheckoutFromPackage = async value => {
-    console.log(value.id, 'valuevalue');
-    const data = {
-      classes_id: item.id,
-      type: 'Package',
-      seat: selectedSeat,
-      device: 'mobile',
-      package_id: value.id,
-    };
-    completeBooking(data);
+    if (waiting === true) {
+      const data = {
+        classes_id: item.id,
+        type: 'Package',
+        device: 'mobile',
+        package_id: value.id,
+      };
+      completeWaiting(data);
+    } else {
+      const data = {
+        classes_id: item.id,
+        type: 'Package',
+        seat: selectedSeat,
+        device: 'mobile',
+        package_id: value.id,
+      };
+      completeBooking(data);
+    }
   };
 
   const completeBooking = async data => {
@@ -170,20 +201,32 @@ const ClassDetail = props => {
     const token = await getToken();
     const instance = new ClassContoller();
     const result = await instance.BookClass(data, token);
-    console.log(result, 'result');
+    console.log(result, 'res');
     if (result.status === 'success') {
       toast.show(result.msg);
       setPayModal(false);
       setLoading(false);
       navigation.goBack();
     } else {
-      toast.show(result.msg);
+      var value = '';
+      if (result.errors) {
+        var errors = result.errors;
+
+        if (errors?.seat) {
+          value = errors.seat + ' ,';
+        }
+        if (value === '') {
+          value = JSON.stringify(result.error);
+        }
+      } else {
+        value = result.msg;
+      }
+      toast.show(value);
       setLoading(false);
     }
   };
 
   const updateBooking = async () => {
-    console.log(selectedSeat, item.priceType, 'selected');
     if (selectedSeat) {
       setLoading(true);
       const data = {
@@ -193,7 +236,6 @@ const ClassDetail = props => {
       const token = await getToken();
       const instance = new ClassContoller();
       const result = await instance.UpdateClass(data, token);
-      console.log(result, 'result');
       if (result.status === 'success') {
         toast.show(result.msg);
         setLoading(false);
@@ -209,13 +251,21 @@ const ClassDetail = props => {
 
   const cancelBooking = async () => {
     setLoading(true);
+    let booking_id = '';
+    if (item?.attributes?.mine_booking === true) {
+      booking_id = item.bookings[0].id;
+    }
+    if (item?.attributes?.user_waiting === true) {
+      booking_id = booking.id;
+    }
+
     const data = {
-      booking_id: item.bookings[0].id,
+      booking_id: booking_id,
     };
+
     const token = await getToken();
     const instance = new ClassContoller();
     const result = await instance.CancelClass(data, token);
-    console.log(result, 'result');
     if (result.status === 'success') {
       toast.show(result.msg);
       setLoading(false);
@@ -227,9 +277,30 @@ const ClassDetail = props => {
     }
   };
 
-  const leaveWaitlist = async () => {};
+  const bookNowInWaing = () => {
+    setWaiting(true);
+    setLoading(true);
+    setTimeout(() => {
+      setPayModal(true);
+      setLoading(false);
+    }, 1000);
+  };
 
-  const bookNowInWaing = async () => {};
+  const completeWaiting = async data => {
+    setLoading(true);
+    const token = await getToken();
+    const instance = new ClassContoller();
+    const result = await instance.joinWaitingClass(data, token);
+    if (result.status === 'success') {
+      toast.show(result.msg);
+      setPayModal(false);
+      setLoading(false);
+      navigation.goBack();
+    } else {
+      toast.show(result.msg);
+      setLoading(false);
+    }
+  };
 
   const renderButton = () => {
     if (item?.attributes) {
@@ -239,25 +310,31 @@ const ClassDetail = props => {
       ) {
         return (
           <View
-            style={{textAlign: 'center', alignItems: 'center', marginTop: -40}}>
+            style={{
+              textAlign: 'center',
+              alignItems: 'center',
+              marginTop: item.indoor === 0 ? -20 : -45,
+            }}>
             <Text style={{fontSize: 12}}>Booked</Text>
             <RoundedRedButton
               label={'CANCEL'}
               onPress={() => setCancelModal(true)}
               style={{width: 120, marginLeft: 5, marginTop: 5}}
             />
-            <RoundedDarkButton2
-              label={'UPDATE BIKE'}
-              onPress={updateBooking}
-              style={{width: 120, marginLeft: 5,marginTop:5}}
-            />
+            {item.indoor === 1 && (
+              <RoundedDarkButton2
+                label={`UPDATE ${item?.location.spot_name}`}
+                onPress={updateBooking}
+                style={{width: 120, marginLeft: 5, marginTop: 5}}
+              />
+            )}
           </View>
         );
       } else if (item?.attributes?.user_waiting === true) {
         return (
           <RoundedDarkButton2
             label={'LEAVE WAITLIST'}
-            onPress={leaveWaitlist}
+            onPress={cancelBooking}
             style={{width: 120, marginLeft: 5}}
           />
         );
@@ -268,11 +345,11 @@ const ClassDetail = props => {
         item.attributes.booking_count_status.waiting_available !== 0
       ) {
         return (
-          <RoundedDarkButton
+          <RoundedDarkButton2
             label={'JOIN WAITLIST'}
             onPress={bookNowInWaing}
             theme={{colors: {primary: 'green'}}}
-            style={{width: 150, marginLeft: 5, padding: 0}}
+            style={{width: 120, marginLeft: 5, marginTop: 5}}
           />
         );
       } else {
@@ -287,6 +364,27 @@ const ClassDetail = props => {
     }
   };
 
+  const renderWaiting = () => {
+    if (
+      item.attributes.user_waiting === false &&
+      item.attributes.mine_booking === false &&
+      item.attributes.booking_count_status.available === 0 &&
+      item.attributes.booking_count_status.waiting_available !== 0
+    ) {
+      return (
+        <Text style={styles.waitlist}>
+          WAITING LIST : {item.attributes.booking_count_status?.waiting}
+        </Text>
+      );
+    } else if (item.attributes.user_waiting === true) {
+      return (
+        <Text style={styles.waitlist}>WAITING : {booking?.waiting_no}</Text>
+      );
+    } else {
+      return <></>;
+    }
+  };
+
   return (
     <>
       <PageLoader loading={loading} />
@@ -295,16 +393,19 @@ const ClassDetail = props => {
         style={{
           paddingTop: Platform.OS === 'ios' ? 0 : 0,
           backgroundColor: '#fff',
+          height: height - 70,
+          paddingBottom: 20,
         }}>
-        <ScrollView
-          contentContainerStyle={{
+        <View
+          style={{
             bottom: 0,
-            height: height - 180,
-            backgroundColor: '#fff',
-          }}
-         
-          
-          >
+            height:
+              Platform.OS === 'android'
+                ? height - 140
+                : height < 700
+                ? height - 105
+                : height - 165,
+          }}>
           {pageUrl && (
             <WebView
               source={{
@@ -322,13 +423,21 @@ const ClassDetail = props => {
               onLoadEnd={() => setLoadFooter(true)}
             />
           )}
-        </ScrollView>
+        </View>
         {loadFooter === true && item ? (
           <View style={styles.footer}>
-            <Text style={styles.smallPara}>
-              THOSE WHO ARRIVE 5 MINS AFTER THE START OF THE CLASS WILL NOT BE
-              PERMITTED TO ENTER
-            </Text>
+            {renderWaiting()}
+            {item?.attributes?.user_waiting === true ? (
+              <Text style={styles.smallPara}>
+                YOU WILL AUTOMATICALLY BE ENROLLED IN THE CLASS WHEN THERE IS
+                AVAILABILITY
+              </Text>
+            ) : (
+              <Text style={styles.smallPara}>
+                THOSE WHO ARRIVE 5 MINS AFTER THE START OF THE CLASS WILL NOT BE
+                PERMITTED TO ENTER
+              </Text>
+            )}
             {renderButton()}
           </View>
         ) : (
@@ -345,11 +454,12 @@ const ClassDetail = props => {
           marginTop: 260,
           justifyContent: 'flex-end',
           marginBottom: 0,
+          zIndex: 999,
         }}>
         <View style={styles.summeryBox}>
           <View style={styles.modalTotalBox}>
             <Text style={{fontSize: 14, textAlign: 'center'}}>
-            Are you sure you want to cancel your booking?
+              Are you sure you want to cancel your booking?
             </Text>
           </View>
 
@@ -358,7 +468,7 @@ const ClassDetail = props => {
               display: 'flex',
               flexDirection: 'row',
               justifyContent: 'flex-end',
-              marginTop: 25,
+              marginTop: 15,
             }}>
             <RoundedOutlineButton
               label={'NO'}
@@ -386,10 +496,25 @@ const ClassDetail = props => {
           zIndex: 999,
         }}>
         <View style={styles.summeryBox}>
-          <View style={styles.modalTotalBox}>
-            <Text style={styles.priceText}>{item?.location.spot_name}</Text>
-            <Text style={styles.priceText}>{selectedSeat}</Text>
-          </View>
+          {waiting === false ? (
+            <>
+              {item?.indoor === 1 && (
+                <View style={styles.modalTotalBox}>
+                  <Text style={styles.priceText}>
+                    {item?.location.spot_name}
+                  </Text>
+                  <Text style={styles.priceText}>{selectedSeat}</Text>
+                </View>
+              )}
+            </>
+          ) : (
+            <View style={styles.modalTotalBox}>
+              <Text style={styles.priceText}>Waitlist</Text>
+              <Text style={styles.priceText}>
+                {item?.attributes?.booking_count_status?.waiting + 1}
+              </Text>
+            </View>
+          )}
           {item?.priceType === 'Amount' && (
             <View style={styles.modalTotalBox}>
               <Text style={styles.priceText}>Amount</Text>
@@ -413,44 +538,57 @@ const ClassDetail = props => {
               <Text style={styles.btnText}>0 QR</Text>
             </TouchableOpacity>
           )}
-          {item?.priceType === 'Credit' && userPackages && (
-            <View>
-              <Text
-                style={[
-                  {
-                    marginTop: 10,
-                    marginBottom: 0,
-                    fontSize: 10,
-                    textAlign: 'center',
-                  },
-                ]}>
-                BOOK FROM PACKAGES
-              </Text>
 
-              {userPackages.map((item1, index) => (
+          {item?.priceType === 'Credit' && (
+            <>
+              {userPackages ? (
+                <View>
+                  <Text
+                    style={[
+                      {
+                        marginTop: 10,
+                        marginBottom: 0,
+                        fontSize: 10,
+                        textAlign: 'center',
+                      },
+                    ]}>
+                    BOOK FROM PACKAGES
+                  </Text>
+
+                  {userPackages.map((item1, index) => (
+                    <TouchableOpacity
+                      key={index + 'btn'}
+                      style={styles.checkoutBtn}
+                      onPress={() => CheckoutFromPackage(item1)}>
+                      <Text style={styles.btnText}>
+                        {item1.attributes.name}
+                      </Text>
+                      {item.attributes.remaining_rides === 'unlimited' ? (
+                        <Text style={styles.btnText}>
+                          {item1.attributes.remaining_rides}{' '}
+                          {item1.attributes.type !== 'unlimited' && (
+                            <Text style={{}}>{item1.attributes.type}</Text>
+                          )}
+                        </Text>
+                      ) : (
+                        <Text style={styles.btnText}>
+                          {item1.attributes.remaining_rides}{' '}
+                          {item1.attributes.type !== 'unlimited' && (
+                            <Text style={{}}>{item1.attributes.type}</Text>
+                          )}
+                        </Text>
+                      )}
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              ) : (
                 <TouchableOpacity
-                  key={index + 'btn'}
                   style={styles.checkoutBtn}
-                  onPress={() => CheckoutFromPackage(item1)}>
-                  <Text style={styles.btnText}>{item1.attributes.name}</Text>
-                  {item.attributes.remaining_rides === 'unlimited' ? (
-                    <Text style={styles.btnText}>
-                      {item1.attributes.remaining_rides}{' '}
-                      {item1.attributes.type !== 'unlimited' && 
-                      <Text style={{}}>{item1.attributes.type}</Text>
-                      }
-                    </Text>
-                  ) : (
-                    <Text style={styles.btnText}>
-                      {item1.attributes.remaining_rides}{' '}
-                      {item1.attributes.type !== 'unlimited' && 
-                      <Text style={{}}>{item1.attributes.type}</Text>
-                      }
-                    </Text>
-                  )}
+                  onPress={() => navigation.navigate('buy')}>
+                  <Text style={styles.btnText}>Prchase Package</Text>
                 </TouchableOpacity>
-              ))}
-            </View>
+              )}
+            </>
           )}
         </View>
       </ModalView>
@@ -463,15 +601,22 @@ const styles = StyleSheet.create({
   smallPara: {
     fontSize: 8,
     fontFamily: 'Gotham-Medium',
-    maxWidth: width - 180,
+    maxWidth: Platform.OS === 'adnroid' ? width - 180 : width - 160,
     lineHeight: 12,
+  },
+  waitlist: {
+    position: 'absolute',
+    fontSize: 10,
+    left: 15,
+    fontFamily: 'Gotham-Medium',
+    marginTop: -3,
   },
   footer: {
     paddingHorizontal: 15,
-    paddingVertical: 15,
     display: 'flex',
     justifyContent: 'space-between',
     flexDirection: 'row',
+    paddingVertical: 15,
   },
   checkoutBtn: {
     backgroundColor: '#161415',
@@ -497,11 +642,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 10,
-    marginTop: 20,
+    marginTop: 10,
   },
   summeryBox: {
     width: width - 70,
     alignSelf: 'center',
-    marginBottom: 100,
+    marginBottom: 20,
   },
 });

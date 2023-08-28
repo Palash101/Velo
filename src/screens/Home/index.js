@@ -1,5 +1,12 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
-import {View, FlatList, Animated, Dimensions, ScrollView} from 'react-native';
+import {
+  View,
+  FlatList,
+  Animated,
+  Dimensions,
+  ScrollView,
+  Alert,
+} from 'react-native';
 import {PageContainer} from '../../components/Container';
 import {Heading} from '../../components/Typography';
 import {TraingBox} from '../../components/TrainingBox';
@@ -10,24 +17,48 @@ import {ClassContoller} from '../../controllers/ClassController';
 import {useNavigation} from '@react-navigation/native';
 import {SkeltonBlackCard} from '../../components/Skelton';
 import analytics from '@react-native-firebase/analytics';
+import {HappeningContoller} from '../../controllers/HappeningController';
+import {API_SUCCESS} from '../../config/ApiConfig';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import messaging from '@react-native-firebase/messaging';
+import {AuthContoller} from '../../controllers/AuthController';
 
 const width = Dimensions.get('window').width;
 
 const Home = () => {
-  console.log(assets, 'trainingstrainings');
 
   const scrollX = useRef(new Animated.Value(0)).current;
   const {getToken, getUser} = useContext(UserContext);
   const [allData, setAllData] = useState([]);
   const [list, setList] = useState([]);
   const [scrollData, setScrollData] = useState([]);
+  const [challenges, setChallenges] = useState([]);
 
   const navigation = useNavigation();
 
   useEffect(() => {
-    getData();
-    getList();
+    const focusHandler = navigation.addListener('focus', () => {
+      getData();
+      getList();
+      getHappening();
+      getFirebaseToken();
+    });
+    return focusHandler;
   }, []);
+
+  const getFirebaseToken = async () => {
+    const newFirebaseToken = await messaging().getToken();
+    const saveToken = await AsyncStorage.getItem('firebaseToken');
+    if (!saveToken || saveToken !== newFirebaseToken) {
+      const token = await getToken();
+      const instance = new AuthContoller();
+      const result = await instance.firebaseTokenUpdate(
+        newFirebaseToken,
+        token,
+      );
+      AsyncStorage.setItem('firebaseToken', newFirebaseToken);
+    }
+  };
 
   const getData = async () => {
     const token = await getToken();
@@ -55,8 +86,18 @@ const Home = () => {
       },
     ];
     setList(data);
-    const half = Math.ceil(data.length / 2);
-    const firstHalf = data.slice(0, half);
+    // const half = Math.ceil(data.length / 2);
+    // const firstHalf = data.slice(0, half);
+    // setScrollData(firstHalf);
+  };
+
+  const getHappening = async () => {
+    const token = await getToken();
+    const instance = new HappeningContoller();
+    const result = await instance.getAllChallenges(token);
+    setChallenges(result?.happenings);
+    const half = Math.ceil(result?.happenings.length / 2);
+    const firstHalf = result?.happenings.slice(0, half);
     setScrollData(firstHalf);
   };
 
@@ -65,14 +106,16 @@ const Home = () => {
     await analytics().logEvent(eventName, {
       name: name,
       gender: gender,
-    })
+    });
   };
 
   return (
     <>
       <PageContainer>
-        <ScrollView contentContainerStyle={{paddingBottom: 100}}>
-          <Heading style={{marginBottom: 15, marginTop: 5}}>Train</Heading>
+        <ScrollView
+          contentContainerStyle={{paddingBottom: 10}}
+          showsVerticalScrollIndicator={false}>
+          <Heading style={{marginBottom: 5, marginTop: 5}}>Train</Heading>
           {!allData?.length ? (
             <>
               <SkeltonBlackCard />
@@ -82,94 +125,110 @@ const Home = () => {
           ) : (
             <>
               {allData?.map((item, key) => (
-                <>
+                <View key={key + 'tr'}>
                   {key < 3 && (
-                    <View key={key + 'taining'}>
+                    <View>
                       <TraingBox
                         title={item.name}
                         bg={require('../../../assets/images/bg.png')}
                         onPress={() => {
                           logCustomeEvent('MostStudioClicked', item.name);
-                          navigation.navigate('classes', {activeId: item.id});
+                          AsyncStorage.setItem(
+                            'activeStudio',
+                            JSON.stringify([key]),
+                          );
+                          navigation.navigate('classes');
                         }}
                       />
                     </View>
                   )}
-                </>
+                </View>
               ))}
             </>
           )}
-          <View style={{marginTop: 10}}>
-            <Heading style={{marginBottom: 5, marginTop: 10}}>
-              HAPPENING NOW
-            </Heading>
+          {challenges && challenges.length > 0 && (
+            <View style={{marginTop: 10}}>
+              <Heading style={{marginBottom: 5, marginTop: 10}}>
+                HAPPENING NOW
+              </Heading>
 
-            <FlatList
-              horizontal={true}
-              data={list}
-              showsHorizontalScrollIndicator={false}
-              onScroll={Animated.event(
-                [{nativeEvent: {contentOffset: {x: scrollX}}}],
-                {
-                  useNativeDriver: false,
-                },
+              <FlatList
+                horizontal={true}
+                data={challenges.sort((a, b) => a.position - b.position)}
+                showsHorizontalScrollIndicator={false}
+                onScroll={Animated.event(
+                  [{nativeEvent: {contentOffset: {x: scrollX}}}],
+                  {
+                    useNativeDriver: false,
+                  },
+                )}
+                pagingEnabled
+                decelerationRate={'normal'}
+                scrollEventThrottle={16}
+                renderItem={({item}, key) => (
+                  <View key={key + 'happening'}>
+                    <TraingBox
+                      title={''}
+                      bg={{uri: API_SUCCESS + '/' + item.image}}
+                      onPress={() => {
+                        if (item?.enroll?.id) {
+                          navigation.navigate('HappeningsReport', {item: item});
+                        } else {
+                          navigation.navigate('HappeningDetail', {item: item});
+                        }
+                      }}
+                      style={{
+                        width: width / 2 - 15,
+                        marginRight: 8,
+                        height: 95,
+                      }}
+                    />
+                  </View>
+                )}
+              />
+              {challenges?.length > 2 && (
+                <ExpandingDot
+                  data={scrollData}
+                  expandingDotWidth={30}
+                  scrollX={scrollX}
+                  inActiveDotOpacity={0.6}
+                  dotStyle={{
+                    width: 10,
+                    height: 10,
+                    borderRadius: 5,
+                    marginHorizontal: 5,
+                  }}
+                  activeDotColor="#606060"
+                  inActiveDotColor="#888"
+                  containerStyle={{
+                    top: 145,
+                    left: '50%',
+                    right: '50%',
+                    width: width,
+                    marginLeft: -45,
+                  }}
+                />
               )}
-              pagingEnabled
-              decelerationRate={'normal'}
-              scrollEventThrottle={16}
-              renderItem={({item}, key) => (
-                <View key={key + 'happening'}>
-                  <TraingBox
-                    title={''}
-                    bg={item.img}
-                    style={{
-                      width: width / 2 - 15,
-                      marginRight: 8,
-                      height: 95,
-                    }}
-                  />
-                </View>
-              )}
-            />
-            <ExpandingDot
-              data={scrollData}
-              expandingDotWidth={30}
-              scrollX={scrollX}
-              inActiveDotOpacity={0.6}
-              dotStyle={{
-                width: 10,
-                height: 10,
-                borderRadius: 5,
-                marginHorizontal: 5,
-              }}
-              activeDotColor="#606060"
-              inActiveDotColor="#888"
-              containerStyle={{
-                top: 145,
-                left: '50%',
-                right: '50%',
-                width: width,
-                marginLeft: -45,
-              }}
-            />
-          </View>
-
-          <View style={{marginTop: 40}}>
+            </View>
+          )}
+          <View style={{marginTop: challenges?.length > 2 ? 40 : 20}}>
             <Heading style={{marginBottom: 5}}>DOUBLE JOY</Heading>
             <TraingBox
-              title={''}
+              title={'Coming Soon...'}
               bg={require('../../../assets/images/bg.png')}
               style={{marginHorizontal: 8, height: 150}}
-              onPress={() => navigation.navigate('DoubleJoy')}
+              onPress={() => console.log()}
+              //onPress={() => navigation.navigate('DoubleJoy')}
             />
           </View>
           <View style={{marginTop: 15}}>
             <Heading style={{marginBottom: 5, marginTop: 10}}>STORE</Heading>
             <TraingBox
-              title={''}
+              title={'Coming Soon...'}
               bg={require('../../../assets/images/bg.png')}
               style={{marginHorizontal: 8, height: 150}}
-              onPress={() => navigation.navigate('Store')}
+              onPress={() => console.log()}
+              //onPress={() => navigation.navigate('Store')}
             />
           </View>
         </ScrollView>

@@ -21,7 +21,7 @@ import {Modal} from 'react-native-paper';
 import {ProfileController} from '../../controllers/ProfileController';
 import {API_SUCCESS} from '../../config/ApiConfig';
 import {useNavigation} from '@react-navigation/native';
-import { WalletController } from '../../controllers/WalletController';
+import {WalletController} from '../../controllers/WalletController';
 
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
@@ -39,7 +39,6 @@ const WalletPay = props => {
   const toast = useToast();
 
   useEffect(() => {
-    console.log(props.route.params.amount);
     setAmount(props.route.params.amount);
     getDetail();
   }, []);
@@ -57,10 +56,15 @@ const WalletPay = props => {
 
   const checkResponse = data => {
     if (data.url.includes('/payment/success')) {
+      setLoading(true);
       setPaymentModal(false);
-      toast.show('Wallet recharged successfully');
-      navigation.navigate('MyWallet');
-    } else if (data.url.includes('transaction_cancelled')) {
+      setTimeout(() => {
+        toast.show('Wallet recharged successfully');
+        navigation.navigate('MyWallet');
+        setLoading(false);
+      },3000);
+    } 
+    else if (data.url.includes('transaction_cancelled')) {
       setPaymentModal(false);
       navigation.navigate('MyWallet');
       toast.show('transaction cancelled');
@@ -83,7 +87,6 @@ const WalletPay = props => {
     const instance = new WalletController();
     const result = await instance.executePayment(amount, type, token);
     if (result.IsSuccess === true) {
-      console.log(result.Data.PaymentURL);
       setPaymentUrl(result.Data.PaymentURL);
       setPaymentModal(true);
       // toast.show(result.Message);
@@ -94,13 +97,11 @@ const WalletPay = props => {
     }
   };
 
- 
-
   return (
     <>
       <PageLoader loading={loading} />
 
-      <View style={{marginTop: 70}}>
+      <View style={{marginTop: Platform.OS === 'android' ? 10 : 70}}>
         <View
           style={{
             display: 'flex',
@@ -116,7 +117,14 @@ const WalletPay = props => {
               style={{width: 16, height: 16, marginLeft: 15, marginTop: 2}}
             />
           </TouchableOpacity>
-          <Text style={{fontSize: 16}}>PAYMENT METHOD</Text>
+          <Text
+            style={{
+              fontSize: 16,
+              color: '#161415',
+              fontFamily: 'Gotham-Medium',
+            }}>
+            PAYMENT METHOD
+          </Text>
         </View>
 
         <View
@@ -128,30 +136,29 @@ const WalletPay = props => {
             alignSelf: 'center',
             paddingBottom: 20,
           }}>
-          <CurvedGreyButton
-            label={
-              <>
-                <Image
-                  source={assets.apple}
-                  style={{tintColor: '#fff', height: 24, width: 24}}
-                />
-                <Text >{' '}PAY</Text>
-              </>
-            }
-            style={{marginTop: 15, borderRadius: 12}}
-            onPress={() => payNow('apple')}
-          />
+          {Platform.OS === 'ios' && (
+            <CurvedGreyButton
+              label={
+                <>
+                  <Image
+                    source={assets.apple}
+                    style={{tintColor: '#fff', height: 24, width: 24}}
+                  />
+                  <Text> PAY</Text>
+                </>
+              }
+              style={{marginTop: 15, borderRadius: 12}}
+              onPress={() => payNow('apple')}
+            />
+          )}
 
           <CurvedGreyButton
             label={
-                <>
-                  <Image
-                    source={assets.google}
-                    style={{height: 24, width: 24}}
-                  />
-                  <Text >{' '}PAY</Text>
-                </>
-              }
+              <>
+                <Image source={assets.google} style={{height: 24, width: 24}} />
+                <Text> PAY</Text>
+              </>
+            }
             style={{marginTop: 15, borderRadius: 12}}
             onPress={() => payNow('gpay')}
           />

@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
   Dimensions,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {AuthContoller} from '../../controllers/AuthController';
 import {useNavigation} from '@react-navigation/native';
@@ -41,8 +42,7 @@ const Login = () => {
         setLoading(true);
         const instance = new AuthContoller();
         const result = await instance.loginUser(email, password);
-        console.log(result, 'result');
-        if (result.access_token) {
+        if (result?.access_token) {
           userCtx.setUser(result.user);
           setToken(result.access_token);
           setAuth(true);
@@ -62,6 +62,7 @@ const Login = () => {
     <>
       <PageContainer>
         <ScrollView contentContainerStyle={{flex: 1}}>
+        <KeyboardAvoidingView>
           <View style={{width: '100%', maxWidth: 320, alignSelf: 'center'}}>
             <AuthHeader title={'Login'} />
             <View style={styles.form}>
@@ -83,6 +84,7 @@ const Login = () => {
                 onPress={submit}
                 style={{marginTop: 20}}
                 loading={loading}
+                disabled={loading}
               />
 
               <TouchableOpacity
@@ -93,9 +95,8 @@ const Login = () => {
 
             </View>
           </View>
-        </ScrollView>
-
-        <View style={styles.alreadyBox}>
+          </KeyboardAvoidingView>
+          <View style={styles.alreadyBox}>
           <Text
             style={{
               color: '#161415',
@@ -111,6 +112,9 @@ const Login = () => {
             <Text style={styles.AlreadyText}>Sign Up</Text>
           </TouchableOpacity>
         </View>
+        </ScrollView>
+
+        
       </PageContainer>
     </>
   );
@@ -144,7 +148,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textTransform: 'uppercase',
     fontSize: 14,
-    fontFamily: 'Gotham-Light',
+    fontFamily: 'Gotham-Book',
     fontWeight:'400'
   },
   input: {

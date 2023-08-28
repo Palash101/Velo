@@ -56,7 +56,7 @@ const Buy = props => {
   useEffect(() => {
     const focusHandler = navigation.addListener('focus', () => {
       if (props.route.params !== undefined) {
-        setActive('My')();
+        setActive('My');
       }
       getPackages();
       getUserAllPackages();
@@ -74,7 +74,6 @@ const Buy = props => {
     const instance = new BuyContoller();
     const result = await instance.getAllPackages(token);
     if (result?.data?.length) {
-      console.log(result.data, 'package');
       setData(result.data);
       setLoading(false);
     } else {
@@ -86,7 +85,6 @@ const Buy = props => {
     const token = await getToken();
     const instance = new BuyContoller();
     const result = await instance.getUserPackages(token);
-    console.log(result, 'userpackage');
     if (result.status === 'error') {
       setErrorMessage(result.msg);
     } else {
@@ -192,7 +190,14 @@ const Buy = props => {
   return (
     <>
       <PageLoader loading={loading} />
-      <PageContainer>
+      <View
+        style={{
+          padding: 10,
+          backgroundColor: '#fff',
+          display: 'flex',
+          height: height < 700 ? height - 95 : height - 135,
+          paddingBottom: 10,
+        }}>
         <View style={{paddingHorizontal: 10}}>
           <View style={styles.tab}>
             {active === 'All' ? (
@@ -226,7 +231,7 @@ const Buy = props => {
             <View style={styles.classesList}>
               <FlatList
                 data={data}
-                pagingEnabled
+                // pagingEnabled
                 numColumns={2}
                 showsVerticalScrollIndicator={false}
                 decelerationRate={'normal'}
@@ -241,9 +246,7 @@ const Buy = props => {
           ) : (
             <View style={styles.classesList}>
               {userPackages?.length ? (
-                <ScrollView
-                  contentContainerStyle={{}}
-                  onScrollBeginDrag={() => setRefresh(!refresh)}>
+                <ScrollView onScrollBeginDrag={() => setRefresh(!refresh)}>
                   {userPackages.map((item, index) => (
                     <ActivePackageItem key={index + 'my'} item={item} />
                   ))}
@@ -256,7 +259,7 @@ const Buy = props => {
             </View>
           )}
         </View>
-      </PageContainer>
+      </View>
 
       <Modal
         visible={cartModal}
@@ -350,7 +353,8 @@ const styles = StyleSheet.create({
     width: width / 2 - 30,
   },
   classesList: {
-    paddingBottom: 150,
+    paddingBottom: 130,
+    paddingTop: 10,
   },
   calander: {
     marginBottom: 20,

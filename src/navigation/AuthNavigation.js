@@ -6,17 +6,28 @@ import Welcome from '../screens/Auth/Welcome';
 import Login from '../screens/Auth/Login';
 import SignUp from '../screens/Auth/Signup';
 import Forgot from '../screens/Auth/ForgotPassword';
-import { Image } from 'react-native';
-import { assets } from '../config/AssetsConfig';
-import { useNavigation } from '@react-navigation/native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import {Dimensions, Image, Platform, View} from 'react-native';
+import {assets} from '../config/AssetsConfig';
+import {useNavigation} from '@react-navigation/native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+
+const width = Dimensions.get('window').width;
 
 function LogoTitle() {
-  return <Image source={assets.logo} style={{width: 60, height: 24}} />;
+  return (
+    <View
+      style={{
+        width: Platform.OS === 'android' ? width - 30 : width - 138,
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
+      <Image source={assets.logo} style={{width: 60, height: 24}} />
+    </View>
+  );
 }
 
 function BackIcon() {
-   const navigation = useNavigation();
+  const navigation = useNavigation();
   return (
     <TouchableOpacity onPress={() => navigation.navigate('Home')}>
       <Image
@@ -32,14 +43,8 @@ const AuthNavigationStack = ({navigation}) => {
 
   return (
     <Stack.Navigator>
+    
       <Stack.Screen
-        name={'Splash'}
-        component={Splash}
-        options={{
-          headerShown: false,
-        }}
-      />
-    <Stack.Screen
         name={'Welcome'}
         component={Welcome}
         options={{
@@ -50,15 +55,23 @@ const AuthNavigationStack = ({navigation}) => {
         name={'Login'}
         component={Login}
         options={{
+          headerStyle: {
+            borderBottomWidth:1,
+            borderColor:'#000'
+          },
           headerLeft: () => <></>,
           headerRight: () => <></>,
           headerTitle: props => <LogoTitle {...props} />,
         }}
       />
-       <Stack.Screen
+      <Stack.Screen
         name={'Signup'}
         component={SignUp}
         options={{
+          headerStyle: {
+            borderBottomWidth:1,
+            borderColor:'#000'
+          },
           headerLeft: () => <></>,
           headerRight: () => <></>,
           headerTitle: props => <LogoTitle {...props} />,
@@ -73,7 +86,6 @@ const AuthNavigationStack = ({navigation}) => {
           headerTitle: props => <LogoTitle {...props} />,
         }}
       />
-
     </Stack.Navigator>
   );
 };

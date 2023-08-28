@@ -38,7 +38,6 @@ const ChangePassword = ({navigation}) => {
   const submit = async () => {
     const token = await getToken();
     const validate = validatePassword();
-    console.log(validate, 'validate');
     if (!validate.msg) {
       setLoading(true);
       const data = {
@@ -85,7 +84,7 @@ const ChangePassword = ({navigation}) => {
       {/* <PageLoader loading={loading} /> */}
       <PageContainer>
         <ScrollView contentContainerStyle={{flex: 1}}>
-          <Text style={{paddingLeft: 15}}>CHANGE PROFILE</Text>
+          <Text style={{paddingLeft: 15,fontFamily:'Gotham-Medium',color: '#161415',}}>CHANGE PROFILE</Text>
 
           <View style={styles.form}>
             <Input

@@ -1,4 +1,4 @@
-import {Image, TouchableOpacity} from 'react-native';
+import {Dimensions, Image, Platform, TouchableOpacity, View} from 'react-native';
 import ClassDetail from '../screens/ClassDetail';
 import Classes from '../screens/Classes';
 import {assets} from '../config/AssetsConfig';
@@ -9,6 +9,7 @@ import DoubleJoyCheckout from '../screens/Checkout/DoubleJouCheckout';
 import Home from '../screens/Home';
 
 const {createStackNavigator} = require('@react-navigation/stack');
+const width = Dimensions.get('window').width;
 
 const DoubleJoyStack = ({navigation}) => {
   const Stack = createStackNavigator();
@@ -26,7 +27,17 @@ const DoubleJoyStack = ({navigation}) => {
   }
 
   function LogoTitle() {
-    return <Image source={assets.logo} style={{width: 60, height: 24}} />;
+    return (
+      <View
+        style={{
+          // width: width - 30,
+          width: Platform.OS === 'android' ? width - 30 : width - 138,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <Image source={assets.logo} style={{width: 60, height: 24}} />
+      </View>
+    );
   }
 
   return (

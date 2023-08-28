@@ -49,7 +49,7 @@ const Profile = ({navigation}) => {
           <GreyBox
             label="My Packages"
             textStyle={{textAlign: 'center'}}
-            onPress={() => navigation.push('Buy')}
+            onPress={() => navigation.navigate('buy')}
           />
           <GreyBox
             label="Change password"
@@ -64,7 +64,7 @@ const Profile = ({navigation}) => {
           <GreyBox
             label="Journey"
             textStyle={{textAlign: 'center'}}
-            onPress={() => navigation.navigate('Journey')}
+            onPress={() => navigation.navigate('journey')}
           />
         </View>
       </View>

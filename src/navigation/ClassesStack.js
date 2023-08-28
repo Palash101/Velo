@@ -28,19 +28,19 @@ const ClassesStack = ({navigation}) => {
   return (
     <Stack.Navigator>
 
-    <Stack.Screen
+    {/* <Stack.Screen
         name="Classes"
         component={Classes}
         options={{
           headerShown:false
         }}
-      />
+      /> */}
 
       <Stack.Screen
         name={'ClassDetail'}
         component={ClassDetail}
         options={{
-         // cardStyle: {backgroundColor: '#ffffff'},
+          cardStyle: {backgroundColor: '#ffffff'},
           headerShown:false
         }}
       />

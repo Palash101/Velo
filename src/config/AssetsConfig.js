@@ -1,5 +1,7 @@
 export const assets = {
   splash: require('../../assets/splash.gif'),
+  splashold: require('../../assets/splashold.gif'),
+
   bell: require('../../assets/icons/bell.png'),
   chevron: require('../../assets/icons/chevron.png'),
   back: require('../../assets/icons/back.png'),
@@ -13,6 +15,8 @@ export const assets = {
   loginBg: require('../../assets/images/loginbg.png'),
   forgetBg: require('../../assets/images/forgot_bg.jpeg'),
   clock: require('../../assets/icons/clock.png'),
+  circle: require('../../assets/icons/circle.png'),
+  calendar: require('../../assets/icons/calendar.png'),
   shake: require('../../assets/images/shake.png'),
   apple: require('../../assets/icons/apple.png'),
   lock: require('../../assets/icons/lock.png'),
@@ -22,4 +26,5 @@ export const assets = {
   whatsapp: require('../../assets/icons/whatsapp.png'),
   refresh: require('../../assets/icons/refresh.png'),
   google: require('../../assets/icons/google.png'),
+  comingSoon: require('../../assets/images/comingsoon.gif'),
 };

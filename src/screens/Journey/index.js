@@ -13,7 +13,7 @@ import {assets} from '../../config/AssetsConfig';
 import {UserContext} from '../../../context/UserContext';
 import {JourneyContoller} from '../../controllers/JourneyController';
 import PageLoader from '../../components/PageLoader';
-import { API_SUCCESS } from '../../config/ApiConfig';
+import {API_SUCCESS} from '../../config/ApiConfig';
 
 const Journey = ({navigation}) => {
   const [data, setData] = useState([{}, {}, {}]);
@@ -26,7 +26,7 @@ const Journey = ({navigation}) => {
   useEffect(() => {
     const focusHandler = navigation.addListener('focus', () => {
       getBookings();
-      getBadges()
+      getBadges();
     });
     return focusHandler;
   }, []);
@@ -36,19 +36,16 @@ const Journey = ({navigation}) => {
     const token = await getToken();
     const instance = new JourneyContoller();
     const result = await instance.getAllBooking(token);
-    console.log(result, 'result');
     setLoading(false);
     setLocations(result.locations);
     setTotal(getTotal(result.locations));
   };
-
 
   const getBadges = async () => {
     setLoading(true);
     const token = await getToken();
     const instance = new JourneyContoller();
     const result = await instance.getAllBedges(token);
-    console.log(result, 'result');
     setLoading(false);
     const mybedge = result.badges.filter(item => item?.status === true);
     setBedges(mybedge);
@@ -74,34 +71,37 @@ const Journey = ({navigation}) => {
           </View>
           <View style={styles.rideBoxes}>
             {locations.map((item, index) => (
-              <View style={styles.rideBox} key={index+'booking'}>
+              <View style={styles.rideBox} key={index + 'booking'}>
                 <Text style={styles.rideText1}>{item.name}</Text>
                 <Text style={styles.count}>{item.bookings_count}</Text>
               </View>
             ))}
           </View>
 
-          <View style={styles.achBoxTitle}>
-            <Text style={styles.achTitle}>Achievements</Text>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('Achievement')}>
-              <Text style={styles.achTitle}>See all</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.achBoxes}>
-            {bedges?.map((item, index) => (
-              <View key={index+'ach'}>
-              {index < 3 && 
-             <View style={styles.achBox} >
-                <ImageBackground source={{uri: API_SUCCESS+'/'+item.image}} resizeMode="contain" style={styles.image}>
-                  
-               </ImageBackground>
-           </View>
-              }
+          {bedges && bedges.length > 0 && (
+            <>
+              <View style={styles.achBoxTitle}>
+                <Text style={styles.achTitle}>Achievements</Text>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('Achievement')}>
+                  <Text style={styles.achTitle}>See all</Text>
+                </TouchableOpacity>
               </View>
-            ))}
-          </View>
+
+              <View style={styles.achBoxes}>
+                {bedges?.map((item, index) => (
+                  <View
+                    key={index + 'in'}
+                    style={index > 2 ? {display: 'none'} : styles.achBox}>
+                    <ImageBackground
+                      source={{uri: API_SUCCESS + '/' + item.image}}
+                      resizeMode="contain"
+                      style={styles.image}></ImageBackground>
+                  </View>
+                ))}
+              </View>
+            </>
+          )}
         </ScrollView>
       </PageContainer>
     </>
@@ -115,24 +115,27 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 82,
-    fontFamily: 'Gotham-medium',
+    fontFamily: 'Gotham-Medium',
     lineHeight: 82,
     marginTop: 5,
+    color: '#161415',
   },
   subTitle: {
     fontSize: 16,
     textTransform: 'uppercase',
-    fontFamily: 'Gotham-medium',
+    fontFamily: 'Gotham-Medium',
+    color: '#161415',
   },
   para: {
     fontSize: 12,
     textTransform: 'uppercase',
-    fontFamily: 'Gotham-Book',
-    marginTop: -5,
+    fontFamily: 'Gotham-Medium',
+    marginTop: -2,
+    color: '#161415',
   },
   rideBoxes: {
     display: 'flex',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     flexDirection: 'row',
   },
   rideBox: {
@@ -144,18 +147,22 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 2, height: 12},
     shadowOpacity: 0.3,
     shadowRadius: 10,
+    borderWidth: 1,
+    borderColor: '#ddd',
   },
   rideText1: {
     fontSize: 16,
     textAlign: 'center',
     textTransform: 'uppercase',
-    fontFamily: 'Gotham-medium',
+    fontFamily: 'Gotham-Medium',
+    color: '#161415',
   },
   count: {
     fontSize: 32,
     fontFamily: 'Gotham-Medium',
     textAlign: 'center',
     marginTop: 5,
+    color: '#161415',
   },
   achBoxes: {
     display: 'flex',
@@ -172,28 +179,29 @@ const styles = StyleSheet.create({
   achTitle: {
     fontSize: 12,
     textTransform: 'uppercase',
-    fontFamily: 'Gotham-Book',
+    fontFamily: 'Gotham-Medium',
+    color: '#161415',
   },
   achBox: {
     backgroundColor: '#f2f2f2',
-    width:72,
-    height:72,
+    width: 72,
+    height: 72,
     borderRadius: 16,
     marginBottom: 30,
-    borderWidth:1,
+    borderWidth: 1,
     borderColor: '#f2f2f2',
-    overflow:'hidden'
+    overflow: 'hidden',
   },
   achImg: {
     width: 28,
     height: 28,
     tintColor: '#000',
-    alignSelf:'center'
+    alignSelf: 'center',
   },
-  image:{
+  image: {
     flex: 1,
     justifyContent: 'center',
     borderRadius: 16,
-    overflow:'hidden'
-  }
+    overflow: 'hidden',
+  },
 });

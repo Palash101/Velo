@@ -31,14 +31,16 @@ const Welcome = () => {
   }, []);
 
   const handleBackButton = () => {
-    switch (navigation.current.state) {
-      case 'Welcome':
-        BackHandler.exitApp();
-        break;
-      default:
-        navigation.goBack();
-    }
-    return true;
+    
+    //return false;
+    // switch (navigation.current.state) {
+    //   case 'Welcome':
+    //     BackHandler.exitApp();
+    //     break;
+    //   default:
+    //     navigation.goBack();
+    // }
+    // return true;
   };
 
   return (

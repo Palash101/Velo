@@ -38,7 +38,6 @@ const Pay = props => {
   const toast = useToast();
 
   useEffect(() => {
-    console.log(props.route.params.item);
     setItem(props.route.params.item);
     getDetail();
   }, []);
@@ -55,29 +54,30 @@ const Pay = props => {
   };
 
   const checkResponse = data => {
-    console.log(data,'datadata')
     if (data.url.includes('/payment/success')) {
+      setLoading(true);
       setPaymentModal(false);
-      toast.show('Package purchased successfully');
-      navigation.navigate('Buy',{purchase:'success'});
+      setTimeout(() => {
+        toast.show('Package purchased successfully');
+        navigation.navigate('buy', {purchase: 'success'});
+        setLoading(false);
+      }, 3000);
     } else if (data.url.includes('transaction_cancelled')) {
-        setPaymentModal(false)
-      navigation.navigate('Buy');
+      setPaymentModal(false);
+      navigation.navigate('buy');
       toast.show('transaction cancelled');
     }
   };
 
   const payNow = val => {
     if (val === 'wallet') {
-        completePaymentDebit('Wallet');
+      completePaymentDebit('Wallet');
     } else if (val === 'debit') {
       completePaymentDebit('Package');
-    }
-    else if (val === 'apple'){
-      completePaymentDebit('ApplePay')
-    }
-    else if (val === 'gpay'){
-      completePaymentDebit('Gpay')
+    } else if (val === 'apple') {
+      completePaymentDebit('ApplePay');
+    } else if (val === 'gpay') {
+      completePaymentDebit('Gpay');
     }
   };
 
@@ -102,18 +102,14 @@ const Pay = props => {
     );
   };
 
-
-
-  const completePaymentDebit = async (type) => {
+  const completePaymentDebit = async type => {
     const token = await getToken();
     setLoading(true);
     const instance = new BuyContoller();
     const result = await instance.executePayment(item, type, token);
     if (result.IsSuccess === true) {
-      console.log(result.Data.PaymentURL);
       setPaymentUrl(result.Data.PaymentURL);
       setPaymentModal(true);
-      //toast.show(result.Message);
       setLoading(false);
     } else {
       toast.show(result.Message);
@@ -126,11 +122,9 @@ const Pay = props => {
       id: item.id,
       type: 'wallet',
     };
-    console.log(data, 'data');
     const token = await getToken();
     const instance = new BuyContoller();
     const result = await instance.purchasePackage(data, token);
-    console.log(result, 'resss');
     if (result.status === 'success') {
       toast.show(result.msg);
       setLoading(false);
@@ -144,20 +138,22 @@ const Pay = props => {
     <>
       <PageLoader loading={loading} />
 
-      <View style={{marginTop: 70}}>
+      <View style={{marginTop: Platform.OS === 'android' ? 10 : 70}}>
         <View
           style={{
             display: 'flex',
-            flexDirection:'row',
-            justifyContent:'center',
+            flexDirection: 'row',
+            justifyContent: 'center',
             marginBottom: 20,
           }}>
-             <TouchableOpacity onPress={() => navigation.navigate('Buy')} style={{position:'absolute',left:0}}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('buy')}
+            style={{position: 'absolute', left: 0}}>
             <Image
-                source={assets.back}
-                style={{width: 16, height: 16, marginLeft: 15,marginTop:2,}}
+              source={assets.back}
+              style={{width: 16, height: 16, marginLeft: 15, marginTop: 2}}
             />
-            </TouchableOpacity>
+          </TouchableOpacity>
           <Text style={{fontSize: 16}}>PAYMENT METHOD</Text>
         </View>
 
@@ -170,28 +166,27 @@ const Pay = props => {
             alignSelf: 'center',
             paddingBottom: 20,
           }}>
-          <CurvedGreyButton
-            label={
-              <>
-                <Image
-                  source={assets.apple}
-                  style={{tintColor: '#fff', height: 24, width: 24,}}
-                />
-                <Text style={{paddingLeft: 5}}>{' '}PAY</Text>
-              </>
-            }
-            style={{marginTop: 15, borderRadius: 12}}
-            onPress={() => payNow('apple')}
-          />
+          {Platform.OS === 'ios' && (
+            <CurvedGreyButton
+              label={
+                <>
+                  <Image
+                    source={assets.apple}
+                    style={{tintColor: '#fff', height: 24, width: 24}}
+                  />
+                  <Text style={{paddingLeft: 5}}> PAY</Text>
+                </>
+              }
+              style={{marginTop: 15, borderRadius: 12}}
+              onPress={() => payNow('apple')}
+            />
+          )}
 
           <CurvedGreyButton
             label={
               <>
-                <Image
-                  source={assets.google}
-                  style={{height: 24, width: 24,}}
-                />
-                <Text>{' '}PAY</Text>
+                <Image source={assets.google} style={{height: 24, width: 24}} />
+                <Text> PAY</Text>
               </>
             }
             style={{marginTop: 15, borderRadius: 12}}
@@ -221,21 +216,20 @@ const Pay = props => {
       <Modal
         visible={paymentModal}
         onDismiss={() => setPaymentModal(false)}
-        style={{height: 'auto',}}>
+        style={{height: 'auto'}}>
         <View style={styles.modalBox1}>
-        <View
+          <View
             style={{
               flexDirection: 'row',
               borderBottomWidth: 1,
               borderColor: '#161415',
-              marginTop:70
+              marginTop: 70,
             }}>
-
             <TouchableOpacity onPress={() => setPaymentModal(false)}>
-            <Image
+              <Image
                 source={assets.back}
-                style={{width: 16, height: 16, marginLeft: 15,marginTop:15,}}
-            />
+                style={{width: 16, height: 16, marginLeft: 15, marginTop: 15}}
+              />
             </TouchableOpacity>
 
             <Text
@@ -244,13 +238,14 @@ const Pay = props => {
                 fontSize: 16,
                 color: '#161415',
                 fontFamily: 'Gotham-Medium',
-                textAlign:'center'
+                textAlign: 'center',
               }}>
               PAY
             </Text>
           </View>
 
-          <ScrollView contentContainerStyle={{
+          <ScrollView
+            contentContainerStyle={{
               bottom: 0,
               height: height,
               backgroundColor: '#f9f9f9',
@@ -276,11 +271,11 @@ const Pay = props => {
 export default Pay;
 
 const styles = StyleSheet.create({
-    modalBox1: {
-        paddingTop: Platform.OS === 'ios' ? 0 : 0,
-        backgroundColor: '#fff',
-        borderTopLeftRadius: 14,
-        borderTopRightRadius: 14,
-        marginTop: 0,
-      },
+  modalBox1: {
+    paddingTop: Platform.OS === 'ios' ? 0 : 0,
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 14,
+    borderTopRightRadius: 14,
+    marginTop: 0,
+  },
 });

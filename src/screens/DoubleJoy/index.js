@@ -6,18 +6,24 @@ import {
   StyleSheet,
   Text,
   View,
+  Image,
 } from 'react-native';
 import {PageContainer} from '../../components/Container';
-import {RoundedDarkButton, RoundedGreyButton, RoundedThemeButton} from '../../components/Buttons';
+import {
+  RoundedDarkButton,
+  RoundedGreyButton,
+  RoundedThemeButton,
+} from '../../components/Buttons';
 import {FlatList} from 'react-native-gesture-handler';
 import {useState} from 'react';
 import {PackageItem} from '../../components/PackageItem';
 import {CartItem} from '../../components/CartItem';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
+import {assets} from '../../config/AssetsConfig';
 
 const DoubleJoy = () => {
   const [active, setActive] = useState('Shakes');
- const navigation = useNavigation();
+  const navigation = useNavigation();
 
   const [data, setData] = useState([
     {name: 'AAA'},
@@ -34,12 +40,26 @@ const DoubleJoy = () => {
 
   const selectItem = item => {
     navigation.navigate('DoubleJoyDetail');
-   // Alert.alert(item.name);
+    // Alert.alert(item.name);
   };
   return (
     <>
       <PageContainer>
-        <View style={{paddingHorizontal: 10}}>
+        <View
+          style={{
+            display: 'flex',
+            flex: 1,
+            textAlign: 'center',
+            width: '100%',
+            justifyContent: 'center',
+          }}>
+          <Image
+            source={assets.comingSoon}
+            style={{alignSelf: 'center', width: 150, height: 100}}
+          />
+        </View>
+
+        {/* <View style={{paddingHorizontal: 10}}>
           <Text style={styles.mainHeading}>Double Joy</Text>
           <View style={styles.tab}>
             {active === 'Shakes' ? (
@@ -86,7 +106,7 @@ const DoubleJoy = () => {
               )}
             />
           </View>
-        </View>
+        </View> */}
       </PageContainer>
     </>
   );
@@ -100,7 +120,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
     marginTop: 10,
-    fontFamily:'Gotham-Medium'
+    fontFamily: 'Gotham-Black',
+    color: '#161415',
   },
   tab: {
     display: 'flex',

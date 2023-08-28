@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -15,10 +15,24 @@ import {useNavigation} from '@react-navigation/native';
 const width = Dimensions.get('window').width;
 export const ClassItem = props => {
   const {item} = props;
+  const [booking, setBooking] = useState();
+
   const time = moment(item.start_date + ' ' + item.start_time).format(
     'hh:mm A',
   );
   const navigation = useNavigation();
+
+
+  useEffect(() => {
+    
+    if (item?.attributes?.user_waiting === true) {
+      let users = item?.attributes?.waitingUsers.filter(
+        user => user.user_id === props.uid,
+      );
+      setBooking(users[0]);
+    }
+
+  },[])
 
   return (
     <>
@@ -34,7 +48,11 @@ export const ClassItem = props => {
             }
             style={styles.mainImage}
           />
+          {item.indoor === 0 &&
+          <Text style={styles.outdoor}>Outdoor</Text>
+          }
         </View>
+
         <View
           style={{
             display: 'flex',
@@ -66,14 +84,22 @@ export const ClassItem = props => {
               item.attributes.booking_count_status.available === 0 &&
               item.attributes.user_waiting === false &&
               item.attributes.mine_booking === false && (
-                <Badge style={[styles.bedge, {backgroundColor: '#161415',color:'#fff'}]}>
+                <Badge
+                  style={[
+                    styles.bedge,
+                    {backgroundColor: '#161415', color: '#fff'},
+                  ]}>
                   Fully Booked
                 </Badge>
               )}
 
             {item.attributes.mine_booking === true &&
               item.attributes.user_waiting === false && (
-                <Badge style={[styles.bedge, {backgroundColor: '#161415',color:'#fff'}]}>
+                <Badge
+                  style={[
+                    styles.bedge,
+                    {backgroundColor: '#161415', color: '#fff'},
+                  ]}>
                   Booked
                 </Badge>
               )}
@@ -82,20 +108,24 @@ export const ClassItem = props => {
               item.attributes.booking_count_status.available === 0 &&
               item.attributes.user_waiting === false &&
               item.attributes.mine_booking === false && (
-                <Badge style={[styles.bedge, {backgroundColor: '#FFC107'}]}>
+                <Badge style={[styles.bedge, {backgroundColor: '#161415',color:'#fff'}]}>
                   Join Waitlist
                 </Badge>
               )}
 
             {item.attributes.user_waiting === true && (
-              <Badge style={[styles.bedge, {backgroundColor: '#161415',color:'#fff'}]}>
-                Waiting: {item.attributes.booking_count_status.waiting}
+              <Badge
+                style={[
+                  styles.bedge,
+                  {backgroundColor: '#161415', color: '#fff'},
+                ]}>
+                Waiting: {booking?.waiting_no}
               </Badge>
             )}
 
             {item.attributes.available_seat_text !== '' &&
               item.attributes.mine_booking === false && (
-                <Badge style={[styles.bedge, {backgroundColor: '#30ae4d'}]}>
+                <Badge style={[styles.bedge, {backgroundColor: 'red',color:'#fff'}]}>
                   {item.attributes.available_seat_text}
                 </Badge>
               )}
@@ -123,6 +153,21 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     overflow: 'hidden',
   },
+  outdoor: {
+    position: 'absolute',
+    width: 60,
+    textAlign: 'center',
+    backgroundColor: '#000',
+    alignItems: 'center',
+    top: 0,
+    zIndex: 999,
+    left: 0,
+    fontSize: 12,
+    lineHeight: 16,
+    color: '#fff',
+    borderBottomLeftRadius: 7,
+    borderBottomRightRadius: 7,
+  },
   mainImage: {
     width: '100%',
     height: '100%',
@@ -137,19 +182,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'Gotham-Medium',
     color: '#161415',
-    marginBottom:5
+    marginBottom: 5,
   },
   bedge: {
     paddingLeft: 10,
     paddingRight: 10,
     fontSize: 8,
-    fontWeight: '600',
     textTransform: 'uppercase',
     height: 20,
     borderRadius: 10,
     lineHeight: 20,
-    //marginTop: 5,
-    fontFamily: 'Gotham-Medium',
+    fontFamily: 'Gotham-Black',
     color: '#161415',
   },
   timeBox: {
@@ -161,13 +204,13 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     marginRight: 5,
-    marginTop: 0,
+    marginTop: 1.5,
   },
   time: {
     fontSize: 10,
+    lineHeight: 12,
     color: '#161415',
     fontFamily: 'Gotham-Medium',
-    color: '#161415',
   },
   centerBox: {
     justifyContent: 'center',
@@ -176,7 +219,7 @@ const styles = StyleSheet.create({
   trainerName: {
     fontSize: 9,
     textTransform: 'uppercase',
-    fontFamily: 'Gotham-Light',
+    fontFamily: 'Gotham-Medium',
   },
   title: {
     fontSize: 12,
@@ -189,10 +232,9 @@ const styles = StyleSheet.create({
   subTitle: {
     fontSize: 9,
     lineHeight: 16,
-    fontWeight: '500',
     justifyContent: 'center',
     textTransform: 'uppercase',
-    fontFamily: 'Gotham-Light',
-    color: '#161415',
+    fontFamily: 'Gotham-Medium',
+    color: '#000',
   },
 });

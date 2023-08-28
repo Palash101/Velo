@@ -1,4 +1,4 @@
-import {useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {assets} from '../../config/AssetsConfig';
 
 const {
@@ -19,17 +19,19 @@ const Splash = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    AsyncStorage.getItem('user', (err, result) => {
-      setTimeout(() => {
-        if (result) {
-          navigation.navigate('Drawer');
-        } else {
-          navigation.navigate('Welcome');
-        }
-      }, 3000);
-    });
+      
+      AsyncStorage.getItem('user', (err, result) => {
+        // setTimeout(() => {
+          if (result) {
+            navigation.navigate('Drawer');
+          } else {
+            navigation.navigate('Welcome');
+          }
+        // }, 3000);
+      });
+   
     BackHandler.addEventListener('hardwareBackPress', handleBackButton);
-  }, []);
+  }, [navigation]);
 
   const handleBackButton = () => {
     switch (navigation.current.state) {
@@ -45,6 +47,7 @@ const Splash = () => {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#161415" />
+      
       <Image source={assets.splash} style={styles.logo} />
     </View>
   );

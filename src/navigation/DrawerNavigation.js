@@ -6,7 +6,7 @@ import {
   createDrawerNavigator,
 } from '@react-navigation/drawer';
 import BottomTab from './BottomTab';
-import {Image, TouchableOpacity, Text, View} from 'react-native';
+import {Image, TouchableOpacity, Text, View, Dimensions, Platform} from 'react-native';
 import {assets} from '../config/AssetsConfig';
 import {useNavigation} from '@react-navigation/native';
 import {UserContext} from '../../context/UserContext';
@@ -23,9 +23,11 @@ import ClassesStack from './ClassesStack';
 import ClassDetail from '../screens/ClassDetail';
 import Pay from '../screens/Buy/pay';
 import Buy from '../screens/Buy';
+import HappeningDetail from '../screens/Happenings/detail';
+import HappeningReport from '../screens/Happenings/report';
 
 const Drawer = createDrawerNavigator();
-
+const width = Dimensions.get('window').width;
 function CustomDrawerContent(props) {
   const userCtx = React.useContext(UserContext);
 
@@ -82,18 +84,27 @@ function CustomDrawerContent(props) {
 }
 
 function LogoTitle() {
-  return <Image source={assets.logo} style={{width: 60, height: 24}} />;
+  return (
+    <View
+      style={{
+        width: Platform.OS === 'android' ? width - 105 : width - 155,
+        justifyContent: 'center',
+        alignItems: 'center',
+        
+      }}>
+      <Image source={assets.logo} style={{width: 60, height: 24}} />
+    </View>
+  );
 }
 
 function NotificationIcon() {
   const navigation = useNavigation();
   return (
     <TouchableOpacity onPress={() => navigation.navigate('Notification')}>
-    
-    <Image
-      source={assets.bell}
-      style={{width: 24, height: 24, marginRight: 15}}
-    />
+      <Image
+        source={assets.bell}
+        style={{width: 24, height: 24, marginRight: 15}}
+      />
     </TouchableOpacity>
   );
 }
@@ -127,6 +138,10 @@ export default function DrawerNavigation() {
       screenOptions={{
         headerLeft: () => <HambergerIcon />,
         headerRight: () => <NotificationIcon />,
+        headerStyle: {
+          borderBottomWidth: 1,
+          borderColor: '#000',
+        },
       }}
       drawerContent={props => <CustomDrawerContent {...props} />}>
       <Drawer.Screen
@@ -144,7 +159,7 @@ export default function DrawerNavigation() {
           headerShown: false,
         }}
       />
-       <Drawer.Screen
+      <Drawer.Screen
         name="ClassDetail"
         component={ClassDetail}
         options={{
@@ -203,19 +218,36 @@ export default function DrawerNavigation() {
         }}
       />
 
-
       <Drawer.Screen
         name="Pay"
         component={Pay}
         options={{
-          headerShown:false,
+          headerShown: false,
           // headerLeft: () => <BackIcon />,
           // headerTitle: props => <LogoTitle {...props} />,
         }}
       />
+      {/* <Drawer.Screen name="Buy" component={Buy} /> */}
+
       <Drawer.Screen
-        name="Buy"
-        component={Buy}
+        name="HappeningDetail"
+        component={HappeningDetail}
+        options={{
+          headerShown: true,
+          headerLeft: () => <BackIcon />,
+          headerTitle: props => <LogoTitle {...props} />,
+          headerRight:() => <></>
+        }}
+      />
+      <Drawer.Screen
+        name="HappeningsReport"
+        component={HappeningReport}
+        options={{
+          headerShown: true,
+          headerLeft: () => <BackIcon />,
+          headerTitle: props => <LogoTitle {...props} />,
+          headerRight:() => <></>
+        }}
       />
     </Drawer.Navigator>
   );

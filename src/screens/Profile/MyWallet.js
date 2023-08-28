@@ -21,25 +21,30 @@ import {useToast} from 'react-native-toast-notifications';
 import {API_BASE, API_SUCCESS} from '../../config/ApiConfig';
 import WebView from 'react-native-webview';
 import {assets} from '../../config/AssetsConfig';
+import { useNavigation } from '@react-navigation/native';
 
 const height = Dimensions.get('window').height;
-const MyWallet = ({navigation}) => {
+const MyWallet = () => {
   const [loading, setLoading] = useState(true);
   const {getToken} = useContext(UserContext);
   const [balance, setBalance] = useState(0);
   const [open, setOpen] = useState(false);
   const [amount, setAmount] = useState(0);
   const toast = useToast();
+  const navigation = useNavigation();
 
   useEffect(() => {
-    getMyBanance();
-  }, []);
+    const focusHandler = navigation.addListener('focus', () => {
+      getMyBanance();
+    });
+    return focusHandler;
+  }, [navigation]);
 
   const getMyBanance = async () => {
+    setLoading(true);
     const token = await getToken();
     const instance = new WalletController();
     const result = await instance.getBalance(token);
-    console.log(result, 'ress');
     setLoading(false);
     if (result?.attributes?.balance) {
       setBalance(result.attributes.balance);
@@ -53,6 +58,7 @@ const MyWallet = ({navigation}) => {
 
   const payNow = () => {
     if (amount > 0) {
+      setOpen(false);
       navigation.navigate('WalletPay', {amount: amount});
     }
     else{
@@ -66,7 +72,7 @@ const MyWallet = ({navigation}) => {
 
       <PageContainer>
         <ScrollView contentContainerStyle={{flex: 1}}>
-          <Text style={{paddingLeft: 15}}>WALLET</Text>
+          <Text style={{paddingLeft: 15,fontFamily:'Gotham-Medium',color:'#161415',marginTop:10 }}>WALLET</Text>
 
           <View style={styles.form}>
             <View style={styles.walletBox}>
@@ -117,7 +123,7 @@ const styles = StyleSheet.create({
   form: {
     width: width - 40,
     alignSelf: 'center',
-    marginTop: 50,
+    marginTop: 20,
     display: 'flex',
     justifyContent: 'center',
   },
@@ -136,11 +142,14 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 6},
     shadowOpacity: 0.2,
     shadowRadius: 10,
+    borderWidth:1,
+    borderColor:'#ddd',
   },
   amountText: {
     fontSize: 28,
-    fontWeight: '700',
+    fontFamily:'Gotham-Black',
     textAlign: 'center',
+    color:'#161415',
   },
   checkoutBtn: {
     backgroundColor: '#161415',

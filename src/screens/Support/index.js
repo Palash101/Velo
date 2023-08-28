@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   Image,
   Linking,
@@ -11,6 +11,7 @@ import {
 import {PageContainer} from '../../components/Container';
 import {assets} from '../../config/AssetsConfig';
 import {SupportController} from '../../controllers/SupportController';
+import {UserContext} from '../../../context/UserContext';
 
 const Support = ({navigation}) => {
   const Faqs = [
@@ -43,6 +44,8 @@ const Support = ({navigation}) => {
   const [data, setData] = useState(Faqs);
   const [supportData, setSupportData] = useState();
   const [active, setActive] = useState({});
+  const {getToken} = useContext(UserContext);
+  const [faqs, setFaqs] = useState([]);
 
   const toggleActive = async item => {
     if (active.id === item.id) {
@@ -54,14 +57,23 @@ const Support = ({navigation}) => {
 
   useEffect(() => {
     getSupportData();
+    getFaqsData();
   }, []);
 
   const getSupportData = async () => {
     const instance = new SupportController();
     const result = await instance.getSupport();
     if (result.status === 'success') {
-      console.log(result.contact_us, 'result.contact_us');
       setSupportData(result.contact_us);
+    }
+  };
+
+  const getFaqsData = async () => {
+    const token = await getToken();
+    const instance = new SupportController();
+    const result = await instance.getFaqs(token);
+    if (result.status === 'success') {
+      setFaqs(result.faqs);
     }
   };
 
@@ -71,12 +83,12 @@ const Support = ({navigation}) => {
         <Text style={styles.heading}>FAQ</Text>
 
         <View style={styles.allFaq}>
-          {data.map((item, index) => (
+          {faqs.map((item, index) => (
             <View style={styles.faqItem} key={index + 'faq'}>
               <TouchableOpacity
                 style={styles.faqTitle}
                 onPress={() => toggleActive(item)}>
-                <Text style={styles.titleText}>{item.question}</Text>
+                <Text style={styles.titleText}>{item.questions}</Text>
                 <Image
                   source={assets.chevron}
                   style={
@@ -101,13 +113,19 @@ const Support = ({navigation}) => {
               height: 30,
               marginTop: 50,
               textTransform: 'uppercase',
+              color: '#161415',
+              fontFamily: 'Gotham-Medium',
             }}>
-            Support
+            Contact
           </Text>
 
           <View style={styles.supportData}>
             <TouchableOpacity
-              onPress={() => Linking.openURL('wahtsapp://veloqatar')}
+              onPress={() => {
+                let url = 'whatsapp://send?text=Hello&phone=+97444800204';
+
+                Linking.openURL(url);
+              }}
               style={styles.supportList}>
               <View style={styles.iconBox}>
                 <Image source={assets.whatsapp} style={styles.supportIcon} />
@@ -115,7 +133,7 @@ const Support = ({navigation}) => {
               <Text style={styles.supportText}>+974 4480 0204</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => Linking.openURL('telprompt:${+97444800204}')}
+              onPress={() => Linking.openURL(`tel:${+97444800204}`)}
               style={styles.supportList}>
               <View style={styles.iconBox}>
                 <Image source={assets.phone} style={styles.supportIcon} />
@@ -128,11 +146,11 @@ const Support = ({navigation}) => {
               <View style={styles.iconBox}>
                 <Image source={assets.email} style={styles.supportIcon} />
               </View>
-              <Text style={styles.supportText}>info@valo.qa</Text>
+              <Text style={styles.supportText}>info@velo.qa</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() =>
-                Linking.openURL('instagram://veloqatar')
+                Linking.openURL('https://www.instagram.com/veloqatar/')
               }
               style={styles.supportList}>
               <View style={styles.iconBox}>
@@ -173,15 +191,17 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginTop: 10,
     textTransform: 'uppercase',
-    fontFamily: 'Gotham-Book',
+    fontFamily: 'Gotham-Medium',
+    color: '#161415',
   },
   support: {
     padding: 15,
   },
   supportText: {
     fontSize: 14,
-    fontFamily: 'Gotham-Book',
+    fontFamily: 'Gotham-Medium',
     lineHeight: 18,
+    color: '#161415',
   },
   faqTitle: {
     backgroundColor: '#f2f2f2',
@@ -192,20 +212,23 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.4,
     shadowRadius: 4,
     fontFamily: 'Gotham-Book',
-    marginBottom: 10,
+    marginBottom: 5,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    color: '#161415',
   },
   titleText: {
-    fontFamily: 'Gotham-Book',
+    fontFamily: 'Gotham-Medium',
     lineHeight: 16,
     fontSize: 14,
+    color: '#161415',
   },
   paraText: {
     fontFamily: 'Gotham-Book',
     lineHeight: 16,
     fontSize: 14,
+    color: '#161415',
   },
   faqPara: {
     backgroundColor: '#fff',
@@ -216,6 +239,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.4,
     shadowRadius: 4,
     fontFamily: 'Gotham-Book',
+    color: '#161415',
   },
   chevronImage: {
     width: 22,
@@ -235,19 +259,20 @@ const styles = StyleSheet.create({
   iconBox: {
     width: 22,
     height: 22,
-    backgroundColor:'#000',
-    padding:4,
-    borderRadius:20
+    backgroundColor: '#000',
+    padding: 4,
+    borderRadius: 20,
   },
   supportIcon: {
     width: 14,
     height: 14,
-    tintColor:'#fff',
+    tintColor: '#fff',
   },
   supportText: {
     lineHeight: 24,
     fontSize: 16,
     fontFamily: 'Gotham-medium',
+    color: '#161415',
   },
   supportData: {
     marginLeft: '25%',

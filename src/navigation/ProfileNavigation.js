@@ -2,7 +2,13 @@ import React from 'react';
 import Profile from '../screens/Profile';
 import ProfileEdit from '../screens/Profile/ProfileEdit';
 import {useNavigation} from '@react-navigation/native';
-import {TouchableOpacity, Image} from 'react-native';
+import {
+  TouchableOpacity,
+  Image,
+  Dimensions,
+  View,
+  Platform,
+} from 'react-native';
 import {assets} from '../config/AssetsConfig';
 import ChangePassword from '../screens/Profile/ChangePassword';
 import MyWallet from '../screens/Profile/MyWallet';
@@ -10,6 +16,7 @@ import Journey from '../screens/Journey';
 import Buy from '../screens/Buy';
 import WalletPay from '../screens/Profile/WalletPay';
 const {createStackNavigator} = require('@react-navigation/stack');
+const width = Dimensions.get('window').width;
 
 const ProfileNavigation = ({navigation}) => {
   const Stack = createStackNavigator();
@@ -37,7 +44,17 @@ const ProfileNavigation = ({navigation}) => {
     );
   }
   function LogoTitle() {
-    return <Image source={assets.logo} style={{width: 60, height: 24}} />;
+    return (
+      <View
+        style={{
+          // width:width - 105,
+          width: Platform.OS === 'android' ? width - 105 : width - 138,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <Image source={assets.logo} style={{width: 60, height: 24}} />
+      </View>
+    );
   }
   return (
     <Stack.Navigator>
@@ -47,6 +64,10 @@ const ProfileNavigation = ({navigation}) => {
         options={{
           headerShown: true,
           cardStyle: {backgroundColor: '#ffffff'},
+          headerStyle: {
+            borderBottomWidth: 1,
+            borderColor: '#000',
+          },
           headerLeft: () => <BackIcon />,
           headerTitle: props => <LogoTitle {...props} />,
           headerRight: () => <EditIcon />,
@@ -57,6 +78,10 @@ const ProfileNavigation = ({navigation}) => {
         name="ProfileEdit"
         component={ProfileEdit}
         options={{
+          headerStyle: {
+            borderBottomWidth: 1,
+            borderColor: '#000',
+          },
           headerLeft: () => <BackIcon />,
           headerTitle: props => <></>,
           headerRight: () => <></>,
@@ -66,6 +91,10 @@ const ProfileNavigation = ({navigation}) => {
         name="ChangePassword"
         component={ChangePassword}
         options={{
+          headerStyle: {
+            borderBottomWidth: 1,
+            borderColor: '#000',
+          },
           headerLeft: () => <BackIcon />,
           headerTitle: props => <></>,
           headerRight: () => <></>,
@@ -76,22 +105,10 @@ const ProfileNavigation = ({navigation}) => {
         name="MyWallet"
         component={MyWallet}
         options={{
-          headerLeft: () => <BackIcon />,
-          headerTitle: props => <LogoTitle {...props} />,
-        }}
-      />
-      <Stack.Screen
-        name="Journey"
-        component={Journey}
-        options={{
-          headerLeft: () => <BackIcon />,
-          headerTitle: props => <LogoTitle {...props} />,
-        }}
-      />
-      <Stack.Screen
-        name="Buy"
-        component={Buy}
-        options={{
+          headerStyle: {
+            borderBottomWidth: 1,
+            borderColor: '#000',
+          },
           headerLeft: () => <BackIcon />,
           headerTitle: props => <LogoTitle {...props} />,
         }}
@@ -100,7 +117,11 @@ const ProfileNavigation = ({navigation}) => {
         name="WalletPay"
         component={WalletPay}
         options={{
-         headerShown:false
+          headerStyle: {
+            borderBottomWidth: 1,
+            borderColor: '#000',
+          },
+          headerShown: false,
         }}
       />
     </Stack.Navigator>

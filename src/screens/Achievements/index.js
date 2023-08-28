@@ -20,7 +20,6 @@ const Achievements = () => {
     const token = await getToken();
     const instance = new JourneyContoller();
     const result = await instance.getAllBedges(token);
-    console.log(result, 'result');
     setLoading(false);
     setData(result.badges);
   };
@@ -75,6 +74,8 @@ const styles = StyleSheet.create({
   achTitle: {
     fontSize: 14,
     textTransform: 'uppercase',
+    fontFamily:'Gotham-Medium',
+    color: '#161415',
   },
   achBox: {
     backgroundColor: '#f2f2f2',

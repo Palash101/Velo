@@ -12,6 +12,10 @@ import {Modal} from 'react-native-paper';
 const height = Dimensions.get('window').height;
 
 export const ModalView = ({visible, setVisible, children, heading, style}) => {
+
+console.log(visible,'visible')
+
+
   return (
     <Modal
       visible={visible}
@@ -53,4 +57,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Gotham-Black',
     textTransform: 'uppercase',
   },
+  modalContent:{
+    paddingBottom:20
+  }
 });
