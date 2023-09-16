@@ -52,10 +52,11 @@ const styles = StyleSheet.create({
     paddingTop: 20,
 
     paddingBottom: 10,
-    fontSize: 20,
+    fontSize: 18,
     color: '#161415',
-    fontFamily: 'Gotham-Black',
+    fontFamily: 'Gotham-Medium',
     textTransform: 'uppercase',
+    fontWeight:'800'
   },
   modalContent:{
     paddingBottom:20

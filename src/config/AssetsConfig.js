@@ -7,6 +7,9 @@ export const assets = {
   back: require('../../assets/icons/back.png'),
   edit: require('../../assets/icons/edit.png'),
   hamburger: require('../../assets/icons/Hamburger_icon.png'),
+  cart: require('../../assets/icons/cart.png'),
+  list: require('../../assets/icons/list.png'),
+
   logo: require('../../assets/images/logo.png'),
   logoWhite: require('../../assets/images/logo-white.png'),
   vlogo: require('../../assets/vlogo.png'),

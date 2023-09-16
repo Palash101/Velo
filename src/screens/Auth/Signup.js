@@ -11,9 +11,6 @@ import {
 } from 'react-native';
 import {AuthContoller} from '../../controllers/AuthController';
 import {useNavigation} from '@react-navigation/native';
-import {PageContainer} from '../../components/Container';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import PageLoader from '../../components/PageLoader';
 import {AuthHeader} from '../../components/AuthHeader';
 import {DarkButton, ThemeButton} from '../../components/Buttons';
 import {Input} from '../../components/Input/input';
@@ -91,12 +88,15 @@ const SignUp = () => {
       };
       const instance = new AuthContoller();
       const result = await instance.signUpUser(data);
+      console.log(result,'resultresult')
       setLoading(false);
       if (result?.status) {
-        userCtx.setUser(result.user);
-        setToken(result.access_token);
-        setAuth(true);
-        toast.show(result.message);
+        // userCtx.setUser(result.user);
+        // setToken(result.access_token);
+        // setAuth(true);
+        // toast.show(result.message);
+        toast.show("We have sent a verify link on your email please verify.");
+        navigation.navigate('Verify',{email:email})
         setLoading(false);
       } else {
         var errors = result.errors;
@@ -162,12 +162,12 @@ const SignUp = () => {
       <View style={styles.termsBox}>
         <Text style={styles.normalText}>By signup you agree our </Text>
         <TouchableOpacity onPress={() => setTermsConditionModal(true)}>
-          <Text style={styles.mediumText}>Terms and Conditions</Text>
+          <Text style={styles.mediumText}>T&C and Privacy Policy.</Text>
         </TouchableOpacity>
-        <Text style={styles.normalText}> and </Text>
+        {/* <Text style={styles.normalText}> and </Text>
         <TouchableOpacity onPress={() => setPolicyModal(true)}>
           <Text style={styles.mediumText}>Privacy Policy.</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     );
   };

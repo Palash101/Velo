@@ -6,25 +6,34 @@ import {
   Dimensions,
   TouchableOpacity,
   Image,
+  Platform,
 } from 'react-native';
 import {RoundedDarkButton} from '../Buttons';
 import {assets} from '../../config/AssetsConfig';
+import { API_BASE, API_SUCCESS } from '../../config/ApiConfig';
 
 const width = Dimensions.get('window').width;
 
-export const CartItem = ({item, onPress}) => {
+export const CartItem = ({item, onPress, addClick, minusClick}) => {
+
+
+
   return (
     <TouchableOpacity style={styles.box} onPress={() => onPress(item)}>
-      <Image source={assets.shake} style={styles.itemImage} />
-      <Text style={styles.title}>{item.name}</Text>
+      <Image source={{uri:API_SUCCESS +'/'+ item?.attributes?.image}} style={styles.itemImage} />
+      <Text style={styles.title}>{item.attributes.name}</Text>
       <View style={styles.priceBox}>
-        <Text style={styles.price}>15 QR</Text>
+        <Text style={styles.price}>{item.attributes?.price} QR</Text>
         <View style={styles.addToCart}>
-          <TouchableOpacity style={styles.decrementBox}>
-            <Text style={styles.decrText}>-</Text>
-          </TouchableOpacity>
-          <Text style={styles.qty}>1</Text>
-          <TouchableOpacity style={styles.incrementBox}>
+          {item.quantity > 0 &&
+          <>
+            <TouchableOpacity style={styles.decrementBox} onPress={() => minusClick(item)}>
+              <Text style={styles.decrText}>-</Text>
+            </TouchableOpacity>
+            <Text style={styles.qty}>{item.quantity}</Text>
+          </>
+          }
+          <TouchableOpacity style={styles.incrementBox} onPress={() => addClick(item)}>
             <Text style={styles.incText}>+</Text>
           </TouchableOpacity>
         </View>
@@ -35,19 +44,19 @@ export const CartItem = ({item, onPress}) => {
 
 const styles = StyleSheet.create({
   box: {
-    backgroundColor: '#fff',
+    backgroundColor: Platform.OS === 'android' ? '#f2f2f2' : '#fff',
     textAlign: 'center',
     padding: 10,
     borderRadius: 24,
     shadowColor: '#161415',
-    shadowOffset: {width: -1, height: 2},
+    shadowOffset: {width: -1, height: 1},
     shadowOpacity: 0.2,
     shadowRadius: 10,
     marginVertical: 20,
     marginHorizontal: 10,
     width: width / 2 - 40,
-    borderWidth:1,
-    borderColor:'#ddd'
+    //borderWidth:1,
+    //borderColor:'#ddd'
   },
   title: {
     fontSize: 12,
@@ -57,15 +66,17 @@ const styles = StyleSheet.create({
     fontFamily:'Gotham-Medium'
   },
   price: {
-    fontSize: 18,
+    fontSize: 14,
     marginVertical: 7,
     color:'#161415',
-    fontFamily:'Gotham-Medium'
+    fontFamily:'Gotham-Medium',
+    lineHeight:24,
   },
   itemImage: {
-    width: 30,
-    height: 90,
+    width: 80,
+    height: 80,
     alignSelf: 'center',
+    borderRadius:10,
   },
   priceBox: {
     display: 'flex',

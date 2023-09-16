@@ -13,7 +13,6 @@ import {
 } from 'react-native';
 import {assets} from '../../config/AssetsConfig';
 import {UserContext} from '../../../context/UserContext';
-import {BuyContoller} from '../../controllers/BuyController';
 import {useToast} from 'react-native-toast-notifications';
 import PageLoader from '../../components/PageLoader';
 import WebView from 'react-native-webview';
@@ -21,13 +20,13 @@ import {Modal} from 'react-native-paper';
 import {ProfileController} from '../../controllers/ProfileController';
 import {API_SUCCESS} from '../../config/ApiConfig';
 import {useNavigation} from '@react-navigation/native';
+import {DoubleJoyController} from '../../controllers/DoubleJoyController';
 
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 
-const Pay = props => {
+const doubleJoypay = props => {
   const [loading, setLoading] = useState(false);
-  const [item, setItem] = useState();
   const {getToken} = useContext(UserContext);
   const [paymentUrl, setPaymentUrl] = useState();
   const [paymentModal, setPaymentModal] = useState(false);
@@ -37,39 +36,28 @@ const Pay = props => {
 
   const toast = useToast();
 
-  useEffect(() => {
-    setItem(props.route.params.item);
-    getDetail();
-  }, []);
-
-  const getDetail = async () => {
-    const token = await getToken();
-    const instance = new ProfileController();
-    const result = await instance.getUserDetail(token);
-    setUser(result.user);
-  };
-
   const getUserToken = async () => {
     return await getToken();
   };
 
   const checkResponse = data => {
-    if (data.url.includes('/payment/success')) {
+    console.log(data.url)
+    if (data.url.includes('payment/success')) {
       setLoading(true);
       setPaymentModal(false);
       setTimeout(() => {
-        toast.show('Package purchased successfully');
-        navigation.navigate('buy', {purchase: 'success'});
+        toast.show('Payment successfully');
+        navigation.navigate('MyOrder', {purchase: 'success'});
         setLoading(false);
       }, 3000);
-    } 
-    else if(data.url.includes('payment/failed')){
-      navigation.navigate('buy');
-      toast.show('Payment has been failed');
     }
-    else if (data.url.includes('transaction_cancelled')) {
+    
+    else if(data.url.includes('payment/failed')){
+      navigation.navigate('DoubleJoy');
+      toast.show('Payment has been failed');
+    }else if (data.url.includes('transaction_cancelled')) {
       setPaymentModal(false);
-      navigation.navigate('buy');
+      navigation.navigate('DoubleJoy');
       toast.show('transaction cancelled');
     }
   };
@@ -77,9 +65,8 @@ const Pay = props => {
   const payNow = val => {
     if (val === 'wallet') {
       PayFromWallet();
-     // completePaymentDebit('Wallet');
     } else if (val === 'debit') {
-      completePaymentDebit('Package');
+      completePaymentDebit('VISA');
     } else if (val === 'apple') {
       completePaymentDebit('ApplePay');
     } else if (val === 'gpay') {
@@ -110,45 +97,29 @@ const Pay = props => {
 
   const completePaymentDebit = async type => {
     const token = await getToken();
+    const cart_id = props.route.params.cart.id;
+    const note = props.route.params.note;
+    console.log(token, cart_id, type, note);
     setLoading(true);
-    const instance = new BuyContoller();
-    const result = await instance.executePayment(item, type, token);
-    console.log(result,'resultttt')
+    const instance = new DoubleJoyController();
+    const result = await instance.checkout(token, cart_id, type, note);
+    console.log(result, 'resultttt');
     if (result.IsSuccess === true) {
-      if(type === 'Wallet'){
+      if (type === 'Wallet') {
         toast.show(result.Message);
-        navigation.navigate('buy', {purchase: 'success'});
+        navigation.navigate('MyOrder', {purchase: 'success'});
         setLoading(false);
-      }
-      else{
+      } else {
         setPaymentUrl(result.Data.PaymentURL);
         setPaymentModal(true);
         setLoading(false);
       }
     } else {
-      if(result?.Message){
-      toast.show(result.Message);
+      if (result?.Message) {
+        toast.show(result.Message);
+      } else {
+        toast.show(result.msg);
       }
-      else{
-        toast.show(result.msg)
-      }
-      setLoading(false);
-    }
-  };
-
-  const completePayment = async () => {
-    const data = {
-      id: item.id,
-      type: 'wallet',
-    };
-    const token = await getToken();
-    const instance = new BuyContoller();
-    const result = await instance.purchasePackage(data, token);
-    if (result.status === 'success') {
-      toast.show(result.msg);
-      setLoading(false);
-    } else {
-      toast.show(result.msg);
       setLoading(false);
     }
   };
@@ -158,7 +129,7 @@ const Pay = props => {
       <PageLoader loading={loading} />
 
       <View style={{marginTop: Platform.OS === 'android' ? 10 : 70}}>
-        <View
+      <View
           style={{
             display: 'flex',
             flexDirection: 'row',
@@ -166,7 +137,7 @@ const Pay = props => {
             marginBottom: 20,
           }}>
           <TouchableOpacity
-            onPress={() => navigation.navigate('buy')}
+            onPress={() => navigation.navigate('DoubleJoyCheckout')}
             style={{position: 'absolute', left: 0}}>
             <Image
               source={assets.back}
@@ -176,12 +147,13 @@ const Pay = props => {
           <Text style={{fontSize: 16}}>PAYMENT METHOD</Text>
         </View>
 
+       
         <View
           style={{
             display: 'flex',
             justifyContent: 'center',
             width: '80%',
-            height: height - 150,
+            height: height - 210,
             alignSelf: 'center',
             paddingBottom: 20,
           }}>
@@ -287,7 +259,7 @@ const Pay = props => {
   );
 };
 
-export default Pay;
+export default doubleJoypay;
 
 const styles = StyleSheet.create({
   modalBox1: {

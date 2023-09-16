@@ -10,15 +10,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {PageContainer} from '../../components/Container';
-import {
-  RoundedDarkButton,
-  RoundedGreyButton,
-  RoundedThemeButton,
-} from '../../components/Buttons';
-import {FlatList} from 'react-native-gesture-handler';
-import {assets} from '../../config/AssetsConfig';
-import ScaledImage from '../../components/ScaleImage';
 import {useNavigation} from '@react-navigation/native';
 import {API_SUCCESS} from '../../config/ApiConfig';
 import moment from 'moment';
@@ -41,8 +32,14 @@ const HappeningReport = props => {
   const [rides, setRides] = useState(0);
 
   useEffect(() => {
-    getDetail();
-    getHappeningDetail();
+    const focusHandler = navigation.addListener('focus', () => {
+      setItem();
+      setData([])
+      getDetail();
+      getHappeningDetail();
+    });
+    return focusHandler;
+    
   }, [props.route.params]);
 
   const getDetail = async () => {
@@ -53,6 +50,7 @@ const HappeningReport = props => {
   };
 
   const getHappeningDetail = async () => {
+    setLoading(true)
     const token = await getToken();
     const id = props.route.params.item.id;
     const instance = new HappeningContoller();
@@ -68,6 +66,7 @@ const HappeningReport = props => {
     if (result?.rides) {
       setRides(result?.rides);
     }
+    setLoading(false)
   };
 
   return (
@@ -80,10 +79,12 @@ const HappeningReport = props => {
             display: 'flex',
             justifyContent: 'center',
           }}>
-          <Image
-            source={{uri: API_SUCCESS + '/' + item?.image}}
-            style={styles.itemImage}
-          />
+          {item?.image && 
+            <Image
+              source={{uri: API_SUCCESS + '/' + item?.image}}
+              style={styles.itemImage}
+            />
+          }
         </View>
         <View style={styles.detailBox}>
           <ScrollView
@@ -100,10 +101,12 @@ const HappeningReport = props => {
                 <Text style={styles.uname}>
                   {user.first_name} {user.last_name}
                 </Text>
-                <Text style={styles.date}>
-                  {moment(item?.start_date).format('DD MMM, YYYY')} - {' '}
-                  {moment(item?.end_date).format('DD MMM, YYYY')}
-                </Text>
+                {item?.start_date &&
+                  <Text style={styles.date}>
+                    {moment(item?.start_date).format('DD MMM, YYYY')} - {' '}
+                    {moment(item?.end_date).format('DD MMM, YYYY')}
+                  </Text>
+                }
               </View>
               <Text style={styles.hd}>{item?.title}</Text>
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -22,23 +22,30 @@ export const ClassItem = props => {
   );
   const navigation = useNavigation();
 
-
   useEffect(() => {
-    
     if (item?.attributes?.user_waiting === true) {
       let users = item?.attributes?.waitingUsers.filter(
         user => user.user_id === props.uid,
       );
       setBooking(users[0]);
     }
+  }, []);
 
-  },[])
+  const gotoClassDetail = () => {
+    if (item.attributes?.expired === true) {
+    } else {
+      navigation.navigate('ClassDetail', {item: item});
+    }
+  };
 
   return (
     <>
       <TouchableOpacity
-        onPress={() => navigation.navigate('ClassDetail', {item: item})}
-        style={styles.outerBox}>
+        onPress={() => gotoClassDetail(item)}
+        style={[
+          styles.outerBox,
+          {opacity: item.attributes?.expired === true ? 0.4 : 1},
+        ]}>
         <View style={styles.imageBox}>
           <Image
             source={
@@ -48,9 +55,7 @@ export const ClassItem = props => {
             }
             style={styles.mainImage}
           />
-          {item.indoor === 0 &&
-          <Text style={styles.outdoor}>Outdoor</Text>
-          }
+          {item.indoor === 0 && <Text style={styles.outdoor}>Outdoor</Text>}
         </View>
 
         <View
@@ -108,7 +113,11 @@ export const ClassItem = props => {
               item.attributes.booking_count_status.available === 0 &&
               item.attributes.user_waiting === false &&
               item.attributes.mine_booking === false && (
-                <Badge style={[styles.bedge, {backgroundColor: '#161415',color:'#fff'}]}>
+                <Badge
+                  style={[
+                    styles.bedge,
+                    {backgroundColor: '#161415', color: '#fff'},
+                  ]}>
                   Join Waitlist
                 </Badge>
               )}
@@ -125,7 +134,11 @@ export const ClassItem = props => {
 
             {item.attributes.available_seat_text !== '' &&
               item.attributes.mine_booking === false && (
-                <Badge style={[styles.bedge, {backgroundColor: 'red',color:'#fff'}]}>
+                <Badge
+                  style={[
+                    styles.bedge,
+                    {backgroundColor: 'red', color: '#fff'},
+                  ]}>
                   {item.attributes.available_seat_text}
                 </Badge>
               )}
@@ -159,7 +172,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     backgroundColor: '#000',
     alignItems: 'center',
-    top: 0,
+    bottom: 0,
     zIndex: 999,
     left: 0,
     fontSize: 12,

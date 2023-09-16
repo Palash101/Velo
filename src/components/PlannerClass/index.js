@@ -49,9 +49,7 @@ export const PlannerClass = props => {
             </Text>
           )}
           <Text
-            style={styles.trainerName}
-            ellipsizeMode="tail"
-            numberOfLines={1}>
+            style={styles.trainerName}>
             {item.relation.classes.relations.trainer.attributes.first_name}
           </Text>
         </View>
@@ -101,7 +99,7 @@ export const PlannerClass = props => {
             </Badge>
           ) : (
             <Badge
-              style={[styles.bedge, {backgroundColor: '#3aae4c'}]}
+              style={[styles.bedge, {backgroundColor: '#161415'}]}
               onPress={() =>
                 navigation.navigate('ClassDetail', {
                   item: item.relation.classes,
@@ -143,7 +141,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     backgroundColor: '#000',
     alignItems: 'center',
-    top: 0,
+    bottom: 0,
     zIndex: 999,
     left: 0,
     fontSize: 9,

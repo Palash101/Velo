@@ -10,6 +10,8 @@ import {Dimensions, Image, Platform, View} from 'react-native';
 import {assets} from '../config/AssetsConfig';
 import {useNavigation} from '@react-navigation/native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import Verify from '../screens/Auth/Verify';
+import ChangePassword from '../screens/Auth/ChangePassword';
 
 const width = Dimensions.get('window').width;
 
@@ -65,6 +67,20 @@ const AuthNavigationStack = ({navigation}) => {
         }}
       />
       <Stack.Screen
+        name={'Verify'}
+        component={Verify}
+        options={{
+          headerStyle: {
+            borderBottomWidth:1,
+            borderColor:'#000'
+          },
+          headerLeft: () => <></>,
+          headerRight: () => <></>,
+          headerTitle: props => <LogoTitle {...props} />,
+        }}
+      />
+      
+      <Stack.Screen
         name={'Signup'}
         component={SignUp}
         options={{
@@ -80,6 +96,15 @@ const AuthNavigationStack = ({navigation}) => {
       <Stack.Screen
         name={'Forgot'}
         component={Forgot}
+        options={{
+          headerLeft: () => <></>,
+          headerRight: () => <></>,
+          headerTitle: props => <LogoTitle {...props} />,
+        }}
+      />
+       <Stack.Screen
+        name={'ResetPassword'}
+        component={ChangePassword}
         options={{
           headerLeft: () => <></>,
           headerRight: () => <></>,

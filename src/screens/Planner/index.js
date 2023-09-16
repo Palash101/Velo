@@ -35,7 +35,11 @@ const Planner = ({navigation}) => {
       getBookings();
     });
     return focusHandler;
-  }, [refresh, navigation]);
+  }, [navigation]);
+
+  useEffect(() => {
+      getBookings();
+  }, [refresh]);
 
   const getBookings = async () => {
     setLoading(true);

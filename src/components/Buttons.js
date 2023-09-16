@@ -79,7 +79,16 @@ export const RoundedGreyButton = props => {
     </Button>
   );
 };
-
+export const RoundedGreyButton2 = props => {
+  return (
+    <TouchableOpacity
+      style={[styles.RoundedDarkButton3,props.style]}
+      onPress={() => props.onPress()}>
+        <Text style={{fontSize:12,color:'#fff',lineHeight:16,fontFamily: 'Gotham-Medium',textTransform:'uppercase'}}>{props.label}</Text>
+      
+    </TouchableOpacity>
+  );
+};
 export const CurvedGreyButton = props => {
   return (
     <Button
@@ -119,6 +128,16 @@ export const RoundedThemeButton = props => {
     </Button>
   );
 };
+export const RoundedThemeButton2 = props => {
+  return (
+     <TouchableOpacity
+     style={[styles.RoundedThemeButton2,props.style]}
+     onPress={() => props.onPress()}>
+        <Text style={{fontSize:12,color:'#000',fontFamily: 'Gotham-Medium',lineHeight:16,textTransform:'uppercase'}}>{props.label}</Text>
+   </TouchableOpacity>
+  );
+};
+
 export const RoundedThemeLightButton = props => {
   return (
     <Button
@@ -179,6 +198,16 @@ const styles = StyleSheet.create({
     padding:5,
     borderRadius:20
   },
+  RoundedDarkButton3:{
+    fontFamily: 'Gotham-Black',
+    fontWeight: '800',
+    backgroundColor: '#000',
+    alignItems: 'center',
+    alignSelf: 'center',
+    width: 'auto',
+    padding:10,
+    borderRadius:20
+  },
   RoundedRedButton:{
     backgroundColor: '#f50e02',
     fontFamily: 'Gotham-Black',
@@ -198,6 +227,19 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: '100%',
     height: 36,
+  },
+  RoundedThemeButton2:{
+    fontFamily: 'Gotham-Black',
+    fontWeight: '800',
+    backgroundColor: '#f2f2f2',
+    alignItems: 'center',
+    alignSelf: 'center',
+    width: '100%',
+    height: 36,
+    paddingTop:10,
+    borderRadius:20,
+    paddingLeft:10,
+    paddingRight:10,
   },
   loader: {
     marginTop: 8,

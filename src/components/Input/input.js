@@ -19,6 +19,7 @@ export const Input = props => {
         theme={{colors: {primary: '#161415'}}}
         value={props.value ? props.value : ''}
         {...props}
+        
       />
     </View>
   );

@@ -8,25 +8,26 @@ import {
   Image,
 } from 'react-native';
 import {assets} from '../../config/AssetsConfig';
+import { API_SUCCESS } from '../../config/ApiConfig';
 
 const width = Dimensions.get('window').width;
 
-export const CartItem1 = ({item, onPress}) => {
+export const CartItem1 = ({item, onPress,  addClick, minusClick}) => {
   return (
     <TouchableOpacity style={styles.box} onPress={() => onPress(item)}>
       <View style={styles.imgBox}>
-        <Image source={assets.shake} style={styles.itemImage} />
+        <Image source={{uri:API_SUCCESS +'/'+ item?.attributes?.image}} style={styles.itemImage} />
       </View>
       <View style={styles.contBox}>
-        <Text style={styles.title}>{item.name}</Text>
+        <Text style={styles.title}>{item?.attributes?.optional_item}</Text>
         <View style={styles.priceBox}>
-          <Text style={styles.price}>15 QR</Text>
+          <Text style={styles.price}>{item?.attributes?.price} QR</Text>
           <View style={styles.addToCart}>
-            <TouchableOpacity style={styles.decrementBox}>
+            <TouchableOpacity style={styles.decrementBox} onPress={() => minusClick(item)}>
               <Text style={styles.decrText}>-</Text>
             </TouchableOpacity>
-            <Text style={styles.qty}>1</Text>
-            <TouchableOpacity style={styles.incrementBox}>
+            <Text style={styles.qty}>{item?.attributes?.quantity}</Text>
+            <TouchableOpacity style={styles.incrementBox} onPress={() => addClick(item)}>
               <Text style={styles.incText}>+</Text>
             </TouchableOpacity>
           </View>
@@ -45,6 +46,8 @@ const styles = StyleSheet.create({
     width: width - 60,
     display: 'flex',
     flexDirection: 'row',
+    backgroundColor:'#f2f2f2',
+    borderRadius:16,
   },
   imgBox: {
     width: 80,
@@ -55,15 +58,16 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 16,
+    fontSize: 14,
     textTransform: 'uppercase',
     marginTop: 10,
     color: '#161415',
     fontFamily: 'Gotham-Medium',
   },
   price: {
-    fontSize: 16,
+    fontSize: 14,
     marginVertical: 7,
+    lineHeight:24,
     marginRight: 20,
     color: '#161415',
     fontFamily: 'Gotham-Medium',

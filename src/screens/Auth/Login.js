@@ -36,6 +36,7 @@ const Login = () => {
 
   const toast = useToast();
 
+
   const submit = async () => {
     if (loading === false) {
       if (email !== '' && password !== '') {
@@ -49,8 +50,17 @@ const Login = () => {
           toast.show('Welcome to velo');
           setLoading(false);
         } else {
-          setLoading(false);
-          toast.show(result.error);
+          if(result.status === 'notVerified'){
+            const otpResult = await instance.resendOtp(email);
+            console.log(otpResult,'otpResult')
+            setLoading(false);
+            toast.show(result.message);
+            navigation.navigate("Verify",{email:email});
+          }
+          else{
+            setLoading(false);
+            toast.show(result.error);
+          }
         }
       } else {
         toast.show('please enter email and password');

@@ -47,7 +47,7 @@ export class ClassContoller {
     if (data.package_id) {
       newdata.append('package_id', data.package_id);
     }
-
+    console.log(newdata,'newdata',token)
     const url = API_BASE + '/booking/complete';
     return fetch(url, {
       method: 'POST',

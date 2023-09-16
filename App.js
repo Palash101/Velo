@@ -62,7 +62,7 @@ const App = () => {
           />
         }
         normalColor={'#000'}
-        duration={1000}
+        duration={2000}
         textStyle={{paddingRight: 40}}>
         <UserProvider>
           {loading ? (

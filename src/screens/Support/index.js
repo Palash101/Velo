@@ -141,7 +141,7 @@ const Support = ({navigation}) => {
               <Text style={styles.supportText}>+974 4480 0204</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => Linking.openURL('mailto:info@valo.qa')}
+              onPress={() => Linking.openURL('mailto:info@velo.qa')}
               style={styles.supportList}>
               <View style={styles.iconBox}>
                 <Image source={assets.email} style={styles.supportIcon} />

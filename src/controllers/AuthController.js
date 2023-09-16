@@ -72,6 +72,65 @@ export class AuthContoller {
       });
   }
 
+  async resendOtp(email) {
+    const newdata = new FormData();
+    newdata.append('email', email);
+    return fetch(API_BASE + '/auth/resend-otp', {
+      method: 'POST',
+      body: newdata,
+    })
+      .then(response => response.json())
+      .then(responseJson => {
+        console.log(responseJson, 'reee');
+        return responseJson;
+      })
+      .catch(error => {
+        console.log(error);
+        return {success: false, error};
+      });
+  }
+
+  async verifyOtp(email, otp) {
+    const newdata = new FormData();
+    newdata.append('email', email);
+    newdata.append('otp', otp);
+    return fetch(API_BASE + '/auth/verify-otp', {
+      method: 'POST',
+      body: newdata,
+    })
+      .then(response => response.json())
+      .then(responseJson => {
+        console.log(responseJson, 'reee');
+        return responseJson;
+      })
+      .catch(error => {
+        console.log(error);
+        return {success: false, error};
+      });
+  }
+
+  async ResetPassword(data) {
+    const newdata = new FormData();
+    newdata.append('email', data.email);
+    newdata.append('otp', data.otp);
+    newdata.append('password', data.password);
+    newdata.append('password_confirmation', data.confirmPassword);
+
+    return fetch(API_BASE + '/auth/reset/password', {
+      method: 'POST',
+      body: newdata,
+    })
+      .then(response => response.json())
+      .then(responseJson => {
+        console.log(responseJson, 'reee');
+        return responseJson;
+      })
+      .catch(error => {
+        console.log(error);
+        return {success: false, error};
+      });
+  }
+
   async firebaseTokenUpdate(firebaseToken, token) {
     const newdata = new FormData();
     newdata.append('token', firebaseToken);

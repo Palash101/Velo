@@ -65,11 +65,11 @@ const Welcome = () => {
           onPress={() => navigation.navigate('Signup')}
           loading={false}
         />
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.skip}
           onPress={() => navigation.navigate('Home')}>
           <Text style={styles.skipText}>Skip Now </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </>
   );

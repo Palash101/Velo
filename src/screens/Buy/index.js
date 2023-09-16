@@ -40,29 +40,28 @@ const Buy = props => {
   const [loading, setLoading] = useState(true);
 
   const [data, setData] = useState([]);
-  const [userPackages, setUserPackages] = useState();
+  const [userPackages, setUserPackages] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
   const [cartModal, setCartModal] = useState(false);
-  const [paymentUrl, setPaymentUrl] = useState('');
   const [selectedItem, setSelectedItem] = useState({});
-  const [payLoading1, setPayLoading1] = useState(false);
-  const [payLoading2, setPayLoading2] = useState(false);
-  const [payModal, setPayModal] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const navigation = useNavigation();
 
-  const toast = useToast();
 
   useEffect(() => {
     const focusHandler = navigation.addListener('focus', () => {
+      console.log('Buy Scree')
       if (props.route.params !== undefined) {
         setActive('My');
+      }
+      else{
+        setActive('All')
       }
       getPackages();
       getUserAllPackages();
     });
     return focusHandler;
-  }, [props]);
+  }, [props.route.params,navigation]);
 
   useEffect(() => {
     getUserAllPackages();
@@ -73,6 +72,7 @@ const Buy = props => {
     const token = await getToken();
     const instance = new BuyContoller();
     const result = await instance.getAllPackages(token);
+ 
     if (result?.data?.length) {
       setData(result.data);
       setLoading(false);
@@ -85,7 +85,9 @@ const Buy = props => {
     const token = await getToken();
     const instance = new BuyContoller();
     const result = await instance.getUserPackages(token);
+    console.log(result,'users package');
     if (result.status === 'error') {
+      setUserPackages([]);
       setErrorMessage(result.msg);
     } else {
       setUserPackages(result);
@@ -164,7 +166,10 @@ const Buy = props => {
             /> */}
             <TouchableOpacity
               style={styles.checkoutBtn}
-              onPress={() => navigation.navigate('Pay', {item: selectedItem})}>
+              onPress={() => {
+                setCartModal(false);
+                navigation.navigate('Pay', {item: selectedItem});
+              }}>
               <Text style={styles.btnText}>GO TO CHECKOUT</Text>
               <Image source={assets.chevron} style={styles.btnImage} />
             </TouchableOpacity>

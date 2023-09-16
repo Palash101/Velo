@@ -45,7 +45,7 @@ const Forgot = () => {
 
           if (result.status === 'success') {
             toast.show(result.message);
-            navigation.navigate('Login');
+            navigation.navigate('ResetPassword',{email: email});
             setLoading(false)
           } else {
             toast.show(result.message);

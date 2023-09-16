@@ -85,12 +85,11 @@ export class BuyContoller {
     return fetch(API_BASE + '/packages/purchase', requestOptions)
       .then(response => response.text())
       .then(result => {
+        console.log(result)
         return JSON.parse(result);
       })
       .catch(error => {
         return error;
       });
-
-    
   }
 }

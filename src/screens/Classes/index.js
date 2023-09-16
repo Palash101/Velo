@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
   Image,
+  RefreshControl,
 } from 'react-native';
 import {PageContainer} from '../../components/Container';
 import {
@@ -27,7 +28,7 @@ import {useNavigation} from '@react-navigation/native';
 import {assets} from '../../config/AssetsConfig';
 import {SkeltonCard, SkeltonStudio} from '../../components/Skelton';
 import analytics from '@react-native-firebase/analytics';
-import { ProfileController } from '../../controllers/ProfileController';
+import {ProfileController} from '../../controllers/ProfileController';
 
 const Classes = props => {
   const [classes, setClasses] = useState();
@@ -40,9 +41,10 @@ const Classes = props => {
   const [forceReload, setForseReload] = useState(false);
   const navigation = useNavigation();
   const [activeStudios, setActiveStudios] = useState([]);
-  const [refresh, setRefresh] = useState(true);
+  const [refresh, setRefresh] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [catIndex, setCatIndex] = useState([]);
-  const [uid, setUid] = useState()
+  const [uid, setUid] = useState();
 
   React.useEffect(() => {
     const focusHandler = navigation.addListener('focus', () => {
@@ -64,7 +66,23 @@ const Classes = props => {
     return focusHandler;
   }, [props.route.params, navigation]);
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   Alert.alert(refresh)
+  //   setClasses();
+  //   getData();
+  //   const result = AsyncStorage.getItem('di');
+  //   if (result) {
+  //     setGlobalIndex(result);
+  //     var date = moment(new Date(), 'YYYY-MM-DD')
+  //       .add(result, 'days')
+  //       .format('YYYY-MM-DD');
+  //     setSelectedDate(date);
+  //   } else {
+  //     setGlobalIndex(0);
+  //   }
+  // }, [refresh]);
+
+  const callRefresh = async() =>{
     setClasses();
     getData();
     const result = AsyncStorage.getItem('di');
@@ -77,7 +95,7 @@ const Classes = props => {
     } else {
       setGlobalIndex(0);
     }
-  }, [refresh]);
+  }
 
   const getData = async () => {
     setLoading(true);
@@ -91,7 +109,6 @@ const Classes = props => {
     const userDetail = await instance1.getUserDetail(token);
     setUid(userDetail.user.id);
 
-
     if (props.route.params?.activeId) {
       const activeLocation = result.locations.filter(
         item => item.id === props.route.params?.activeId,
@@ -100,33 +117,25 @@ const Classes = props => {
       setActive(activeLocation[0]?.classess);
       setFilteredClass(activeLocation[0].classess);
     } else {
-
       if (aStudio?.length) {
-
         const allCatIndex = JSON.parse(aStudio);
         setCatIndex(allCatIndex);
-       
+
         let studios = [];
-        result.locations.forEach((item,index) => {
+        result.locations.forEach((item, index) => {
           const exist = allCatIndex.filter(item => item === index);
-          if(exist.length){
-            studios.push(item)
+          if (exist.length) {
+            studios.push(item);
           }
-        })
-       
+        });
 
         setActiveStudios(studios);
         const allClasses = getAllFilteredClassess(studios);
         setActive(allClasses);
         setFilteredClass(allClasses);
-
-
       } else {
-
-        selectCategory(result.locations[0],0);
+        selectCategory(result.locations[0], 0);
       }
-
-     
     }
   };
 
@@ -168,30 +177,27 @@ const Classes = props => {
 
   const selectCategory = async (item, index) => {
     const filterData = activeStudios.filter(item1 => item1.id === item.id);
-    
 
     if (filterData.length) {
-        if(activeStudios.length > 1){
-
+      if (activeStudios.length > 1) {
         const filterData1 = activeStudios.filter(item1 => item1.id !== item.id);
         const filterData2 = catIndex.filter(item1 => item1 !== index);
 
         setActiveStudios(filterData1);
 
-        setCatIndex(filterData2)
+        setCatIndex(filterData2);
         AsyncStorage.setItem('activeStudio', JSON.stringify(filterData2));
-        setCatIndex(filterData2)
+        setCatIndex(filterData2);
         let allClasses = getAllFilteredClassess(filterData1);
         setActive(allClasses);
         setFilteredClass(allClasses);
       }
-
     } else {
       const allData = [...activeStudios, item];
       setActiveStudios(allData);
 
       const catIndexData = [...catIndex, index];
-      setCatIndex(catIndexData)
+      setCatIndex(catIndexData);
       AsyncStorage.setItem('activeStudio', JSON.stringify(catIndexData));
 
       let allClasses = getAllFilteredClassess(allData);
@@ -223,8 +229,16 @@ const Classes = props => {
     await analytics().logEvent(eventName, {
       name: name,
       gender: gender,
-    })
+    });
   };
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      callRefresh();
+      setRefreshing(false);
+    }, 2000);
+  }, []);
 
   return (
     <>
@@ -254,7 +268,8 @@ const Classes = props => {
                         label={item.name}
                         onPress={() => {
                           logCustomeEvent('MostStudioClicked', item.name);
-                          selectCategory(item, index)}}
+                          selectCategory(item, index);
+                        }}
                         style={styles.tabBtn}
                       />
                     )}
@@ -263,11 +278,11 @@ const Classes = props => {
               />
             )}
           </View>
-          <View style={styles.refreshIcon}>
+          {/* <View style={styles.refreshIcon}>
             <TouchableOpacity onPress={() => setRefresh(!refresh)}>
               <Image source={assets.refresh} style={{width: 24, height: 24}} />
             </TouchableOpacity>
-          </View>
+          </View> */}
           <View style={styles.calander}>
             <Calendar onSelectDate={onSelectDate} globalIndex={globalIndex} />
           </View>
@@ -278,11 +293,17 @@ const Classes = props => {
                 data={classes}
                 showsVerticalScrollIndicator={false}
                 decelerationRate={'normal'}
-                //onScrollBeginDrag={() => Alert.alert('Helo')}
-                //onScrollEndDrag={() => Alert.alert('end')}
-                contentContainerStyle={{paddingBottom:40}}
+                // onScrollBeginDrag={() => setRefresh(!refresh)}
+                //onScrollEndDrag={() => setRefresh(!refresh)}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }
+                contentContainerStyle={{paddingBottom: 40}}
                 renderItem={({item}, key) => (
-                  <ClassItem key={key} item={item} uid={uid} />
+                    <ClassItem key={key} item={item} uid={uid} />
                 )}
               />
             ) : (
@@ -326,10 +347,11 @@ const styles = StyleSheet.create({
   },
   classesList: {
     marginBottom: 270,
+    height: height - 310,
   },
   calander: {
-    marginBottom: 20,
-    marginTop: 10,
+    marginBottom: 10,
+    marginTop: 0,
   },
   refreshIcon: {
     width: 24,

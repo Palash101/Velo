@@ -58,7 +58,7 @@ const ProfileEdit = ({navigation}) => {
       setSingleFile(res[0]);
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
-        Alert.alert('Canceled');
+        console.log('Canceled');
       } else {
         Alert.alert('Unknown Error: ' + JSON.stringify(err));
         throw err;
@@ -112,6 +112,7 @@ const ProfileEdit = ({navigation}) => {
       const token = await getToken();
       const instance = new ProfileController();
       const result = await instance.updateProfile(data, token);
+      console.log(result,'ress')
       if (result.status === 'success') {
         toast.show(result.message);
         userCtx.setUser({...user.data, ...result.user});

@@ -49,6 +49,8 @@ const Home = () => {
   const getFirebaseToken = async () => {
     const newFirebaseToken = await messaging().getToken();
     const saveToken = await AsyncStorage.getItem('firebaseToken');
+
+    console.log(newFirebaseToken, 'newFirebaseToken');
     if (!saveToken || saveToken !== newFirebaseToken) {
       const token = await getToken();
       const instance = new AuthContoller();
@@ -214,11 +216,12 @@ const Home = () => {
           <View style={{marginTop: challenges?.length > 2 ? 40 : 20}}>
             <Heading style={{marginBottom: 5}}>DOUBLE JOY</Heading>
             <TraingBox
-              title={'Coming Soon...'}
+              // title={'Coming Soon...'}
+              title={''}
               bg={require('../../../assets/images/bg.png')}
               style={{marginHorizontal: 8, height: 150}}
               onPress={() => console.log()}
-              //onPress={() => navigation.navigate('DoubleJoy')}
+              onPress={() => navigation.navigate('DoubleJoy')}
             />
           </View>
           <View style={{marginTop: 15}}>

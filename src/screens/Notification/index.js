@@ -76,7 +76,7 @@ const Notification = ({navigation}) => {
               ) : (
                 <>
                   <Text style={styles.noData}>
-                    No upcoming bookings available.
+                    No Record Found.
                   </Text>
                 </>
               )}

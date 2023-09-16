@@ -49,7 +49,7 @@ const Profile = ({navigation}) => {
           <GreyBox
             label="My Packages"
             textStyle={{textAlign: 'center'}}
-            onPress={() => navigation.navigate('buy')}
+            onPress={() => navigation.navigate('buy',{active:'My'})}
           />
           <GreyBox
             label="Change password"

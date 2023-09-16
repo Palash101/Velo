@@ -1,38 +1,24 @@
 import React, {useContext, useEffect} from 'react';
 import {
-  Alert,
   Dimensions,
-  Image,
-  Modal,
   Platform,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import {PageContainer} from '../../components/Container';
-import TopBar from '../../components/TopBar';
 import {
-  RoundedDarkButton,
   RoundedDarkButton2,
   RoundedGreyButton,
   RoundedOutlineButton,
   RoundedRedButton,
-  RoundedThemeButton,
 } from '../../components/Buttons';
-import {FlatList} from 'react-native-gesture-handler';
 import {useState} from 'react';
-import {ClassItem} from '../../components/ClassItem';
-import Calendar from '../../components/calendar/Calendar';
-import moment from 'moment';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import PageLoader from '../../components/PageLoader';
 import WebView from 'react-native-webview';
 import {API_LAYOUT, API_SUCCESS} from '../../config/ApiConfig';
 import {useNavigation} from '@react-navigation/native';
 import {useToast} from 'react-native-toast-notifications';
-import {assets} from '../../config/AssetsConfig';
 import {UserContext} from '../../../context/UserContext';
 import {ModalView} from '../../components/ModalView';
 import {ClassContoller} from '../../controllers/ClassController';
@@ -70,6 +56,7 @@ const ClassDetail = props => {
       loadClassLayout();
       getDetail();
       getUserAllPackages();
+      setPayModal(false);
     });
     return focusHandler;
   }, [props.route.params, navigation]);
@@ -91,6 +78,7 @@ const ClassDetail = props => {
     const instance = new BuyContoller();
     const result = await instance.getUserPackages(token);
     if (result.status === 'error') {
+      setUserPackages([]);
     } else {
       setUserPackages(result);
     }
@@ -112,7 +100,7 @@ const ClassDetail = props => {
       );
       setBooking(users[0]);
     }
-    console.log(result.class)
+    console.log(result.class);
     setItem(result.class);
     setLoading(false);
   };
@@ -352,6 +340,17 @@ const ClassDetail = props => {
             style={{width: 120, marginLeft: 5, marginTop: 5}}
           />
         );
+      } else if (
+        item.attributes.booking_count_status.waiting_available === 0 &&
+        item.attributes.booking_count_status.available === 0 &&
+        item.attributes.user_waiting === false &&
+        item.attributes.mine_booking === false
+      ) {
+        return (
+          <Text style={{fontFamily: 'Gotham-Black', marginTop: 7}}>
+            FULLY BOOKED
+          </Text>
+        );
       } else {
         return (
           <RoundedDarkButton2
@@ -541,7 +540,7 @@ const ClassDetail = props => {
 
           {item?.priceType === 'Credit' && (
             <>
-              {userPackages ? (
+              {userPackages && userPackages?.length ? (
                 <View>
                   <Text
                     style={[
