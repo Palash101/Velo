@@ -61,7 +61,7 @@ export const PlannerClass = props => {
           <View style={styles.timeBox}>
             <Image source={assets.calendar} style={styles.timeImage} />
             <Text style={styles.dateText}>
-              {item.relation.classes.attributes.start_date}
+              {item.attributes.booked_date}
             </Text>
           </View>
           <View style={styles.timeBox}>
@@ -205,11 +205,12 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   title: {
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'Gotham-Black',
     overflow: 'hidden',
     textTransform: 'uppercase',
     color: '#161415',
+    width:90,
   },
   subTitle: {
     fontSize: 8,

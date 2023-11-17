@@ -24,6 +24,11 @@ PODS:
   - Firebase/Messaging (10.10.0):
     - Firebase/CoreOnly
     - FirebaseMessaging (~> 10.10.0)
+  - Firebase/RemoteConfig (10.10.0):
+    - Firebase/CoreOnly
+    - FirebaseRemoteConfig (~> 10.10.0)
+  - FirebaseABTesting (10.15.0):
+    - FirebaseCore (~> 10.0)
   - FirebaseAnalytics (10.10.0):
     - FirebaseAnalytics/AdIdSupport (= 10.10.0)
     - FirebaseCore (~> 10.0)
@@ -64,6 +69,12 @@ PODS:
     - GoogleUtilities/Reachability (~> 7.8)
     - GoogleUtilities/UserDefaults (~> 7.8)
     - nanopb (< 2.30910.0, >= 2.30908.0)
+  - FirebaseRemoteConfig (10.10.0):
+    - FirebaseABTesting (~> 10.0)
+    - FirebaseCore (~> 10.0)
+    - FirebaseInstallations (~> 10.0)
+    - GoogleUtilities/Environment (~> 7.8)
+    - "GoogleUtilities/NSData+zlib (~> 7.8)"
   - Flipper (0.125.0):
     - Flipper-Folly (~> 2.6)
     - Flipper-RSocket (~> 1.4)
@@ -448,6 +459,8 @@ PODS:
     - glog
   - react-native-document-picker (9.0.1):
     - React-Core
+  - react-native-image-picker (7.0.0):
+    - React-Core
   - react-native-safe-area-context (4.5.3):
     - RCT-Folly
     - RCTRequired
@@ -544,9 +557,9 @@ PODS:
     - React-Core
   - RNCMaskedView (0.2.9):
     - React-Core
-  - RNDateTimePicker (7.3.0):
+  - RNDateTimePicker (7.4.1):
     - React-Core
-  - RNFBAnalytics (18.3.0):
+  - RNFBAnalytics (18.4.0):
     - Firebase/Analytics (= 10.10.0)
     - React-Core
     - RNFBApp
@@ -556,6 +569,10 @@ PODS:
   - RNFBMessaging (18.0.0):
     - Firebase/Messaging (= 10.10.0)
     - FirebaseCoreExtension (= 10.10.0)
+    - React-Core
+    - RNFBApp
+  - RNFBRemoteConfig (18.4.0):
+    - Firebase/RemoteConfig (= 10.10.0)
     - React-Core
     - RNFBApp
   - RNGestureHandler (2.12.0):
@@ -650,6 +667,7 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - react-native-document-picker (from `../node_modules/react-native-document-picker`)
+  - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -671,6 +689,7 @@ DEPENDENCIES:
   - "RNFBAnalytics (from `../node_modules/@react-native-firebase/analytics`)"
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
+  - "RNFBRemoteConfig (from `../node_modules/@react-native-firebase/remote-config`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -681,12 +700,14 @@ SPEC REPOS:
   trunk:
     - CocoaAsyncSocket
     - Firebase
+    - FirebaseABTesting
     - FirebaseAnalytics
     - FirebaseCore
     - FirebaseCoreExtension
     - FirebaseCoreInternal
     - FirebaseInstallations
     - FirebaseMessaging
+    - FirebaseRemoteConfig
     - Flipper
     - Flipper-Boost-iOSX
     - Flipper-DoubleConversion
@@ -752,6 +773,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/logger"
   react-native-document-picker:
     :path: "../node_modules/react-native-document-picker"
+  react-native-image-picker:
+    :path: "../node_modules/react-native-image-picker"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-webview:
@@ -794,6 +817,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/app"
   RNFBMessaging:
     :path: "../node_modules/@react-native-firebase/messaging"
+  RNFBRemoteConfig:
+    :path: "../node_modules/@react-native-firebase/remote-config"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNReanimated:
@@ -813,12 +838,14 @@ SPEC CHECKSUMS:
   FBLazyVector: ddb55c55295ea51ed98aa7e2e08add2f826309d5
   FBReactNativeSpec: 90fc1a90b4b7a171e0a7c20ea426c1bf6ce4399c
   Firebase: facd334e557a979bd03a0b58d90fd56b52b8aba0
+  FirebaseABTesting: 7fa3bca17f79ac433301d20d5cd33401f7738dca
   FirebaseAnalytics: 7bc7de519111dae802f5bc0c9c083918f8b8870d
   FirebaseCore: d027ff503d37edb78db98429b11f580a24a7df2a
   FirebaseCoreExtension: 8d93ebbf6838a874b4ed82a564c9d6705f8365dd
   FirebaseCoreInternal: 9e46c82a14a3b3a25be4e1e151ce6d21536b89c0
   FirebaseInstallations: 2a2c6859354cbec0a228a863d4daf6de7c74ced4
   FirebaseMessaging: 8a3b9a8b98ce72a42d22e69865cf662e38d2d6f5
+  FirebaseRemoteConfig: 8ef82c9d0bc45525a3d152d958f08742523ca5a9
   Flipper: 26fc4b7382499f1281eb8cb921e5c3ad6de91fe0
   Flipper-Boost-iOSX: fd1e2b8cbef7e662a122412d7ac5f5bea715403c
   Flipper-DoubleConversion: 2dc99b02f658daf147069aad9dbd29d8feb06d30
@@ -853,6 +880,7 @@ SPEC CHECKSUMS:
   React-jsinspector: cdc854f8b13abd202afa54bc12578e5afb9cfae1
   React-logger: ef2269b3afa6ba868da90496c3e17a4ec4f4cee0
   react-native-document-picker: 2b8f18667caee73a96708a82b284a4f40b30a156
+  react-native-image-picker: ddbbe4d226d9c82a82360f5de66bf71a657a42e6
   react-native-safe-area-context: b8979f5eda6ed5903d4dbc885be3846ea3daa753
   react-native-webview: b8ec89966713985111a14d6e4bf98d8b54bced0d
   React-perflogger: 217095464d5c4bb70df0742fa86bf2a363693468
@@ -870,10 +898,11 @@ SPEC CHECKSUMS:
   ReactCommon: 65718685d4095d06b4b1af8042e12f1df2925c31
   RNCAsyncStorage: ddc4ee162bfd41b0d2c68bf2d95acd81dd7f1f93
   RNCMaskedView: 949696f25ec596bfc697fc88e6f95cf0c79669b6
-  RNDateTimePicker: 01e6d27ba2e0931cd05049c5bff6171c3c027ea8
-  RNFBAnalytics: 7babe9fc072d8bcac0f21b97808ef028d988f7e9
+  RNDateTimePicker: 9b4091348e53f540180abdc54984d839a556f593
+  RNFBAnalytics: f9d196dac064f9db7288e18f4943d63ffcf90ee2
   RNFBApp: 7da45c10070789f5e4337a5534139976e8d74e0a
   RNFBMessaging: fd543fa2aa4688fac4e88b1ce54e39cac4339b32
+  RNFBRemoteConfig: 0602fc295f62be6da83ed72a872bd9d73021ab62
   RNGestureHandler: dec4645026e7401a0899f2846d864403478ff6a5
   RNReanimated: 9976fbaaeb8a188c36026154c844bf374b3b7eeb
   RNScreens: 218801c16a2782546d30bd2026bb625c0302d70f

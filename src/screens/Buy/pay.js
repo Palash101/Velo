@@ -54,24 +54,56 @@ const Pay = props => {
   };
 
   const checkResponse = data => {
-    if (data.url.includes('/payment/success')) {
-      setLoading(true);
-      setPaymentModal(false);
-      setTimeout(() => {
-        toast.show('Package purchased successfully');
-        navigation.navigate('buy', {purchase: 'success'});
-        setLoading(false);
-      }, 3000);
-    } 
-    else if(data.url.includes('payment/failed')){
-      navigation.navigate('buy');
-      toast.show('Payment has been failed');
+    console.log(data.url)
+    if (data.url.includes('status')) {
+      const url1 = data.url.split('?')[1];
+      const url2 = url1.split('&')[0];
+      const status = url2.split('=')[1];
+      console.log(status,'status');
+      if(status === 'Paid'){
+        setLoading(true);
+        setPaymentModal(false);
+        setTimeout(() => {
+          toast.show('Package purchased successfully');
+          navigation.navigate('buy', {purchase: 'success'});
+          setLoading(false);
+        }, 2000);
+      }
+      else{
+        setPaymentModal(false);
+        setPaymentUrl('');
+        navigation.navigate('buy');
+        toast.show('Payment has been ' + status);
+      }
     }
-    else if (data.url.includes('transaction_cancelled')) {
-      setPaymentModal(false);
-      navigation.navigate('buy');
-      toast.show('transaction cancelled');
-    }
+
+
+    // if (data.url.includes('status=Paid')) {
+    //   setLoading(true);
+    //   setPaymentModal(false);
+    //   setTimeout(() => {
+    //     toast.show('Package purchased successfully');
+    //     navigation.navigate('buy', {purchase: 'success'});
+    //     setLoading(false);
+    //   }, 3000);
+    // } 
+    // else if(data.url.includes('status=Canceled')){
+    //   setPaymentModal(false);
+    //   setPaymentUrl('');
+    //   navigation.navigate('buy');
+    //   toast.show('Payment has been failed');
+    // }
+    // else if(data.url.includes('status=Pending')){
+    //   setPaymentModal(false);
+    //   setPaymentUrl('');
+    //   navigation.navigate('buy');
+    //   toast.show('Your payment is in pending');
+    // }
+    // else if (data.url.includes('transaction_cancelled')) {
+    //   setPaymentModal(false);
+    //   navigation.navigate('buy');
+    //   toast.show('transaction cancelled');
+    // }
   };
 
   const payNow = val => {

@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   Dimensions,
+  KeyboardAvoidingView,
   Platform,
   ScrollView,
   StyleSheet,
@@ -24,15 +25,16 @@ console.log(visible,'visible')
       // style={{height: 'auto', marginTop: 260, justifyContent:'flex-end',marginBottom:0}}
       //{...props}
       >
-      <View style={styles.modalBox}>
-        <View style={styles.titleHeading}>
-          <Text style={styles.titleText}>{heading}</Text>
-        </View>
+        
+          <View style={styles.modalBox}>
+            <View style={styles.titleHeading}>
+              <Text style={styles.titleText}>{heading}</Text>
+            </View>
 
-        <ScrollView contentContainerStyle={styles.modalContent}>
-          {children}
-        </ScrollView>
-      </View>
+            <ScrollView contentContainerStyle={styles.modalContent}>
+              {children}
+            </ScrollView>
+          </View>
     </Modal>
   );
 };

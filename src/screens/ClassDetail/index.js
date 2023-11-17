@@ -46,11 +46,14 @@ const ClassDetail = props => {
   const [waiting, setWaiting] = useState(false);
   const [uid, setUid] = useState();
   const [booking, setBooking] = useState();
+  const [selectedSeatText, setSelectedSeatText] = useState();
 
   useEffect(() => {
     const focusHandler = navigation.addListener('focus', () => {
       setPageUrl('');
       setItem();
+      setWaiting(false);
+      setSelectedSeatText('');
       setSelectedSeat();
       setForseReload(!forceReload);
       loadClassLayout();
@@ -157,6 +160,7 @@ const ClassDetail = props => {
         classes_id: item.id,
         type: type,
         seat: selectedSeat,
+        seat_text: selectedSeatText,
         device: 'mobile',
       };
       completeBooking(data);
@@ -177,6 +181,7 @@ const ClassDetail = props => {
         classes_id: item.id,
         type: 'Package',
         seat: selectedSeat,
+        seat_text: selectedSeatText,
         device: 'mobile',
         package_id: value.id,
       };
@@ -219,11 +224,13 @@ const ClassDetail = props => {
       setLoading(true);
       const data = {
         seat: selectedSeat,
+        seat_text: selectedSeatText,
         booking_id: item.bookings[0].id,
       };
       const token = await getToken();
       const instance = new ClassContoller();
       const result = await instance.UpdateClass(data, token);
+      console.log(result, 'resultresult');
       if (result.status === 'success') {
         toast.show(result.msg);
         setLoading(false);
@@ -415,7 +422,10 @@ const ClassDetail = props => {
                 },
               }}
               onMessage={event => {
-                setSelectedSeat(JSON.parse(event.nativeEvent.data).seatClick);
+                setSelectedSeat(JSON.parse(event.nativeEvent.data).seat);
+                setSelectedSeatText(
+                  JSON.parse(event.nativeEvent.data).seat_text,
+                );
               }}
               onNavigationStateChange={data => checkResponce(data)}
               startInLoadingState={true}
@@ -502,7 +512,9 @@ const ClassDetail = props => {
                   <Text style={styles.priceText}>
                     {item?.location.spot_name}
                   </Text>
-                  <Text style={styles.priceText}>{selectedSeat}</Text>
+                  <Text style={styles.priceText}>
+                    {selectedSeatText ? selectedSeatText : selectedSeat}
+                  </Text>
                 </View>
               )}
             </>
@@ -572,8 +584,17 @@ const ClassDetail = props => {
                       ) : (
                         <Text style={styles.btnText}>
                           {item1.attributes.remaining_rides}{' '}
-                          {item1.attributes.type !== 'unlimited' && (
+                          {/* {item1.attributes.type !== 'unlimited' && (
                             <Text style={{}}>{item1.attributes.type}</Text>
+                          )} */}
+                          {item1?.attributes?.type !== 'unlimited' ? (
+                            item1?.attributes?.type === 'ride' ? (
+                              ' Class'
+                            ) : (
+                              item1?.attributes?.type
+                            )
+                          ) : (
+                            <></>
                           )}
                         </Text>
                       )}

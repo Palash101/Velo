@@ -1,4 +1,11 @@
-import {Dimensions, Image, Platform, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Dimensions,
+  Image,
+  Platform,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import ClassDetail from '../screens/ClassDetail';
 import Classes from '../screens/Classes';
 import {assets} from '../config/AssetsConfig';
@@ -28,6 +35,18 @@ const DoubleJoyStack = ({navigation}) => {
     );
   }
 
+  function BackIconFromOrder(){
+    const navigation = useNavigation();
+    return (
+      <TouchableOpacity onPress={() => navigation.navigate('DoubleJoy')}>
+        <Image
+          source={assets.back}
+          style={{width: 24, height: 24, marginLeft: 15}}
+        />
+      </TouchableOpacity>
+    );
+  }
+
   function LogoTitle() {
     return (
       <View
@@ -42,18 +61,45 @@ const DoubleJoyStack = ({navigation}) => {
     );
   }
 
+  function DoubleJoyTitle() {
+    return (
+      <View
+        style={{
+          width: Platform.OS === 'android' ? width - 105 : width - 138,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <Text
+          style={{fontFamily: 'Gotham-Medium', color: '#161415', fontSize: 18}}>
+          DOUBLE JOY
+        </Text>
+      </View>
+    );
+  }
+  function MyOrderTitle() {
+    return (
+      <View
+        style={{
+          width: Platform.OS === 'android' ? width - 105 : width - 138,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <Text
+          style={{fontFamily: 'Gotham-Medium', color: '#161415', fontSize: 18}}>
+          MY ORDERS
+        </Text>
+      </View>
+    );
+  }
+
   return (
     <Stack.Navigator>
-    
       <Stack.Screen
         name="DoubleJoy"
         component={DoubleJoy}
         options={{
           headerLeft: () => <BackIcon />,
-          headerTitle: props => <View>
-            <Text style={{fontFamily:'Gotham-Medium',fontSize:18}}>Double Joy</Text>
-          </View>,
-          // headerTitle: props => <LogoTitle {...props} />,
+          headerTitle: props => <DoubleJoyTitle />,
         }}
       />
       <Stack.Screen
@@ -70,22 +116,20 @@ const DoubleJoyStack = ({navigation}) => {
           headerShown: false,
         }}
       />
-        <Stack.Screen
+      <Stack.Screen
         name="MyOrder"
         component={MyOrder}
         options={{
-          headerLeft: () => <BackIcon />,
-          headerTitle: props => <View>
-            <Text style={{fontFamily:'Gotham-Medium',fontSize:18}}>My Orders</Text>
-          </View>,
+          headerLeft: () => <BackIconFromOrder />,
+          headerTitle: props => <MyOrderTitle />,
         }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="DoubleJoyPay"
         component={doubleJoypay}
         options={{
-         headerShown:false
+          headerShown: false,
         }}
       />
     </Stack.Navigator>

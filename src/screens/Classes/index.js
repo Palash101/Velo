@@ -32,6 +32,7 @@ import {ProfileController} from '../../controllers/ProfileController';
 
 const Classes = props => {
   const [classes, setClasses] = useState();
+
   const [allData, setAllData] = useState([]);
   const {getToken, getUser} = useContext(UserContext);
   const [globalIndex, setGlobalIndex] = useState(0);
@@ -82,7 +83,7 @@ const Classes = props => {
   //   }
   // }, [refresh]);
 
-  const callRefresh = async() =>{
+  const callRefresh = async () => {
     setClasses();
     getData();
     const result = AsyncStorage.getItem('di');
@@ -95,7 +96,7 @@ const Classes = props => {
     } else {
       setGlobalIndex(0);
     }
-  }
+  };
 
   const getData = async () => {
     setLoading(true);
@@ -114,8 +115,8 @@ const Classes = props => {
         item => item.id === props.route.params?.activeId,
       );
       setActiveStudios([activeLocation[0]]);
-      setActive(activeLocation[0]?.classess);
-      setFilteredClass(activeLocation[0].classess);
+      setActive(activeLocation[0]?.studio_classes);
+      setFilteredClass(activeLocation[0].studio_classes);
     } else {
       if (aStudio?.length) {
         const allCatIndex = JSON.parse(aStudio);
@@ -158,7 +159,21 @@ const Classes = props => {
     const filterData = newData.filter(item =>
       moment(item.start_date).isSame(activeDate),
     );
-    setClasses(filterData);
+
+    const sortedArray = filterData.sort((a, b) => {
+      if (
+        moment(a.start_date + ' ' + a.start_time + ':00').isBefore(
+          moment(b.start_date + ' ' + b.start_time + ':00'),
+        )
+      ) {
+        return -1;
+      } else {
+        return 1;
+      }
+    });
+
+
+    setClasses(sortedArray);
     setLoading(false);
   };
 
@@ -171,7 +186,20 @@ const Classes = props => {
     const filterData = active.filter(item =>
       moment(item.start_date).isSame(dt),
     );
-    setClasses(filterData);
+
+    const sortedArray = filterData.sort((a, b) => {
+      if (
+        moment(a.start_date + ' ' + a.start_time + ':00').isBefore(
+          moment(b.start_date + ' ' + b.start_time + ':00'),
+        )
+      ) {
+        return -1;
+      } else {
+        return 1;
+      }
+    });
+
+    setClasses(sortedArray);
     setLoading(false);
   };
 
@@ -210,7 +238,7 @@ const Classes = props => {
   const getAllFilteredClassess = allStudioData => {
     let allClasses = [];
     allStudioData.forEach((val, index) => {
-      val.classess.forEach((classVal, index2) => {
+      val.studio_classes.forEach((classVal, index2) => {
         allClasses.push(classVal);
       });
     });
@@ -293,8 +321,6 @@ const Classes = props => {
                 data={classes}
                 showsVerticalScrollIndicator={false}
                 decelerationRate={'normal'}
-                // onScrollBeginDrag={() => setRefresh(!refresh)}
-                //onScrollEndDrag={() => setRefresh(!refresh)}
                 refreshControl={
                   <RefreshControl
                     refreshing={refreshing}
@@ -303,7 +329,7 @@ const Classes = props => {
                 }
                 contentContainerStyle={{paddingBottom: 40}}
                 renderItem={({item}, key) => (
-                    <ClassItem key={key} item={item} uid={uid} />
+                  <ClassItem key={key} item={item} uid={uid} />
                 )}
               />
             ) : (

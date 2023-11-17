@@ -1,23 +1,15 @@
 import React, {useContext, useEffect} from 'react';
 import {
-  Alert,
   Dimensions,
-  ScrollView,
   StyleSheet,
   Text,
   View,
-  Image,
-  TouchableOpacity,
   Platform,
+  RefreshControl,
 } from 'react-native';
 import {PageContainer} from '../../components/Container';
 import {
-  RoundedDarkButton,
   RoundedDarkButton2,
-  RoundedGreyButton,
-  RoundedGreyButton2,
-  RoundedThemeButton,
-  RoundedThemeButton2,
 } from '../../components/Buttons';
 import {FlatList} from 'react-native-gesture-handler';
 import {useState} from 'react';
@@ -38,11 +30,14 @@ const MyOrder = props => {
   const {getToken} = useContext(UserContext);
   const [errorMessage, setErrorMessage] = useState('');
   const [data, setData] = useState([]);
+  const [allData, setAllData] = useState([]);
+  const [show, setShow] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     const focusHandler = navigation.addListener('focus', () => {
       if (props.route.params !== undefined) {
-        setActive('My');
+        setActive({name: 'New', id: 0});
       }
       getAllData();
     });
@@ -50,13 +45,25 @@ const MyOrder = props => {
   }, [props.route.params, navigation]);
 
   const getAllData = async () => {
-    setLoading(true)
+    setLoading(true);
     const token = await getToken();
     const instance = new DoubleJoyController();
     const result = await instance.getMyOrder(token);
-    console.log(result,'result')
+    console.log(result, 'result');
     setLoading(false);
-    setData(result.data)
+    setAllData(result.data);
+    if (result.data.length > 5) {
+      setData([
+        result.data[0],
+        result.data[1],
+        result.data[2],
+        result.data[3],
+        result.data[4],
+      ]);
+    } else {
+      setData(result.data);
+      setShow(true)
+    }
   };
 
   const statusData = [
@@ -66,58 +73,60 @@ const MyOrder = props => {
     {name: 'Picked', id: 4},
   ];
 
+  const loadHistory = () => {
+    setData(allData);
+    setShow(true)
+  };
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      getAllData();
+      setRefreshing(false);
+    }, 2000);
+  }, []); 
+
   return (
     <>
-     <PageLoader loading={loading} />
+      <PageLoader loading={loading} />
       <PageContainer>
-        <View style={styles.tab}>
-          <FlatList
-            data={statusData}
-            pagingEnabled
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            decelerationRate={'normal'}
-            renderItem={({item, index}) => (
-              <View key={index + 'cat'}>
-                {active.id === item.id ? (
-                  <RoundedGreyButton2 label={item.name} style={styles.tabBtn} />
-                ) : (
-                  <RoundedThemeButton2
-                    label={item.name}
-                    onPress={() => setActive(item)}
-                    style={styles.tabBtn}
-                  />
-                )}
-              </View>
-            )}
+        <FlatList
+          data={data}
+          showsVerticalScrollIndicator={false}
+          decelerationRate={'normal'}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
+          contentContainerStyle={{paddingBottom: 40}}
+          renderItem={({item}, key) => (
+            <MyOrderItem key={key + 'my'} item={item} />
+          )}
+        />
+
+        {show === false && (
+          <RoundedDarkButton2
+            label="Load History"
+            onPress={() => loadHistory()}
+            style={{marginBottom: 20}}
           />
-        </View>
+        )}
 
-        <ScrollView
-          contentContainerStyle={{paddingHorizontal: 10, paddingBottom: 20,height:height-180,}}>
-        
-
-          {data
-            .filter(item => item?.attributes?.status === active.name)
-            .map((item, index) => (
-              <MyOrderItem key={index + 'my'} item={item} />
-            ))}
-
-            {data.filter(item => item?.attributes?.status === active.name).length == 0 &&
-            <View style={{
-              position:'absolute',
-              top:'50%',
-              alignItems:'center',
-              left:0,
-              right:0,
-
+        {data.length == 0 && (
+          <View
+            style={{
+              position: 'absolute',
+              top: '50%',
+              alignItems: 'center',
+              left: 0,
+              right: 0,
             }}>
-
             <Text>No data found</Text>
-            </View>
-            }
-        </ScrollView>
-        
+          </View>
+        )}
+        {/* </ScrollView> */}
       </PageContainer>
     </>
   );
@@ -150,12 +159,12 @@ const styles = StyleSheet.create({
   tab: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-between',
     marginTop: Platform.OS === 'android' ? 0 : 20,
     marginBottom: 10,
+    width: 'auto',
   },
   tabBtn: {
-    width: width / 3 - 15,
+    width: 'auto',
     marginTop: 10,
     marginBottom: 10,
     marginRight: 10,

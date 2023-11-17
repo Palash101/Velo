@@ -4,6 +4,8 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Allow access to the photo library for selecting images</string>
 	<key>CFBundleDisplayName</key>
 	<string>velo</string>
 	<key>CFBundleExecutable</key>

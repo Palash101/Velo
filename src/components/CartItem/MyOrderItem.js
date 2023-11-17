@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -14,8 +14,32 @@ const width = Dimensions.get('window').width;
 import {assets} from '../../config/AssetsConfig';
 
 export const MyOrderItem = props => {
-  const {item} = props;
+  // const {item} = props;
+  const [item, setItem] = useState({});
   const [showItem, setShowItem] = useState();
+
+
+  useEffect(() => {
+    let newItem = props.item;
+    
+    newItem.attributes.items.forEach(i => {
+      let addonPrice = 0;
+      if(i.addons !== null){
+         let addons = JSON.parse(i.addons)
+         i.newAddons = addons;
+        addons.forEach(j => {
+          addonPrice = addonPrice + JSON.parse(j.price)
+        });
+         i.addonPrice = addonPrice;
+      }
+      
+     i.totalItemPrice = addonPrice + i.optional_item.price;
+     console.log(i,'iii')
+    })
+
+    console.log(newItem,'newitem')
+    setItem(newItem)
+  },[props]);
 
   const getColor = status => {
     if (status === 'New') {
@@ -25,7 +49,7 @@ export const MyOrderItem = props => {
     } else if (status === 'Ready') {
       return '#06ba0e';
     } else if (status === 'Picked') {
-      return '#ffff';
+      return '#fabbdd';
     }
   };
 
@@ -49,31 +73,28 @@ export const MyOrderItem = props => {
               display: 'flex',
               flexDirection: 'row',
               justifyContent: 'space-between',
-              width: width - 60,
+              width: width - 40,
             }}>
-            <Text style={styles.title}>{item.attributes.order_ref}</Text>
-            <Text style={styles.title}>{item.attributes.items_total} QR</Text>
-          </View>
-
-          <View style={styles.paraBox}>
-            <Text style={styles.paraText}>Date</Text>
-            <Text style={styles.paraText}>
-              : {moment(item.attributes.date).format('DD MMM, YYYY HH:MM A')}
+             <Text style={styles.title}>
+            {moment(item?.attributes?.date).format('DD MMM, YYYY HH:mm A')}
+          </Text>
+            <Text style={[styles.title, {width: 80}]}>
+              {item?.attributes?.items_total} QAR
             </Text>
           </View>
+
           <View
             style={{
               display: 'flex',
               flexDirection: 'row',
               justifyContent: 'space-between',
-              width: width - 60,
-              marginTop:5
+              width: width - 40,
+              marginTop: 5,
             }}>
             <TouchableOpacity
               style={{
                 backgroundColor: '#000',
                 borderRadius: 10,
-                padding: 5,
                 paddingHorizontal: 10,
                 display: 'flex',
                 flexDirection: 'row',
@@ -82,46 +103,72 @@ export const MyOrderItem = props => {
               <Text
                 style={{
                   color: '#fff',
-                  height: 12,
+                  lineHeight: 16,
                   fontSize: 12,
+                  marginTop: 2,
                   fontFamily: 'Gotham-Medium',
-                  fontWeight: '700',
+                  fontWeight: '800',
                 }}>
-                Items (3){' '}
+                Items ({item?.attributes?.items?.length}){' '}
               </Text>
               <Image
                 source={assets.chevron}
-                style={{width: 16, height: 12, tintColor: '#fff'}}
+                style={{width: 16, height: 12, marginTop: 4, tintColor: '#fff'}}
               />
             </TouchableOpacity>
-            <Badge
-              style={[
-                styles.bedge,
-                {
-                  backgroundColor: getColor(item.status),
-                  color: item.attributes.status === 'New' ? '#fff' : '#000',
-                  paddingHorizontal: 10,
-                  fontWeight:'700'
-                },
-              ]}>
-              {item.attributes.status}
-            </Badge>
+            <View
+              style={{
+                width: 80,
+                display: 'flex',
+                flexDirection: 'row',
+                textAlign: 'center',
+              }}>
+              {item?.attributes?.status !== 'New' && (
+                <Badge
+                  style={[
+                    styles.bedge,
+                    {
+                      backgroundColor: getColor(item?.attributes?.status),
+                      color:
+                        item?.attributes?.status === 'Picked' ? '#000' : '#000',
+                      paddingHorizontal: 10,
+                      fontWeight: '800',
+                      marginLeft:-10
+                    },
+                  ]}>
+                  {item?.attributes?.status === 'Picked'
+                    ? 'Completed'
+                    : item?.attributes?.status}
+                </Badge>
+              )}
+            </View>
           </View>
-        {showItem?.id === item.id &&
-        <View>
-          {item.attributes.items.map((item1,index) =>(
-              <View style={styles.itemBox}>
-                <Text style={styles.itemText}>{item1.name}</Text>
-                <View style={styles.itemBox2}>
-                  <Text style={styles.itemText}>{item1.price/item1.quantity} x {item1.quantity}</Text>
-                  <Text style={styles.itemText}>{item1.price} {item1.currency}</Text>
+          {showItem?.id === item?.id && (
+            <View>
+              {item?.attributes?.items.map((item1, index) => (
+                <View style={styles.itemBox}>
+                  <View>
+                    <Text style={styles.itemText}>{item1?.optional_item?.name}</Text>
+                    <View style={{display:'flex',flexDirection:'row',flexWrap:'wrap',width:width- 170}}>
+                    {item1.newAddons?.map((i,index11) => (
+                      <Text style={styles.addon}>{i.name}: {i.price}{item?.relation?.transaction.attributes.currency}</Text>
+                    ))}
+                    </View>
+                  </View>
+                  <View style={styles.itemBox2}>
+                    <Text style={styles.itemText}>{item1.quantity}X</Text>
+                    <Text style={[styles.itemText, {width: 80}]}>
+                      {(item1?.totalItemPrice) * item1?.quantity} {item?.relation?.transaction.attributes.currency}
+                    </Text>
+                  </View>
                 </View>
-              </View>
-          ))}
-         
+              ))}
+            </View>
+          )}
         </View>
-        }
-
+        <View style={styles.paraBox}>
+        <Text style={styles.paraText}>{item?.attributes?.order_ref}</Text>
+         
         </View>
       </View>
     </View>
@@ -135,41 +182,54 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 10,
     borderRadius: 12,
-    width: width - 40,
-    marginTop: 20,
+    width: width - 20,
+    marginTop: 30,
     shadowColor: '#161415',
-    shadowOffset: {width: -1, height: 1},
+    shadowOffset: {width: 0, height: 0},
     shadowOpacity: 0.2,
     shadowRadius: 10,
   },
-  itemBox:{
-    display:'flex',
-    flexDirection:'row',
-    justifyContent:'space-between'
+  itemBox: {
+    width: width - 40,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
-  itemBox2:{
-    display:'flex',
-    flexDirection:'row',
-    justifyContent:'space-between',
-    width:width/2.5
+  addon:{
+    fontFamily:'Gotham-Medium',
+    fontSize:9,
+    borderWidth:1,
+    paddingHorizontal:5,
+    paddingVertical:2,
+    borderRadius:10,
+    marginRight:2,
+    marginVertical:2
+
   },
-  itemText:{
-    fontSize:12,
-    paddingTop:10,
-    paddingBottom:5,
+  itemBox2: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: width / 2.9,
+  },
+  itemText: {
+    fontSize: 12,
+    paddingTop: 10,
+    paddingBottom: 5,
     fontFamily: 'Gotham-Medium',
   },
   paraBox: {
     display: 'flex',
     flexDirection: 'row',
     paddingVertical: 2,
+    marginTop: 10,
   },
   title: {
-    fontSize: 16,
+    fontSize: 12,
     textTransform: 'uppercase',
-    fontFamily: 'Gotham-Black',
+    fontFamily: 'Gotham-Medium',
     color: '#000',
-    marginBottom: 5,
+    marginBottom: 3,
   },
   paraText: {
     fontSize: 10,

@@ -55,20 +55,41 @@ const WalletPay = props => {
   };
 
   const checkResponse = data => {
-    if (data.url.includes('/payment/success')) {
-      setLoading(true);
-      setPaymentModal(false);
-      setTimeout(() => {
-        toast.show('Wallet recharged successfully');
+    console.log(data.url)
+    if (data.url.includes('status')) {
+      const url1 = data.url.split('?')[1];
+      const url2 = url1.split('&')[0];
+      const status = url2.split('=')[1];
+      console.log(status, 'status');
+      if (status === 'Paid') {
+        setLoading(true);
+        setPaymentModal(false);
+        setTimeout(() => {
+          toast.show('Wallet recharged successfully');
+          navigation.navigate('MyWallet');
+          setLoading(false);
+        }, 2000);
+      } else {
+        setPaymentModal(false);
         navigation.navigate('MyWallet');
-        setLoading(false);
-      },3000);
-    } 
-    else if (data.url.includes('transaction_cancelled')) {
-      setPaymentModal(false);
-      navigation.navigate('MyWallet');
-      toast.show('transaction cancelled');
+        toast.show('Payment has been ' + status);
+      }
     }
+
+    // if (data.url.includes('/payment/success')) {
+    //   setLoading(true);
+    //   setPaymentModal(false);
+    //   setTimeout(() => {
+    //     toast.show('Wallet recharged successfully');
+    //     navigation.navigate('MyWallet');
+    //     setLoading(false);
+    //   },3000);
+    // }
+    // else if (data.url.includes('transaction_cancelled')) {
+    //   setPaymentModal(false);
+    //   navigation.navigate('MyWallet');
+    //   toast.show('transaction cancelled');
+    // }
   };
 
   const payNow = val => {

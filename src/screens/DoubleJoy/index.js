@@ -8,14 +8,12 @@ import {
   View,
   Image,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
 import {PageContainer} from '../../components/Container';
 import {
-  RoundedDarkButton,
   RoundedDarkButton2,
-  RoundedGreyButton,
   RoundedGreyButton2,
-  RoundedThemeButton,
   RoundedThemeButton2,
 } from '../../components/Buttons';
 import {FlatList} from 'react-native-gesture-handler';
@@ -27,13 +25,14 @@ import {assets} from '../../config/AssetsConfig';
 import {DoubleJoyController} from '../../controllers/DoubleJoyController';
 import {UserContext} from '../../../context/UserContext';
 import PageLoader from '../../components/PageLoader';
-import { Badge } from 'react-native-paper';
+import {Badge} from 'react-native-paper';
 
 const DoubleJoy = props => {
   const [active, setActive] = useState({attributes: {name: 'All'}, id: 0});
   const navigation = useNavigation();
   const {getToken} = useContext(UserContext);
   const [cart, setCart] = useState([]);
+  const [activeData, setActiveData] = useState([]);
   const [allData, setAllData] = useState();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([{attributes: {name: 'All'}, id: 0}]);
@@ -41,6 +40,7 @@ const DoubleJoy = props => {
 
   useEffect(() => {
     const focusHandler = navigation.addListener('focus', () => {
+      setActive({attributes: {name: 'All'}, id: 0});
       console.log(props, 'propsprops');
       getAllData();
     });
@@ -57,11 +57,14 @@ const DoubleJoy = props => {
     const instance = new DoubleJoyController();
     const result = await instance.getAllDoubleJoy(token);
     console.log(result, 'result');
+    const filterResult = result.filter(
+      i => i.relation.optional_items.length > 0,
+    );
 
-    setData([{attributes: {name: 'All'}, id: 0}, ...result]);
+    setData([{attributes: {name: 'All'}, id: 0}, ...filterResult]);
 
     const myOrder = await instance.getMyCart(token);
-
+    console.log(myOrder, 'myOrder');
     let newResult = [];
     result.map((item, index) => {
       item?.relation?.optional_items.map((item1, index1) => {
@@ -72,7 +75,11 @@ const DoubleJoy = props => {
 
           if (citem.length > 0) {
             item1.quantity = citem[0].attributes.quantity;
+            item1.cartAddon = citem[0].attributes.addons;
+
             newResult.push({catId: item.id, ...item1});
+
+
           } else {
             item1.quantity = 0;
             newResult.push({catId: item.id, ...item1});
@@ -85,8 +92,18 @@ const DoubleJoy = props => {
     });
     console.log(newResult, 'newResult');
     setLoading(false);
+    setActiveData(newResult);
     setAllData(newResult);
     setCart(myOrder);
+
+
+    if (!active?.id) {
+      setActiveData(newResult);
+    } else {
+      const filterData = [{attributes: {name: 'All'}, id: 0}, ...filterResult].filter(i => i.id === active.id);
+      setActiveData(filterData[0].relation.optional_items);
+    }
+    
   };
 
   const selectItem = item => {
@@ -97,11 +114,32 @@ const DoubleJoy = props => {
   const addClick = async item => {
     const token = await getToken();
     const instance = new DoubleJoyController();
+    let myNotes = '';
+    let getAddons = [];
 
-    console.log(item, 'item');
+    if (item.quantity > 0) {
+      let myCartItem = cart.relation.items.filter(
+        i => i.attributes.optional_item_id == item.id,
+      );
+      if (myCartItem[0].attributes.addons.length > 0) {
+        getAddons = JSON.parse(myCartItem[0].attributes.addons);
+      }
+      if (myCartItem[0].attributes.notes) {
+        myNotes = myCartItem[0].attributes.notes;
+      }
+    }
+
+
+    console.log(token, item.id, item.quantity + 1, myNotes, getAddons, 'sss');
     setLoading(true);
-    const result = await instance.addItem(token, item.id, item.quantity + 1);
-    console.log(result, 'addcart');
+    const result = await instance.addItem(
+      token,
+      item.id,
+      item.quantity + 1,
+      myNotes,
+      getAddons,
+    );
+    console.log(result, result?.status, result.status === 'success', 'addcart');
     if (result.status === 'success') {
       setRefresh(!refresh);
     } else {
@@ -112,12 +150,34 @@ const DoubleJoy = props => {
     const token = await getToken();
     const instance = new DoubleJoyController();
 
+    let myNotes = '';
+    let getAddons = [];
+
+    if (item.quantity > 0) {
+      let myCartItem = cart.relation.items.filter(
+        i => i.attributes.optional_item_id == item.id,
+      );
+      if (myCartItem[0].attributes.addons.length > 0) {
+        getAddons = JSON.parse(myCartItem[0].attributes.addons);
+      }
+      if (myCartItem[0].attributes.notes) {
+        myNotes = myCartItem[0].attributes.notes;
+      }
+    }
+
     if (item.quantity > 1) {
       setLoading(true);
-      const result = await instance.addItem(token, item.id, item.quantity - 1);
-      console.log(result, 'addcart');
+      const result = await instance.addItem(
+        token,
+        item.id,
+        item.quantity - 1,
+        myNotes,
+        getAddons,
+      );
+      console.log(result.status, result.status === 'success', 'addcart');
       if (result.status === 'success') {
-        setRefresh(!refresh);
+        // setRefresh(!refresh);
+        getAllData();
       } else {
         setLoading(false);
       }
@@ -130,6 +190,16 @@ const DoubleJoy = props => {
       } else {
         setLoading(false);
       }
+    }
+  };
+
+  const clickTab = item => {
+    setActive(item);
+    if (item.id === 0) {
+      setActiveData(allData);
+    } else {
+      const filterData = data.filter(i => i.id === item.id);
+      setActiveData(filterData[0].relation.optional_items);
     }
   };
 
@@ -150,22 +220,22 @@ const DoubleJoy = props => {
             <TouchableOpacity
               style={{marginTop: 0}}
               onPress={() => navigation.navigate('DoubleJoyCheckout')}>
-            {cart?.relation?.items.length > 0 &&
-             <Badge
-              style={[
-                {
-                  padding:0,
-                  backgroundColor:'red',
-                  fontWeight:'700',
-                  fontSize:10,
-                  position:'absolute',
-                  right:-10,
-                  top:-10,
-                },
-              ]}>
-              {cart?.relation?.items.length}
-            </Badge>
-            }
+              {cart?.relation?.items.length > 0 && (
+                <Badge
+                  style={[
+                    {
+                      padding: 0,
+                      backgroundColor: 'red',
+                      fontWeight: '700',
+                      fontSize: 10,
+                      position: 'absolute',
+                      right: -10,
+                      top: -10,
+                    },
+                  ]}>
+                  {cart?.relation?.items.length}
+                </Badge>
+              )}
               <Image source={assets.cart} style={{width: 20, height: 20}} />
             </TouchableOpacity>
           </View>
@@ -183,11 +253,12 @@ const DoubleJoy = props => {
                     <RoundedGreyButton2
                       label={item.attributes.name}
                       style={styles.tabBtn}
+                      onPress={() => console.log()}
                     />
                   ) : (
                     <RoundedThemeButton2
                       label={item.attributes.name}
-                      onPress={() => setActive(item)}
+                      onPress={() => clickTab(item)}
                       style={styles.tabBtn}
                     />
                   )}
@@ -198,23 +269,19 @@ const DoubleJoy = props => {
 
           <View style={styles.classesList}>
             <FlatList
-              data={allData}
+              data={activeData}
               pagingEnabled
               numColumns={2}
               showsVerticalScrollIndicator={false}
               decelerationRate={'normal'}
+              contentContainerStyle={{
+                paddingBottom: 20,
+              }}
               columnWrapperStyle={{
                 justifyContent: 'space-between',
               }}
               renderItem={({item}, key) => (
-                <View
-                  key={key + 'cat'}
-                  style={{
-                    display:
-                      item.catId === active.id || active.id === 0
-                        ? 'flex'
-                        : 'none',
-                  }}>
+                <View key={key + 'cat'}>
                   <CartItem
                     item={item}
                     onPress={selectItem}
@@ -261,11 +328,11 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginBottom: 5,
     marginRight: 10,
-    paddingLeft:0,
-    paddingRight:0
+    paddingLeft: 0,
+    paddingRight: 0,
   },
   classesList: {
-    height:height-240,
+    height: Platform.OS === 'ios' ? height - 200 : height - 200,
   },
   calander: {
     marginBottom: 20,

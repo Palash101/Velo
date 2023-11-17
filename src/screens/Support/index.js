@@ -14,34 +14,8 @@ import {SupportController} from '../../controllers/SupportController';
 import {UserContext} from '../../../context/UserContext';
 
 const Support = ({navigation}) => {
-  const Faqs = [
-    {
-      id: 1,
-      question: 'What is the waitlist policy?',
-      answer:
-        'Lorem ipsum doller emit is dummy content Lorem ipsum doller emit is dummy content Lorem ipsum doller emit is dummy content',
-    },
-    {
-      id: 2,
-      question: 'What is the waitlist policy?',
-      answer:
-        'Lorem ipsum doller emit is dummy content Lorem ipsum doller emit is dummy content Lorem ipsum doller emit is dummy content',
-    },
-    {
-      id: 3,
-      question: 'What is the waitlist policy?',
-      answer:
-        'Lorem ipsum doller emit is dummy content Lorem ipsum doller emit is dummy content Lorem ipsum doller emit is dummy content',
-    },
-    {
-      id: 4,
-      question: 'What is the waitlist policy?',
-      answer:
-        'Lorem ipsum doller emit is dummy content Lorem ipsum doller emit is dummy content Lorem ipsum doller emit is dummy content',
-    },
-  ];
 
-  const [data, setData] = useState(Faqs);
+  const [data, setData] = useState([]);
   const [supportData, setSupportData] = useState();
   const [active, setActive] = useState({});
   const {getToken} = useContext(UserContext);

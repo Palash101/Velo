@@ -25,7 +25,7 @@ const App = () => {
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
-    }, 3000);
+    }, 1500);
     PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
     );
@@ -66,9 +66,10 @@ const App = () => {
         textStyle={{paddingRight: 40}}>
         <UserProvider>
           {loading ? (
-            <View style={styles.container}>
+            <View style={[styles.container, {backgroundColor: '#000'}]}>
               <StatusBar barStyle="light-content" backgroundColor="#161415" />
-              <Image source={assets.splash} style={styles.logo} />
+              {/* <Image source={assets.splash} style={styles.logo} /> */}
+              <Image source={assets.logoWhite} style={{width:170,height:80,tintColor:'#fff'}} /> 
             </View>
           ) : (
             <UserConsumer>

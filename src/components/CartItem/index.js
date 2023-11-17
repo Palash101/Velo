@@ -23,7 +23,7 @@ export const CartItem = ({item, onPress, addClick, minusClick}) => {
       <Image source={{uri:API_SUCCESS +'/'+ item?.attributes?.image}} style={styles.itemImage} />
       <Text style={styles.title}>{item.attributes.name}</Text>
       <View style={styles.priceBox}>
-        <Text style={styles.price}>{item.attributes?.price} QR</Text>
+        <Text style={styles.price}>{item.attributes?.price} QAR</Text>
         <View style={styles.addToCart}>
           {item.quantity > 0 &&
           <>
@@ -62,6 +62,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textTransform: 'uppercase',
     marginTop: 10,
+    height:30,
+    lineHeight:15,
     color:'#161415',
     fontFamily:'Gotham-Medium'
   },
@@ -73,8 +75,8 @@ const styles = StyleSheet.create({
     lineHeight:24,
   },
   itemImage: {
-    width: 80,
-    height: 80,
+    width: '100%',
+    height: 110,
     alignSelf: 'center',
     borderRadius:10,
   },

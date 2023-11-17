@@ -1,11 +1,17 @@
 import React, {useContext, useEffect} from 'react';
-import {Dimensions, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {
+  Dimensions,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import {PageContainer} from '../../components/Container';
 import {
   RoundedDarkButton,
   RoundedGreyButton,
   RoundedOutlineButton,
-  RoundedThemeButton,
 } from '../../components/Buttons';
 import {useState} from 'react';
 import {PlannerClass} from '../../components/PlannerClass';
@@ -16,6 +22,10 @@ import {useToast} from 'react-native-toast-notifications';
 import {ClassContoller} from '../../controllers/ClassController';
 import {ModalView} from '../../components/ModalView';
 import {Heading, Heading2} from '../../components/Typography';
+import PageLoader from '../../components/PageLoader';
+import moment from 'moment';
+import Calendar from '../../components/calendar/Calendar';
+import Calendar2 from '../../components/calendar/Calendar2';
 
 const Planner = ({navigation}) => {
   const [classes, setClasses] = useState([
@@ -26,19 +36,24 @@ const Planner = ({navigation}) => {
   const [refresh, setRefresh] = useState(true);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loading2, setLoading2] = useState(false);
   const {getToken} = useContext(UserContext);
   const [cancelId, setCancelId] = useState();
   const [cancelModal, setCancelModal] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [allData, setAllData] = useState([]);
+  const [gIndex, setGIndex] = useState(0);
 
   useEffect(() => {
     const focusHandler = navigation.addListener('focus', () => {
+      setGIndex(0)
       getBookings();
     });
     return focusHandler;
   }, [navigation]);
 
   useEffect(() => {
-      getBookings();
+    getBookings();
   }, [refresh]);
 
   const getBookings = async () => {
@@ -48,14 +63,41 @@ const Planner = ({navigation}) => {
     const instance = new PlannerContoller();
     const result = await instance.getAllBooking(token);
     setLoading(false);
-    console.log(result,'result')
+    console.log(result, 'result');
     const result1 = result.data.filter(
       item => item.attributes.status !== 'Cancelled',
     );
 
-    const allData = joinGroup(result1);
-    console.log(allData,'allData')
-    setData(allData);
+    const allData1 = joinGroup(result1);
+    setAllData(allData1);
+
+
+    var dt = moment(new Date()).format('YYYY-MM-DD');
+
+    let allFiterData = [];
+
+    allData1.forEach(element => {
+      let filterData = element.data.filter(item =>
+        moment(item.attributes.booked_date_standard).isSame(dt),
+      );
+      if(filterData.length){
+        let sortedArray = filterData.sort((a, b) => {
+          if (
+            moment(a.attributes.booked_date_standard + ' ' + a.attributes.booking_time + ':00').isBefore(
+              moment(b.attributes.booked_date_standard + ' ' + b.attributes.booking_time + ':00'),
+            )
+          ) {
+            return -1;
+          } else {
+            return 1;
+          }
+        });
+
+        allFiterData.push({name: element.name, data: sortedArray});
+      }
+    });
+
+    setData(allFiterData);
   };
 
   const joinGroup = allData => {
@@ -85,7 +127,7 @@ const Planner = ({navigation}) => {
   };
 
   const cancelBooking = async () => {
-    setLoading(true);
+    setLoading2(true);
     const dt = {
       booking_id: cancelId,
     };
@@ -94,17 +136,57 @@ const Planner = ({navigation}) => {
     const result = await instance.CancelClass(dt, token);
     if (result.status === 'success') {
       toast.show(result.msg);
-      setLoading(false);
+      setLoading2(false);
       setCancelModal(false);
       setRefresh(!refresh);
     } else {
       toast.show(result.msg);
-      setLoading(false);
+      setLoading2(false);
     }
+  };
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      getBookings();
+      setRefreshing(false);
+    }, 2000);
+  }, []);
+
+  const onSelectDate = (date, i) => {
+    setLoading(true);
+    var dt = moment(date).format('YYYY-MM-DD');
+
+    let allFiterData = [];
+    allData.forEach(element => {
+      let filterData = element.data.filter(item =>
+        moment(item.attributes.booked_date_standard).isSame(dt),
+      );
+      if(filterData.length){
+
+        let sortedArray = filterData.sort((a, b) => {
+          if (
+            moment(a.attributes.booked_date_standard + ' ' + a.attributes.booking_time + ':00').isBefore(
+              moment(b.attributes.booked_date_standard + ' ' + b.attributes.booking_time + ':00'),
+            )
+          ) {
+            return -1;
+          } else {
+            return 1;
+          }
+        });
+
+        allFiterData.push({name: element.name, data: sortedArray});
+      }
+    });
+
+    setData(allFiterData);
+    setLoading(false);
   };
 
   return (
     <>
+      <PageLoader loading={loading2} />
       <PageContainer>
         <View style={styles.tab}>
           <RoundedGreyButton
@@ -114,13 +196,18 @@ const Planner = ({navigation}) => {
           />
         </View>
 
+        <View style={styles.calander}>
+          <Calendar2 onSelectDate={onSelectDate} globalIndex={gIndex} />
+        </View>
+
         <ScrollView
           showsVerticalScrollIndicator={false}
+          decelerationRate={'normal'}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
           contentContainerStyle={{paddingHorizontal: 10}}>
-            
           <View style={styles.classesList}>
-       
-
             {data?.length > 0 ? (
               <>
                 {data.map((item, key) => (
@@ -156,7 +243,7 @@ const Planner = ({navigation}) => {
                     <RoundedDarkButton
                       label={'Book Now'}
                       onPress={() => navigation.navigate('classes')}
-                      style={{width:150,alignSelf:'center'}}
+                      style={{width: 150, alignSelf: 'center'}}
                     />
                   </View>
                 )}
@@ -240,6 +327,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     alignSelf: 'center',
     marginTop: height / 2 - 200,
-    marginBottom:20
+    marginBottom: 20,
   },
 });

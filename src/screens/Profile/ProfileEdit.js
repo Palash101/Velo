@@ -24,7 +24,18 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 import DocumentPicker from 'react-native-document-picker';
 import {API_SUCCESS} from '../../config/ApiConfig';
+import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
+import {ModalView} from '../../components/ModalView';
+import RadioForm, {
+  RadioButton,
+  RadioButtonInput,
+  RadioButtonLabel,
+} from 'react-native-simple-radio-button';
 
+var radio_props = [
+  {label: 'MALE', value: 'Male'},
+  {label: 'FEMALE', value: 'Female'},
+];
 const ProfileEdit = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [first_name, setFirstName] = useState('');
@@ -33,11 +44,12 @@ const ProfileEdit = ({navigation}) => {
   const [dob, setDob] = useState('');
   const [image, setImage] = useState('');
   const [datePicker, setDatePicker] = useState(false);
-
+  const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const {getToken} = useContext(UserContext);
   const [user, setUser] = useState({});
   const toast = useToast();
+  const [gender, setGender] = useState();
   const userCtx = useContext(UserContext);
   const [singleFile, setSingleFile] = useState('');
   const dt = new Date();
@@ -49,21 +61,69 @@ const ProfileEdit = ({navigation}) => {
   }, []);
 
   const selectOneFile = async () => {
-    //Opening Document Picker for selection of one file
-    try {
-      const res = await DocumentPicker.pick({
-        type: [DocumentPicker.types.images],
-      });
-      setImage(res[0].uri);
-      setSingleFile(res[0]);
-    } catch (err) {
-      if (DocumentPicker.isCancel(err)) {
-        console.log('Canceled');
+    setOpen(true);
+  };
+
+  const openGallery = async () => {
+    const options = {
+      mediaType: 'photo',
+      includeBase64: false,
+      maxHeight: 2000,
+      maxWidth: 2000,
+    };
+
+    launchImageLibrary(options, response => {
+      setOpen(false);
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('Image picker error: ', response.error);
       } else {
-        Alert.alert('Unknown Error: ' + JSON.stringify(err));
-        throw err;
+        let imageUri = response.uri || response.assets?.[0]?.uri;
+        console.log(response, 'response');
+        setImage(imageUri);
+        setSingleFile(response.assets ? response.assets[0] : response);
       }
-    }
+    });
+
+    //Opening Document Picker for selection of one file
+    // try {
+    //   const res = await DocumentPicker.pick({
+    //     type: [DocumentPicker.types.images],
+    //   });
+    //   setImage(res[0].uri);
+    //   setSingleFile(res[0]);
+    // } catch (err) {
+    //   if (DocumentPicker.isCancel(err)) {
+    //     console.log('Canceled');
+    //   } else {
+    //     Alert.alert('Unknown Error: ' + JSON.stringify(err));
+    //     throw err;
+    //   }
+    // }
+  };
+
+  const openCamera = async () => {
+    const options = {
+      mediaType: 'photo',
+      includeBase64: false,
+      maxHeight: 2000,
+      maxWidth: 2000,
+    };
+
+    launchCamera(options, response => {
+      setOpen(false);
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('Image picker error: ', response.error);
+      } else {
+        let imageUri = response.uri || response.assets?.[0]?.uri;
+        console.log(response, 'response');
+        setImage(imageUri);
+        setSingleFile(response.assets ? response.assets[0] : response);
+      }
+    });
   };
 
   const getDetail = async () => {
@@ -76,6 +136,7 @@ const ProfileEdit = ({navigation}) => {
     setEmail(result.user.email);
     setPhone(result.user.phone);
     setDob(result.user.dob);
+    setGender(result.user.gender);
     setImage(API_SUCCESS + '/' + result.user.image);
     setLoading(false);
   };
@@ -100,19 +161,20 @@ const ProfileEdit = ({navigation}) => {
         last_name: last_name,
         email: email,
         phone: phone,
+        gender: gender,
         dob: moment(dob).format('YYYY-MM-DD'),
       };
       if (singleFile?.uri) {
         data.image = {
           uri: singleFile.uri,
           type: singleFile.type,
-          name: singleFile.name,
+          name: singleFile.fileName,
         };
       }
       const token = await getToken();
       const instance = new ProfileController();
       const result = await instance.updateProfile(data, token);
-      console.log(result,'ress')
+      console.log(result, 'ress');
       if (result.status === 'success') {
         toast.show(result.message);
         userCtx.setUser({...user.data, ...result.user});
@@ -181,7 +243,7 @@ const ProfileEdit = ({navigation}) => {
               onChang={setPhone}
               keyboardType={'numeric'}
             />
-            <View>
+            <View style={{marginBottom:15}}>
               <Text
                 style={{
                   paddingTop: 15,
@@ -254,6 +316,40 @@ const ProfileEdit = ({navigation}) => {
               )}
             </View>
 
+            <RadioForm
+                    formHorizontal={true}
+                    animation={true}
+                  >
+                  {
+                    radio_props.map((obj, i) => (
+                      <RadioButton labelHorizontal={true} key={i} >
+                        <RadioButtonInput
+                          obj={obj}
+                          index={i}
+                          isSelected={gender === obj.value}
+                          onPress={(value) => setGender(value)}
+                          borderWidth={1}
+                          buttonInnerColor={'#000'}
+                          buttonOuterColor={gender === obj.value ? '#161415' : '#161415'}
+                          buttonSize={10}
+                          buttonOuterSize={18}
+                          buttonStyle={{}}
+                          buttonWrapStyle={{marginLeft: 10}}
+                        />
+                        <RadioButtonLabel
+                          obj={obj}
+                          index={i}
+                          labelHorizontal={true}
+                          onPress={(value) => setGender(value)}
+                          labelStyle={{fontSize: 14, color: '#161415'}}
+                          labelWrapStyle={{}}
+                        />
+                      </RadioButton>
+                    ))
+                  }  
+                </RadioForm>
+
+
             <View style={styles.btnBox}>
               <RoundedThemeButton
                 label={'CANCEL'}
@@ -271,6 +367,22 @@ const ProfileEdit = ({navigation}) => {
           </View>
         </ScrollView>
       </PageContainer>
+
+      <ModalView
+        visible={open}
+        heading=""
+        setVisible={() => setOpen(false)}
+        style={{
+          height: 'auto',
+          marginTop: 260,
+          justifyContent: 'flex-end',
+          marginBottom: 0,
+        }}>
+        <View style={{paddingHorizontal: '20%', gap: 20, paddingBottom: 40}}>
+          <RoundedDarkButton label="Choose from Device" onPress={openGallery} />
+          <RoundedDarkButton label="Open Camera" onPress={openCamera} />
+        </View>
+      </ModalView>
 
       {datePicker && (
         <DateTimePicker

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -9,10 +9,13 @@ import {
 } from 'react-native';
 import {assets} from '../../config/AssetsConfig';
 import { API_SUCCESS } from '../../config/ApiConfig';
+import { Badge } from 'react-native-paper';
 
 const width = Dimensions.get('window').width;
 
 export const CartItem1 = ({item, onPress,  addClick, minusClick}) => {
+
+    const [addons, setAddons] = useState(item.attributes.addons ? JSON.parse(item.attributes.addons) : [])
   return (
     <TouchableOpacity style={styles.box} onPress={() => onPress(item)}>
       <View style={styles.imgBox}>
@@ -20,8 +23,34 @@ export const CartItem1 = ({item, onPress,  addClick, minusClick}) => {
       </View>
       <View style={styles.contBox}>
         <Text style={styles.title}>{item?.attributes?.optional_item}</Text>
+        <Text style={{fontSize:10,marginTop:5}}>{item?.attributes?.notes}</Text>
+
+
+        {addons?.length > 0 &&
+          <View style={{display:'flex',flexDirection:'row',marginTop:5}}>
+            {addons.map((i,index) => (
+              <Badge
+                  style={[
+                    styles.bedge,
+                    {
+                      backgroundColor: '#fff',
+                      color: '#000',
+                      paddingHorizontal: 8,
+                      borderWidth:0.5,
+                      height:15,
+                      fontSize:9,lineHeight:13,
+                      fontWeight:'600',
+                      marginRight:2
+                    },
+                  ]}>
+                {i.name}
+            </Badge>
+            ))}
+          </View>
+        }
+
         <View style={styles.priceBox}>
-          <Text style={styles.price}>{item?.attributes?.price} QR</Text>
+          <Text style={styles.price}>{item?.attributes?.total_price} QAR</Text>
           <View style={styles.addToCart}>
             <TouchableOpacity style={styles.decrementBox} onPress={() => minusClick(item)}>
               <Text style={styles.decrText}>-</Text>
@@ -59,22 +88,25 @@ const styles = StyleSheet.create({
 
   title: {
     fontSize: 14,
+    lineHeight:16,
     textTransform: 'uppercase',
-    marginTop: 10,
+    marginTop: 3,
     color: '#161415',
     fontFamily: 'Gotham-Medium',
+    width:width - 180
   },
   price: {
     fontSize: 14,
-    marginVertical: 7,
+    marginVertical: 5,
     lineHeight:24,
     marginRight: 20,
     color: '#161415',
     fontFamily: 'Gotham-Medium',
   },
   itemImage: {
-    width: 40,
+    width: 80,
     height: 80,
+    borderRadius:10,
     alignSelf: 'center',
   },
   priceBox: {

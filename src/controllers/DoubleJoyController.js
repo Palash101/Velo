@@ -2,6 +2,7 @@ import {API_BASE} from '../config/ApiConfig';
 
 export class DoubleJoyController {
   async getAllDoubleJoy(token) {
+    console.log(token, 'token');
     return fetch(API_BASE + '/category/get', {
       method: 'GET',
       headers: {
@@ -55,26 +56,34 @@ export class DoubleJoyController {
       });
   }
 
-  async addItem(token, id, qty) {
-    const newdata = new FormData();
-    newdata.append('optional_item_id', id);
-    newdata.append('quantity', qty);
+  async addItem(token, id, qty, notes, addons) {
+ 
+    var myHeaders = new Headers();
+    myHeaders.append('Accept', 'application/json');
+    myHeaders.append('Authorization', 'Bearer ' + token);
 
-    console.log(newdata, token)
-    return fetch(API_BASE + '/cart/add', {
+    var formdata = new FormData();
+    formdata.append('optional_item_id', id);
+    formdata.append('quantity', qty);
+    formdata.append('addons', JSON.stringify(addons));
+    formdata.append('notes', notes);
+
+    console.log(formdata,'formdata')
+
+    var requestOptions = {
       method: 'POST',
-      body: newdata,
-      headers: {
-        Authorization: 'Bearer ' + token,
-        Accept: 'application/json',
-      },
-    })
+      headers: myHeaders,
+      body: formdata,
+      redirect: 'follow',
+    };
+
+    return fetch('https://api.velo.qa/api/cart/add', requestOptions)
       .then(response => response.json())
-      .then(responseJson => {
-        return responseJson;
+      .then(result => {
+        console.log(result,'result')
+        return result;
       })
       .catch(error => {
-        console.log(error);
         return {success: false, error};
       });
   }
@@ -102,33 +111,6 @@ export class DoubleJoyController {
   }
 
   async checkout(token, cart_id, type, note) {
-    
-
-    // const newdata = new FormData();
-    // newdata.append('cart_id', cart_id);
-    // newdata.append('type', type);
-    // if (note || note?.length) {
-    //   newdata.append('note', note);
-    // }
-
-    // console.log(newdata, 'newdata');
-    // return fetch(API_BASE + '/order/checkout', {
-    //   method: 'POST',
-    //   body: newdata,
-    //   headers: {
-    //     Authorization: 'Bearer ' + token,
-    //     Accept: 'application/json',
-    //   },
-    // })
-    //   .then(response => response.json())
-    //   .then(responseJson => {
-    //     return JSON.parse(responseJson);
-    //   })
-    //   .catch(error => {
-    //     console.log(error);
-    //     return {success: false, error};
-    //   });
-
     var myHeaders = new Headers();
     myHeaders.append('Accept', 'application/json');
     myHeaders.append('Authorization', 'Bearer ' + token);
@@ -138,7 +120,7 @@ export class DoubleJoyController {
     newdata.append('type', type);
     if (note || note?.length) {
       newdata.append('note', note);
-     }
+    }
 
     var requestOptions = {
       method: 'POST',
@@ -155,6 +137,5 @@ export class DoubleJoyController {
       .catch(error => {
         return error;
       });
-
   }
 }

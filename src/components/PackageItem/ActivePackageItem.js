@@ -13,7 +13,7 @@ export const ActivePackageItem = (props) => {
       <Text style={styles.title}>{item?.attributes?.name}</Text>
       <View style={styles.paraBox}>
         <Text style={styles.paraText}>Expires</Text>
-        <Text style={styles.paraValue}>:  {item?.attributes?.valid_till == '-' ? '-' : moment(item?.attributes?.valid_till).format('LL')}</Text>
+        <Text style={styles.paraValue}>:  {item?.attributes?.valid_till == '-' ? '-' : moment(item?.attributes?.valid_till).format('MMM DD, YYYY')}</Text>
       </View>
       <View style={styles.paraBox}>
         <Text style={styles.paraText}>Remaining</Text>
@@ -28,8 +28,8 @@ export const ActivePackageItem = (props) => {
 const styles = StyleSheet.create({
   box: {
     backgroundColor: '#161415',
-    paddingVertical: 30,
-    paddingHorizontal: 30,
+    paddingVertical: 20,
+    paddingHorizontal: 20,
     borderRadius: 24,
     width: width - 40,
     marginTop: 10,
@@ -40,21 +40,21 @@ const styles = StyleSheet.create({
     paddingVertical:8,
   },
   title: {
-    fontSize: 18,
+    fontSize: 16,
     textTransform: 'uppercase',
     fontFamily: 'Gotham-Black',
     color: '#fff',
     marginBottom: 15,
   },
   paraText: {
-    fontSize: 16,
+    fontSize: 14,
     textTransform: 'uppercase',
     fontFamily: 'Gotham-Medium',
     color: '#fff',
     width: '40%',
   },
   paraValue: {
-    fontSize: 16,
+    fontSize: 14,
     textTransform: 'uppercase',
     fontFamily: 'Gotham-Medium',
     color: '#fff',

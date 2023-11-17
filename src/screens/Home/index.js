@@ -6,6 +6,9 @@ import {
   Dimensions,
   ScrollView,
   Alert,
+  StyleSheet,
+  Text,
+  Linking,
 } from 'react-native';
 import {PageContainer} from '../../components/Container';
 import {Heading} from '../../components/Typography';
@@ -22,17 +25,22 @@ import {API_SUCCESS} from '../../config/ApiConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import {AuthContoller} from '../../controllers/AuthController';
+import remoteConfig from '@react-native-firebase/remote-config';
+import { ModalView } from '../../components/ModalView';
+import { RoundedGreyButton } from '../../components/Buttons';
 
 const width = Dimensions.get('window').width;
 
 const Home = () => {
-
   const scrollX = useRef(new Animated.Value(0)).current;
   const {getToken, getUser} = useContext(UserContext);
   const [allData, setAllData] = useState([]);
   const [list, setList] = useState([]);
   const [scrollData, setScrollData] = useState([]);
   const [challenges, setChallenges] = useState([]);
+  const [updateModal, setUpdateModal] = useState(false);
+  const [doubleJoyImage, setDoubleJoyImage] = useState('');
+  const [storeImage, setStoreImage] = useState('');
 
   const navigation = useNavigation();
 
@@ -42,9 +50,32 @@ const Home = () => {
       getList();
       getHappening();
       getFirebaseToken();
+      checkForUpdate();
     });
     return focusHandler;
   }, []);
+
+  async function checkForUpdate() {
+    try {
+      await remoteConfig().fetchAndActivate();
+      const forceUpdateVersion = remoteConfig()
+        .getValue('force_update_version')
+        .asString();
+      const currentAppVersion = '3.9'; // Replace with your app's current version
+      if (currentAppVersion < forceUpdateVersion) {
+        setUpdateModal(true)
+        // Show a modal or message to the user indicating they need to update the app.
+        // You can use a library like 'react-native-modal' for modals.
+        // You can also navigate the user to the app store.
+      }
+    } catch (error) {
+      console.error('Error fetching remote config:', error);
+    }
+  }
+
+  const update = async() => {
+    Linking.openURL('https://play.google.com/store/apps/details?id=com.velo.bassem&hl=en_IN&gl=US')
+  }
 
   const getFirebaseToken = async () => {
     const newFirebaseToken = await messaging().getToken();
@@ -65,7 +96,7 @@ const Home = () => {
   const getData = async () => {
     const token = await getToken();
     const instance = new ClassContoller();
-    const result = await instance.getAllClasses(token);
+    const result = await instance.getHomeLocation(token);
     setAllData(result.locations);
   };
 
@@ -98,6 +129,10 @@ const Home = () => {
     const instance = new HappeningContoller();
     const result = await instance.getAllChallenges(token);
     setChallenges(result?.happenings);
+
+    setDoubleJoyImage(result?.doublejoy_banner);
+    setStoreImage(result?.store_banner);
+
     const half = Math.ceil(result?.happenings.length / 2);
     const firstHalf = result?.happenings.slice(0, half);
     setScrollData(firstHalf);
@@ -132,7 +167,7 @@ const Home = () => {
                     <View>
                       <TraingBox
                         title={item.name}
-                        bg={require('../../../assets/images/bg.png')}
+                        bg={{uri: API_SUCCESS +'/'+ item.image}}
                         onPress={() => {
                           logCustomeEvent('MostStudioClicked', item.name);
                           AsyncStorage.setItem(
@@ -218,8 +253,8 @@ const Home = () => {
             <TraingBox
               // title={'Coming Soon...'}
               title={''}
-              bg={require('../../../assets/images/bg.png')}
-              style={{marginHorizontal: 8, height: 150}}
+              bg={{uri: doubleJoyImage}}
+              style={{marginHorizontal: 0, height: 150}}
               onPress={() => console.log()}
               onPress={() => navigation.navigate('DoubleJoy')}
             />
@@ -228,15 +263,66 @@ const Home = () => {
             <Heading style={{marginBottom: 5, marginTop: 10}}>STORE</Heading>
             <TraingBox
               title={'Coming Soon...'}
-              bg={require('../../../assets/images/bg.png')}
-              style={{marginHorizontal: 8, height: 150}}
+              bg={{uri: storeImage}}
+              style={{marginHorizontal: 0, height: 150}}
               onPress={() => console.log()}
               //onPress={() => navigation.navigate('Store')}
             />
           </View>
         </ScrollView>
       </PageContainer>
+
+      <ModalView
+        visible={updateModal}
+        heading="Update App"
+        setVisible={() => setUpdateModal(false)}
+        style={{
+          height: 'auto',
+          marginTop: 260,
+          justifyContent: 'flex-end',
+          marginBottom: 0,
+          zIndex: 999,
+        }}>
+        <View style={styles.summeryBox}>
+          <View style={styles.modalTotalBox}>
+            <Text style={{fontSize: 14, textAlign: 'center'}}>
+              Please update your application to continue.
+            </Text>
+          </View>
+
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'flex-end',
+              marginTop: 15,
+            }}>
+          
+            <RoundedGreyButton
+              label={'UPDATE'}
+              onPress={() => update()}
+              style={{width: 100, marginLeft: 5, marginTop: 5}}
+            />
+          </View>
+        </View>
+      </ModalView>
+
     </>
   );
 };
 export default Home;
+const styles = StyleSheet.create({
+  modalTotalBox: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+    marginTop: 10,
+  },
+  summeryBox: {
+    width: width - 70,
+    alignSelf: 'center',
+    marginBottom: 20,
+  },
+
+})

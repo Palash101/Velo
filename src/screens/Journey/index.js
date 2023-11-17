@@ -37,6 +37,7 @@ const Journey = ({navigation}) => {
     const instance = new JourneyContoller();
     const result = await instance.getAllBooking(token);
     setLoading(false);
+    console.log(result,'resultresult')
     setLocations(result.locations);
     setTotal(getTotal(result.locations));
   };

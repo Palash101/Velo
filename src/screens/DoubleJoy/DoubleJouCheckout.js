@@ -46,9 +46,6 @@ const DoubleJoyCheckout = () => {
   const [refresh, setRefresh] = useState(false);
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
-  const [note, setNote] = useState();
-  const [showNote, setShowNote] = useState(false);
-  const [noteModal, setNoteModal] = useState(false);
   useEffect(() => {
     const focusHandler = navigation.addListener('focus', () => {
       getAllData();
@@ -63,6 +60,7 @@ const DoubleJoyCheckout = () => {
   const getAllData = async () => {
     setLoading(true);
     const token = await getToken();
+    console.log(token,'token')
     const instance = new DoubleJoyController();
     const result = await instance.getMyCart(token);
     setLoading(false);
@@ -81,6 +79,7 @@ const DoubleJoyCheckout = () => {
   const addClick = async item => {
     const token = await getToken();
     const instance = new DoubleJoyController();
+    let addons = item.attributes.addons?.length ?  JSON.parse(item.attributes.addons) : [];
 
     console.log(item, 'item');
     setLoading(true);
@@ -88,6 +87,9 @@ const DoubleJoyCheckout = () => {
       token,
       item.attributes.optional_item_id,
       item.attributes.quantity + 1,
+      item.attributes.notes,
+      addons,
+
     );
     console.log(result, 'addcart');
     if (result.status === 'success') {
@@ -99,6 +101,7 @@ const DoubleJoyCheckout = () => {
   const minusClick = async item => {
     const token = await getToken();
     const instance = new DoubleJoyController();
+    let addons = item.attributes.addons?.length ?  JSON.parse(item.attributes.addons) : [];
 
     if (item.attributes.quantity > 1) {
       setLoading(true);
@@ -106,6 +109,8 @@ const DoubleJoyCheckout = () => {
         token,
         item.attributes.optional_item_id,
         item.attributes.quantity - 1,
+        item.attributes.notes,
+        addons
       );
       console.log(result, 'addcart');
       if (result.status === 'success') {
@@ -115,6 +120,7 @@ const DoubleJoyCheckout = () => {
       }
     } else {
       setLoading(true);
+      console.log(item.attributes.optional_item_id,'idd')
       const result = await instance.removeItem(
         token,
         item.attributes.optional_item_id,
@@ -170,26 +176,13 @@ const DoubleJoyCheckout = () => {
             <View style={styles.summeryBox}>
             
 
-              {note ? (
-                <View style={{display:'flex',flexDirection:'row'}}>
-                  <Text style={{fontSize:12,margin:10,width:width - 140,color:'#161415'}} ellipsizeMode="tail" numberOfLines={1}><Text style={{fontWeight:'700',color:'#000'}}>Note:</Text> {note}</Text>
-                  <TouchableOpacity onPress={() => setNoteModal(true)} style={{height:16,marginTop:12}}>
-                    <Text style={{fontSize:12,fontFamily:'Gotham-Black',color:'#000'}}>EDIT</Text>
-                  </TouchableOpacity>
-                </View>
-              ):(
-                <RoundedGreyButton
-                  style={styles.buyBtn}
-                  label={'ADD NOTE TO ORDER'}
-                  onPress={() => setNoteModal(true)}
-                />
-               )}
+            
               <TouchableOpacity
                 style={styles.checkoutBtn}
-                onPress={() => navigation.navigate('DoubleJoyPay',{cart:cart,total:total,note:note})}>
+                onPress={() => navigation.navigate('DoubleJoyPay',{cart:cart,total:total})}>
                   <Text style={styles.btnText}>GO TO CHECKOUT</Text>
                   <View style={{display:'flex',flexDirection:'row'}}>
-                    <Text style={styles.btnText}>{total} QR</Text>
+                    <Text style={styles.btnText}>{total} QAR</Text>
                     <Image source={assets.chevron} style={styles.btnImage} />
                   </View>
               </TouchableOpacity>
@@ -215,71 +208,7 @@ const DoubleJoyCheckout = () => {
         </View>
       </PageContainer>
 
-      <ModalView
-        visible={noteModal}
-        heading="Note"
-        setVisible={() => setNoteModal(false)}
-        style={{
-          height: 'auto',
-          marginTop: 260,
-          justifyContent: 'flex-end',
-          marginBottom: 0,
-          zIndex: 999,
-        }}>
-        <View style={styles.summeryBox}>
-          <View style={styles.modalTotalBox}>
-          <View>
-              <TextInput
-                mode={'Flat'}
-                style={styles.input}
-                onChangeText={text => setNote(text)}
-                activeOutlineColor="#161415"
-                outlineColor="transparent"
-                contentStyle={{color: '#161415',fontFamily:'Gotham-Medium' }}
-                textColor="#161415"
-                theme={{colors: {primary: '#161415'}}}
-                value={note ? note : ''}
-                multiline={true}
-                
-              />
-                  {/* <Input
-                    value={note}
-                    label={''}
-                    placeholder="Enter your note"
-                    onChang={setNote}
-                    multiline={true}
-                    numberOfLines={3}
-                    style={{
-                      height: 82,
-                      fontSize: 12,
-                     // backgroundColor: 'transparent',
-                      padding:0,
-                      width:width - 70
-                    }}
-                  /> */}
-                </View>
-          </View>
-
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'flex-end',
-              marginTop: 15,
-            }}>
-            <RoundedThemeButton2
-              label={'Cancel'}
-              onPress={() => setNoteModal(false)}
-              style={{width: 100, marginLeft: 5, marginTop: 5}}
-            />
-            <RoundedGreyButton2
-              label={'Save'}
-              onPress={() => setNoteModal()}
-              style={{width: 100, marginLeft: 5, marginTop: 5}}
-            />
-          </View>
-        </View>
-      </ModalView>
+     
 
    
     </>
@@ -324,7 +253,7 @@ const styles = StyleSheet.create({
   classesList: {
     marginBottom: 0,
     marginTop: 20,
-    height: Platform.OS === 'ios' ? height - 280 : height - 190,
+    height: Platform.OS === 'ios' ? height - 200 : height - 190,
   },
   calander: {
     marginBottom: 20,

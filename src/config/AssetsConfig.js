@@ -1,7 +1,6 @@
 export const assets = {
   splash: require('../../assets/splash.gif'),
   splashold: require('../../assets/splashold.gif'),
-
   bell: require('../../assets/icons/bell.png'),
   chevron: require('../../assets/icons/chevron.png'),
   back: require('../../assets/icons/back.png'),
@@ -9,10 +8,10 @@ export const assets = {
   hamburger: require('../../assets/icons/Hamburger_icon.png'),
   cart: require('../../assets/icons/cart.png'),
   list: require('../../assets/icons/list.png'),
-
   logo: require('../../assets/images/logo.png'),
   logoWhite: require('../../assets/images/logo-white.png'),
   vlogo: require('../../assets/vlogo.png'),
+  vlogoDark: require('../../assets/vlogoDark.png'),
   mainLogo: require('../../assets/icon.png'),
   bg: require('../../assets/images/chbg.jpg'),
   loginBg: require('../../assets/images/loginbg.png'),

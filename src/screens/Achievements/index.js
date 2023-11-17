@@ -1,11 +1,13 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Image, StyleSheet, Text, View, FlatList, ImageBackground} from 'react-native';
+import {Image, StyleSheet, Text, View, FlatList, ImageBackground, Dimensions} from 'react-native';
 import {PageContainer} from '../../components/Container';
 import {assets} from '../../config/AssetsConfig';
 import {UserContext} from '../../../context/UserContext';
 import {JourneyContoller} from '../../controllers/JourneyController';
 import PageLoader from '../../components/PageLoader';
 import { API_SUCCESS } from '../../config/ApiConfig';
+
+const width = Dimensions.get('window').width;
 
 const Achievements = () => {
   const [data, setData] = useState([]);
@@ -39,15 +41,16 @@ const Achievements = () => {
             showsVerticalScrollIndicator={false}
             decelerationRate={'normal'}
             columnWrapperStyle={{
-              justifyContent: 'space-around',
+              justifyContent: 'flex-start',
             }}
             renderItem={({item}, key) => (
               <View style={styles.achBox} key={key+'ach'}>
                 <ImageBackground source={{uri: API_SUCCESS+'/'+item.image}} resizeMode="contain" style={[styles.image,{opacity:!item?.status ? 0.3 : 1}]}>
-                  {!item?.status && 
+                 
+                </ImageBackground>
+                {!item?.status && 
                    <Image source={assets.lock} style={styles.achImg} />
                   }
-                </ImageBackground>
               </View>
             )}
           />
@@ -85,13 +88,17 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     borderWidth:1,
     borderColor: '#f2f2f2',
-    overflow:'hidden'
+    overflow:'hidden',
+    marginLeft:(width - 236)/6,
+    marginRight:(width - 236)/6
   },
   achImg: {
-    width: 28,
-    height: 28,
+    width: 32,
+    height: 32,
     tintColor: '#000',
-    alignSelf:'center'
+    alignSelf:'center',
+    position:'absolute',
+    marginTop:19
   },
   image:{
     flex: 1,

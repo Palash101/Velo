@@ -1,6 +1,25 @@
 import {API_BASE} from '../config/ApiConfig';
 
 export class ClassContoller {
+
+  async getHomeLocation(token) {
+    return fetch(API_BASE + '/location', {
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        Accept: 'application/json',
+      },
+    })
+      .then(response => response.json())
+      .then(responseJson => {
+        return responseJson;
+      })
+      .catch(error => {
+        console.log(error);
+        return {success: false, error};
+      });
+  }
+
   async getAllClasses(token) {
     return fetch(API_BASE + '/locations/get', {
       method: 'GET',
@@ -43,6 +62,7 @@ export class ClassContoller {
     newdata.append('classes_id', data.classes_id);
     newdata.append('type', data.type);
     newdata.append('seat', data.seat);
+    newdata.append('seat_text', data.seat_text);
     newdata.append('device', data.device);
     if (data.package_id) {
       newdata.append('package_id', data.package_id);
@@ -95,8 +115,9 @@ export class ClassContoller {
   async UpdateClass(data, token){
     const newdata = new FormData();
     newdata.append('seat', data.seat);
+    newdata.append('seat_text', data.seat_text);
     newdata.append('booking_id', data.booking_id);
-    console.log(newdata,'newdata')
+    console.log(newdata, 'newdata');
     const url = API_BASE + '/booking/seat/update';
     return fetch(url, {
       method: 'POST',

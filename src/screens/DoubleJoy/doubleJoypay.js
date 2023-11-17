@@ -42,24 +42,43 @@ const doubleJoypay = props => {
 
   const checkResponse = data => {
     console.log(data.url)
-    if (data.url.includes('payment/success')) {
-      setLoading(true);
-      setPaymentModal(false);
-      setTimeout(() => {
-        toast.show('Payment successfully');
-        navigation.navigate('MyOrder', {purchase: 'success'});
-        setLoading(false);
-      }, 3000);
+    if (data.url.includes('status')) {
+      const url1 = data.url.split('?')[1];
+      const url2 = url1.split('&')[0];
+      const status = url2.split('=')[1];
+      console.log(status, 'status');
+      if (status === 'Paid') {
+        setLoading(true);
+        setPaymentModal(false);
+        setTimeout(() => {
+          toast.show('Payment successfully');
+          navigation.navigate('MyOrder', {purchase: 'success'});
+          setLoading(false);
+        }, 2000);
+      } else {
+        setPaymentModal(false);
+        navigation.navigate('DoubleJoy');
+        toast.show('Payment has been ' + status);
+      }
     }
-    
-    else if(data.url.includes('payment/failed')){
-      navigation.navigate('DoubleJoy');
-      toast.show('Payment has been failed');
-    }else if (data.url.includes('transaction_cancelled')) {
-      setPaymentModal(false);
-      navigation.navigate('DoubleJoy');
-      toast.show('transaction cancelled');
-    }
+
+    // console.log(data.url);
+    // if (data.url.includes('payment/success')) {
+    //   setLoading(true);
+    //   setPaymentModal(false);
+    //   setTimeout(() => {
+    //     toast.show('Payment successfully');
+    //     navigation.navigate('MyOrder', {purchase: 'success'});
+    //     setLoading(false);
+    //   }, 3000);
+    // } else if (data.url.includes('payment/failed')) {
+    //   navigation.navigate('DoubleJoy');
+    //   toast.show('Payment has been failed');
+    // } else if (data.url.includes('transaction_cancelled')) {
+    //   setPaymentModal(false);
+    //   navigation.navigate('DoubleJoy');
+    //   toast.show('transaction cancelled');
+    // }
   };
 
   const payNow = val => {
@@ -107,7 +126,7 @@ const doubleJoypay = props => {
     if (result.IsSuccess === true) {
       if (type === 'Wallet') {
         toast.show(result.Message);
-        navigation.navigate('MyOrder', {purchase: 'success'});
+        navigation.navigate('MyOrder');
         setLoading(false);
       } else {
         setPaymentUrl(result.Data.PaymentURL);
@@ -129,7 +148,7 @@ const doubleJoypay = props => {
       <PageLoader loading={loading} />
 
       <View style={{marginTop: Platform.OS === 'android' ? 10 : 70}}>
-      <View
+        <View
           style={{
             display: 'flex',
             flexDirection: 'row',
@@ -147,7 +166,6 @@ const doubleJoypay = props => {
           <Text style={{fontSize: 16}}>PAYMENT METHOD</Text>
         </View>
 
-       
         <View
           style={{
             display: 'flex',

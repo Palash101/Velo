@@ -21,15 +21,20 @@ import {useToast} from 'react-native-toast-notifications';
 import {API_BASE, API_SUCCESS} from '../../config/ApiConfig';
 import WebView from 'react-native-webview';
 import {assets} from '../../config/AssetsConfig';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
+import useKeyboardHeight from 'react-native-use-keyboard-height';
 
 const height = Dimensions.get('window').height;
+
 const MyWallet = () => {
   const [loading, setLoading] = useState(true);
   const {getToken} = useContext(UserContext);
   const [balance, setBalance] = useState(0);
   const [open, setOpen] = useState(false);
   const [amount, setAmount] = useState(0);
+
+  const keyboardHeight = useKeyboardHeight();
+
   const toast = useToast();
   const navigation = useNavigation();
 
@@ -55,24 +60,31 @@ const MyWallet = () => {
     setOpen(true);
   };
 
-
   const payNow = () => {
     if (amount > 0) {
       setOpen(false);
       navigation.navigate('WalletPay', {amount: amount});
-    }
-    else{
-      toast.show("Please enter amount")
+    } else {
+      toast.show('Please enter amount');
     }
   };
 
+ 
   return (
     <>
       <PageLoader loading={loading} />
 
       <PageContainer>
         <ScrollView contentContainerStyle={{flex: 1}}>
-          <Text style={{paddingLeft: 15,fontFamily:'Gotham-Medium',color:'#161415',marginTop:10 }}>WALLET</Text>
+          <Text
+            style={{
+              paddingLeft: 15,
+              fontFamily: 'Gotham-Medium',
+              color: '#161415',
+              marginTop: 10,
+            }}>
+            WALLET
+          </Text>
 
           <View style={styles.form}>
             <View style={styles.walletBox}>
@@ -98,7 +110,7 @@ const MyWallet = () => {
           height: 'auto',
           marginTop: 260,
           justifyContent: 'flex-end',
-          marginBottom: 0,
+          marginBottom: keyboardHeight,
         }}>
         <View style={{paddingHorizontal: 30, marginTop: 30, paddingBottom: 80}}>
           <Input
@@ -142,14 +154,14 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 6},
     shadowOpacity: 0.2,
     shadowRadius: 10,
-    borderWidth:1,
-    borderColor:'#ddd',
+    borderWidth: 1,
+    borderColor: '#ddd',
   },
   amountText: {
     fontSize: 28,
-    fontFamily:'Gotham-Black',
+    fontFamily: 'Gotham-Black',
     textAlign: 'center',
-    color:'#161415',
+    color: '#161415',
   },
   checkoutBtn: {
     backgroundColor: '#161415',
