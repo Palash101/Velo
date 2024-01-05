@@ -6,6 +6,8 @@
 	<string>en</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Allow access to the photo library for selecting images</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Allow access to the camera for capture image</string>
 	<key>CFBundleDisplayName</key>
 	<string>velo</string>
 	<key>CFBundleExecutable</key>
@@ -38,7 +40,7 @@
 		</dict>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string/>
+	<string></string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

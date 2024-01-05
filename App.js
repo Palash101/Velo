@@ -18,6 +18,7 @@ import UserProvider, {UserConsumer} from './context/UserContext';
 import {PermissionsAndroid} from 'react-native';
 
 import {ErrorBoundary} from './src/ErrorBoundary';
+import { notificationListener, requestUserPermission } from './src/utils/fcm';
 
 const App = () => {
   const [loading, setLoading] = useState(true);
@@ -32,16 +33,14 @@ const App = () => {
 
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       console.log(remoteMessage, 'remoteMessage');
-      Alert.alert(
-        remoteMessage.notification.title,
-        remoteMessage.notification.body,
-      );
     });
     return unsubscribe;
   }, []);
 
   useEffect(() => {
     registerAppWithFCM();
+    requestUserPermission();
+    notificationListener();
   }, []);
 
   const registerAppWithFCM = async () => {

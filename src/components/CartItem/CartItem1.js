@@ -23,7 +23,11 @@ export const CartItem1 = ({item, onPress,  addClick, minusClick}) => {
       </View>
       <View style={styles.contBox}>
         <Text style={styles.title}>{item?.attributes?.optional_item}</Text>
+        {item?.attributes?.notes ? 
         <Text style={{fontSize:10,marginTop:5}}>{item?.attributes?.notes}</Text>
+        :
+        <></>
+        }
 
 
         {addons?.length > 0 &&

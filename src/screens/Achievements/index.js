@@ -22,6 +22,7 @@ const Achievements = () => {
     const token = await getToken();
     const instance = new JourneyContoller();
     const result = await instance.getAllBedges(token);
+    console.log(result,'result')
     setLoading(false);
     setData(result.badges);
   };

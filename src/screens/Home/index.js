@@ -9,11 +9,11 @@ import {
   StyleSheet,
   Text,
   Linking,
+  Platform,
 } from 'react-native';
 import {PageContainer} from '../../components/Container';
 import {Heading} from '../../components/Typography';
 import {TraingBox} from '../../components/TrainingBox';
-import {assets} from '../../config/AssetsConfig';
 import {ExpandingDot} from 'react-native-animated-pagination-dots';
 import {UserContext} from '../../../context/UserContext';
 import {ClassContoller} from '../../controllers/ClassController';
@@ -26,8 +26,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import {AuthContoller} from '../../controllers/AuthController';
 import remoteConfig from '@react-native-firebase/remote-config';
-import { ModalView } from '../../components/ModalView';
-import { RoundedGreyButton } from '../../components/Buttons';
+import {RoundedGreyButton} from '../../components/Buttons';
+import {Modal} from 'react-native-paper';
 
 const width = Dimensions.get('window').width;
 
@@ -41,6 +41,12 @@ const Home = () => {
   const [updateModal, setUpdateModal] = useState(false);
   const [doubleJoyImage, setDoubleJoyImage] = useState('');
   const [storeImage, setStoreImage] = useState('');
+
+  const [doubleJoyStatus, setDoubleJoyStatus] = useState('');
+  const [storeStatus, setStoreStatus] = useState('');
+
+  const [doubleJoyStatusText, setDoubleJoyStatusText] = useState('');
+  const [storeStatusText, setStoreStatusText] = useState('');
 
   const navigation = useNavigation();
 
@@ -61,9 +67,11 @@ const Home = () => {
       const forceUpdateVersion = remoteConfig()
         .getValue('force_update_version')
         .asString();
-      const currentAppVersion = '3.9'; // Replace with your app's current version
-      if (currentAppVersion < forceUpdateVersion) {
-        setUpdateModal(true)
+
+      const currentAppVersion = 4.93; // Replace with your app's current version
+      console.log(forceUpdateVersion, 'fupdate');
+      if (forceUpdateVersion > currentAppVersion) {
+        setUpdateModal(true);
         // Show a modal or message to the user indicating they need to update the app.
         // You can use a library like 'react-native-modal' for modals.
         // You can also navigate the user to the app store.
@@ -73,9 +81,15 @@ const Home = () => {
     }
   }
 
-  const update = async() => {
-    Linking.openURL('https://play.google.com/store/apps/details?id=com.velo.bassem&hl=en_IN&gl=US')
-  }
+  const update = async () => {
+    if (Platform.OS === 'android') {
+      Linking.openURL(
+        'https://play.google.com/store/apps/details?id=com.velo.bassem&hl=en_IN&gl=US',
+      );
+    } else {
+      Linking.openURL('https://apps.apple.com/us/app/velo-qatar/id1510547168');
+    }
+  };
 
   const getFirebaseToken = async () => {
     const newFirebaseToken = await messaging().getToken();
@@ -133,6 +147,12 @@ const Home = () => {
     setDoubleJoyImage(result?.doublejoy_banner);
     setStoreImage(result?.store_banner);
 
+    setDoubleJoyStatusText(result?.doublejoy_status_text);
+    setStoreStatusText(result?.store_status_text);
+
+    setDoubleJoyStatus(result?.doublejoy_status);
+    setStoreStatus(result?.store_status);
+
     const half = Math.ceil(result?.happenings.length / 2);
     const firstHalf = result?.happenings.slice(0, half);
     setScrollData(firstHalf);
@@ -167,7 +187,7 @@ const Home = () => {
                     <View>
                       <TraingBox
                         title={item.name}
-                        bg={{uri: API_SUCCESS +'/'+ item.image}}
+                        bg={{uri: API_SUCCESS + '/' + item.image}}
                         onPress={() => {
                           logCustomeEvent('MostStudioClicked', item.name);
                           AsyncStorage.setItem(
@@ -248,34 +268,43 @@ const Home = () => {
               )}
             </View>
           )}
-          <View style={{marginTop: challenges?.length > 2 ? 40 : 20}}>
-            <Heading style={{marginBottom: 5}}>DOUBLE JOY</Heading>
-            <TraingBox
-              // title={'Coming Soon...'}
-              title={''}
-              bg={{uri: doubleJoyImage}}
-              style={{marginHorizontal: 0, height: 150}}
-              onPress={() => console.log()}
-              onPress={() => navigation.navigate('DoubleJoy')}
-            />
-          </View>
-          <View style={{marginTop: 15}}>
-            <Heading style={{marginBottom: 5, marginTop: 10}}>STORE</Heading>
-            <TraingBox
-              title={'Coming Soon...'}
-              bg={{uri: storeImage}}
-              style={{marginHorizontal: 0, height: 150}}
-              onPress={() => console.log()}
-              //onPress={() => navigation.navigate('Store')}
-            />
-          </View>
+          {doubleJoyStatus != 'block' && (
+            <View style={{marginTop: challenges?.length > 2 ? 40 : 20}}>
+              <Heading style={{marginBottom: 5}}>DOUBLE JOY</Heading>
+              <TraingBox
+                // title={'Coming Soon...'}
+                title={doubleJoyStatusText}
+                bg={{uri: doubleJoyImage}}
+                style={{marginHorizontal: 0, height: 150,opacity:doubleJoyStatus === 'closed' ? 0.6 : 1}}
+                onPress={() => console.log()}
+                onPress={() =>
+                  doubleJoyStatus != 'closed'
+                    ? navigation.navigate('DoubleJoy')
+                    : console.log('closed now')
+                }
+              />
+            </View>
+          )}
+          {storeStatus != 'block' && (
+            <View style={{marginTop: 15}}>
+              <Heading style={{marginBottom: 5, marginTop: 10}}>STORE</Heading>
+              <TraingBox
+                title={storeStatusText}
+                bg={{uri: storeImage}}
+                style={{marginHorizontal: 0, height: 150,opacity:storeStatus === 'closed' ? 0.6 : 1}}
+                onPress={() => console.log()}
+                //onPress={() => navigation.navigate('Store')}
+              />
+            </View>
+          )}
         </ScrollView>
       </PageContainer>
 
-      <ModalView
+      <Modal
+        dismissableBackButton={true}
         visible={updateModal}
-        heading="Update App"
-        setVisible={() => setUpdateModal(false)}
+        onDismiss={() => console.log()}
+        onRequestClose={() => console.log()}
         style={{
           height: 'auto',
           marginTop: 260,
@@ -283,30 +312,33 @@ const Home = () => {
           marginBottom: 0,
           zIndex: 999,
         }}>
-        <View style={styles.summeryBox}>
-          <View style={styles.modalTotalBox}>
-            <Text style={{fontSize: 14, textAlign: 'center'}}>
-              Please update your application to continue.
-            </Text>
+        <View style={styles.modalBox}>
+          <View style={styles.titleHeading}>
+            <Text style={styles.titleText}>UPDATE APP</Text>
           </View>
+          <View style={styles.summeryBox}>
+            <View style={styles.modalTotalBox}>
+              <Text style={{fontSize: 14, textAlign: 'center'}}>
+                Please update your application to continue.
+              </Text>
+            </View>
 
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'flex-end',
-              marginTop: 15,
-            }}>
-          
-            <RoundedGreyButton
-              label={'UPDATE'}
-              onPress={() => update()}
-              style={{width: 100, marginLeft: 5, marginTop: 5}}
-            />
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'flex-end',
+                marginTop: 15,
+              }}>
+              <RoundedGreyButton
+                label={'UPDATE'}
+                onPress={() => update()}
+                style={{width: 100, marginLeft: 5, marginTop: 5}}
+              />
+            </View>
           </View>
         </View>
-      </ModalView>
-
+      </Modal>
     </>
   );
 };
@@ -324,5 +356,27 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginBottom: 20,
   },
+  modalBox: {
+    paddingTop: Platform.OS === 'ios' ? 30 : 30,
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 36,
+    borderTopRightRadius: 36,
+  },
+  titleHeading: {
+    flexDirection: 'row',
+  },
+  titleText: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
 
-})
+    paddingBottom: 10,
+    fontSize: 18,
+    color: '#161415',
+    fontFamily: 'Gotham-Medium',
+    textTransform: 'uppercase',
+    fontWeight: '800',
+  },
+  modalContent: {
+    paddingBottom: 20,
+  },
+});

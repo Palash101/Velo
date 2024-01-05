@@ -32,9 +32,9 @@ import {ModalView} from '../../components/ModalView';
 import {UserContext} from '../../../context/UserContext';
 import {DoubleJoyController} from '../../controllers/DoubleJoyController';
 import PageLoader from '../../components/PageLoader';
-import { Input } from '../../components/Input/input';
-import { TextInput } from 'react-native-paper';
-import { transparent } from 'react-native-paper/lib/typescript/src/styles/themes/v2/colors';
+import {Input} from '../../components/Input/input';
+import {TextInput} from 'react-native-paper';
+import {transparent} from 'react-native-paper/lib/typescript/src/styles/themes/v2/colors';
 
 const height = Dimensions.get('window').height;
 
@@ -60,7 +60,7 @@ const DoubleJoyCheckout = () => {
   const getAllData = async () => {
     setLoading(true);
     const token = await getToken();
-    console.log(token,'token')
+    console.log(token, 'token');
     const instance = new DoubleJoyController();
     const result = await instance.getMyCart(token);
     setLoading(false);
@@ -79,7 +79,9 @@ const DoubleJoyCheckout = () => {
   const addClick = async item => {
     const token = await getToken();
     const instance = new DoubleJoyController();
-    let addons = item.attributes.addons?.length ?  JSON.parse(item.attributes.addons) : [];
+    let addons = item.attributes.addons?.length
+      ? JSON.parse(item.attributes.addons)
+      : [];
 
     console.log(item, 'item');
     setLoading(true);
@@ -89,7 +91,6 @@ const DoubleJoyCheckout = () => {
       item.attributes.quantity + 1,
       item.attributes.notes,
       addons,
-
     );
     console.log(result, 'addcart');
     if (result.status === 'success') {
@@ -101,7 +102,9 @@ const DoubleJoyCheckout = () => {
   const minusClick = async item => {
     const token = await getToken();
     const instance = new DoubleJoyController();
-    let addons = item.attributes.addons?.length ?  JSON.parse(item.attributes.addons) : [];
+    let addons = item.attributes.addons?.length
+      ? JSON.parse(item.attributes.addons)
+      : [];
 
     if (item.attributes.quantity > 1) {
       setLoading(true);
@@ -110,7 +113,7 @@ const DoubleJoyCheckout = () => {
         item.attributes.optional_item_id,
         item.attributes.quantity - 1,
         item.attributes.notes,
-        addons
+        addons,
       );
       console.log(result, 'addcart');
       if (result.status === 'success') {
@@ -120,7 +123,7 @@ const DoubleJoyCheckout = () => {
       }
     } else {
       setLoading(true);
-      console.log(item.attributes.optional_item_id,'idd')
+      console.log(item.attributes.optional_item_id, 'idd');
       const result = await instance.removeItem(
         token,
         item.attributes.optional_item_id,
@@ -170,47 +173,42 @@ const DoubleJoyCheckout = () => {
             />
           </View>
 
-          
-          {cart?.relation?.items.length > 0 ?
-          
+          {cart?.relation?.items.length > 0 ? (
             <View style={styles.summeryBox}>
-            
-
-            
               <TouchableOpacity
                 style={styles.checkoutBtn}
-                onPress={() => navigation.navigate('DoubleJoyPay',{cart:cart,total:total})}>
-                  <Text style={styles.btnText}>GO TO CHECKOUT</Text>
-                  <View style={{display:'flex',flexDirection:'row'}}>
-                    <Text style={styles.btnText}>{total} QAR</Text>
-                    <Image source={assets.chevron} style={styles.btnImage} />
-                  </View>
+                onPress={() =>
+                  navigation.navigate('DoubleJoyPay', {
+                    cart: cart,
+                    total: total,
+                  })
+                }>
+                <Text style={styles.btnText}>GO TO CHECKOUT</Text>
+                <View style={{display: 'flex', flexDirection: 'row'}}>
+                  <Text style={styles.btnText}>{total} QAR</Text>
+                  <Image source={assets.chevron} style={styles.btnImage} />
+                </View>
               </TouchableOpacity>
             </View>
-            :
-            <View style={{
-              position:'absolute',
-              top:'50%',
-              alignItems:'center',
-              left:0,
-              right:0,
-
-            }}>
-
+          ) : (
+            <View
+              style={{
+                position: 'absolute',
+                top: '50%',
+                alignItems: 'center',
+                left: 0,
+                right: 0,
+              }}>
               <Text>No items available in cart</Text>
               <RoundedGreyButton
-                  style={{marginTop:10}}
-                  label={'Add Items'}
-                  onPress={() => navigation.navigate('DoubleJoy')}
-                />
+                style={{marginTop: 10}}
+                label={'Add Items'}
+                onPress={() => navigation.navigate('DoubleJoy')}
+              />
             </View>
-          }
+          )}
         </View>
       </PageContainer>
-
-     
-
-   
     </>
   );
 };
@@ -234,7 +232,7 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     fontSize: 14,
     fontFamily: 'Gotham-Medium',
-    width:width-70
+    width: width - 70,
   },
   buyBtn: {
     marginBottom: 10,
@@ -265,7 +263,7 @@ const styles = StyleSheet.create({
   btnText: {
     color: '#fff',
     fontSize: 16,
-    lineHeight:24
+    lineHeight: 24,
   },
   checkoutBtn: {
     backgroundColor: '#161415',

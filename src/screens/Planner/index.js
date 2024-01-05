@@ -26,8 +26,9 @@ import PageLoader from '../../components/PageLoader';
 import moment from 'moment';
 import Calendar from '../../components/calendar/Calendar';
 import Calendar2 from '../../components/calendar/Calendar2';
+import {useNavigation} from '@react-navigation/native';
 
-const Planner = ({navigation}) => {
+const Planner = () => {
   const [classes, setClasses] = useState([
     {name: 'CYCLE', data: [{}, {}, {}]},
     {name: 'RACK', data: [{}, {}, {}]},
@@ -43,10 +44,11 @@ const Planner = ({navigation}) => {
   const [refreshing, setRefreshing] = useState(false);
   const [allData, setAllData] = useState([]);
   const [gIndex, setGIndex] = useState(0);
+  const navigation = useNavigation();
 
   useEffect(() => {
     const focusHandler = navigation.addListener('focus', () => {
-      setGIndex(0)
+      setGIndex(0);
       getBookings();
     });
     return focusHandler;
@@ -71,7 +73,6 @@ const Planner = ({navigation}) => {
     const allData1 = joinGroup(result1);
     setAllData(allData1);
 
-
     var dt = moment(new Date()).format('YYYY-MM-DD');
 
     let allFiterData = [];
@@ -80,11 +81,21 @@ const Planner = ({navigation}) => {
       let filterData = element.data.filter(item =>
         moment(item.attributes.booked_date_standard).isSame(dt),
       );
-      if(filterData.length){
+      if (filterData.length) {
         let sortedArray = filterData.sort((a, b) => {
           if (
-            moment(a.attributes.booked_date_standard + ' ' + a.attributes.booking_time + ':00').isBefore(
-              moment(b.attributes.booked_date_standard + ' ' + b.attributes.booking_time + ':00'),
+            moment(
+              a.attributes.booked_date_standard +
+                ' ' +
+                a.attributes.booking_time +
+                ':00',
+            ).isBefore(
+              moment(
+                b.attributes.booked_date_standard +
+                  ' ' +
+                  b.attributes.booking_time +
+                  ':00',
+              ),
             )
           ) {
             return -1;
@@ -156,18 +167,27 @@ const Planner = ({navigation}) => {
   const onSelectDate = (date, i) => {
     setLoading(true);
     var dt = moment(date).format('YYYY-MM-DD');
-
+    setGIndex(i)
     let allFiterData = [];
     allData.forEach(element => {
       let filterData = element.data.filter(item =>
         moment(item.attributes.booked_date_standard).isSame(dt),
       );
-      if(filterData.length){
-
+      if (filterData.length) {
         let sortedArray = filterData.sort((a, b) => {
           if (
-            moment(a.attributes.booked_date_standard + ' ' + a.attributes.booking_time + ':00').isBefore(
-              moment(b.attributes.booked_date_standard + ' ' + b.attributes.booking_time + ':00'),
+            moment(
+              a.attributes.booked_date_standard +
+                ' ' +
+                a.attributes.booking_time +
+                ':00',
+            ).isBefore(
+              moment(
+                b.attributes.booked_date_standard +
+                  ' ' +
+                  b.attributes.booking_time +
+                  ':00',
+              ),
             )
           ) {
             return -1;

@@ -117,7 +117,7 @@ const ChangePassword = (props) => {
               <RoundedThemeButton
                 label={'CANCEL'}
                 style={{marginTop: 20, width: width / 2 - 50}}
-                onPress={() => navigation.navigate('Profile')}
+                onPress={() => navigation.navigate('Login')}
                 loading={false}
               />
               <RoundedDarkButton

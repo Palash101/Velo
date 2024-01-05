@@ -29,6 +29,7 @@ const HappeningDetail = props => {
 
   useEffect(() => {
     setItem(props.route.params.item);
+    console.log(API_SUCCESS + '/' + props.route.params.item?.image)
   }, [props.route.params]);
 
   const acceptChallenge = async () => {

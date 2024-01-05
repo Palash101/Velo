@@ -253,7 +253,6 @@ const ClassDetail = props => {
     if (item?.attributes?.user_waiting === true) {
       booking_id = booking.id;
     }
-
     const data = {
       booking_id: booking_id,
     };
@@ -577,8 +576,14 @@ const ClassDetail = props => {
                       {item.attributes.remaining_rides === 'unlimited' ? (
                         <Text style={styles.btnText}>
                           {item1.attributes.remaining_rides}{' '}
+
                           {item1.attributes.type !== 'unlimited' && (
-                            <Text style={{}}>{item1.attributes.type}</Text>
+                             item1?.attributes?.type === 'ride' ? (
+                              <Text style={{}}>Class</Text>
+                            ) : (
+                              <Text style={{}}>{item1.attributes.type}</Text>
+                            )
+                            
                           )}
                         </Text>
                       ) : (

@@ -57,16 +57,21 @@ const DoubleJoy = props => {
     const instance = new DoubleJoyController();
     const result = await instance.getAllDoubleJoy(token);
     console.log(result, 'result');
-    const filterResult = result.filter(
+
+    let sortCat = result.sort((a, b) => a.attributes.position - b.attributes.position);
+
+    const filterResult = sortCat.filter(
       i => i.relation.optional_items.length > 0,
     );
+
+    const myActive = {attributes: {name: 'All'}, id: 0};
 
     setData([{attributes: {name: 'All'}, id: 0}, ...filterResult]);
 
     const myOrder = await instance.getMyCart(token);
     console.log(myOrder, 'myOrder');
     let newResult = [];
-    result.map((item, index) => {
+    sortCat.map((item, index) => {
       item?.relation?.optional_items.map((item1, index1) => {
         if (myOrder?.relation?.items?.length > 0) {
           let citem = myOrder?.relation?.items?.filter(
@@ -78,8 +83,6 @@ const DoubleJoy = props => {
             item1.cartAddon = citem[0].attributes.addons;
 
             newResult.push({catId: item.id, ...item1});
-
-
           } else {
             item1.quantity = 0;
             newResult.push({catId: item.id, ...item1});
@@ -96,14 +99,15 @@ const DoubleJoy = props => {
     setAllData(newResult);
     setCart(myOrder);
 
-
-    if (!active?.id) {
+    if (!myActive?.id) {
       setActiveData(newResult);
     } else {
-      const filterData = [{attributes: {name: 'All'}, id: 0}, ...filterResult].filter(i => i.id === active.id);
+      const filterData = [
+        {attributes: {name: 'All'}, id: 0},
+        ...filterResult,
+      ].filter(i => i.id === active.id);
       setActiveData(filterData[0].relation.optional_items);
     }
-    
   };
 
   const selectItem = item => {
@@ -128,7 +132,6 @@ const DoubleJoy = props => {
         myNotes = myCartItem[0].attributes.notes;
       }
     }
-
 
     console.log(token, item.id, item.quantity + 1, myNotes, getAddons, 'sss');
     setLoading(true);
@@ -240,14 +243,16 @@ const DoubleJoy = props => {
             </TouchableOpacity>
           </View>
 
-          <View style={styles.tab}>
-            <FlatList
+          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+            <View style={styles.tab}>
+              {/* <FlatList
               data={data}
               pagingEnabled
               horizontal={true}
               showsHorizontalScrollIndicator={false}
               decelerationRate={'normal'}
-              renderItem={({item, index}) => (
+              renderItem={({item, index}) => ( */}
+              {data.map((item, index) => (
                 <View key={index + 'cat'}>
                   {active.id === item.id ? (
                     <RoundedGreyButton2
@@ -263,12 +268,14 @@ const DoubleJoy = props => {
                     />
                   )}
                 </View>
-              )}
-            />
-          </View>
+              ))}
+              {/* )}
+            /> */}
+            </View>
+          </ScrollView>
 
           <View style={styles.classesList}>
-            <FlatList
+            {/* <FlatList
               data={activeData}
               pagingEnabled
               numColumns={2}
@@ -280,17 +287,25 @@ const DoubleJoy = props => {
               columnWrapperStyle={{
                 justifyContent: 'space-between',
               }}
-              renderItem={({item}, key) => (
-                <View key={key + 'cat'}>
-                  <CartItem
-                    item={item}
-                    onPress={selectItem}
-                    addClick={addClick}
-                    minusClick={minusClick}
-                  />
-                </View>
-              )}
-            />
+              renderItem={({item}, key) => ( */}
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{paddingBottom: 50}}>
+              <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+                {activeData.sort((a, b) => a.attributes.position - b.attributes.position).map((item, index) => (
+                  <View style={{width: width / 2 - 20}} key={index + 'cat'}>
+                    <CartItem
+                      item={item}
+                      onPress={selectItem}
+                      addClick={addClick}
+                      minusClick={minusClick}
+                    />
+                  </View>
+                ))}
+              </View>
+            </ScrollView>
+            {/* )}
+            /> */}
           </View>
         </View>
       </PageContainer>
@@ -324,12 +339,14 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   tabBtn: {
-    width: width / 3 - 20,
+    // width: width / 3 - 20,
+    width: 'auto',
+    minWidth: width / 3 - 20,
     marginTop: 5,
     marginBottom: 5,
     marginRight: 10,
-    paddingLeft: 0,
-    paddingRight: 0,
+    paddingLeft: 10,
+    paddingRight: 10,
   },
   classesList: {
     height: Platform.OS === 'ios' ? height - 200 : height - 200,

@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
   View,
   Dimensions,
+  SafeAreaView,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {AuthContoller} from '../../controllers/AuthController';
 import {useNavigation} from '@react-navigation/native';
@@ -35,6 +37,8 @@ import {CountryPicker} from 'react-native-country-codes-picker';
 import {assets} from '../../config/AssetsConfig';
 import {UserContext} from '../../../context/UserContext';
 import {Modal} from 'react-native-paper';
+import { PageContainer } from '../../components/Container';
+import { TermsController } from '../../controllers/TermsController';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -56,9 +60,9 @@ const SignUp = () => {
   const [terms, setTerms] = useState(false);
   const [termsConditionModal, setTermsConditionModal] = useState(false);
   const [policyModal, setPolicyModal] = useState(false);
-  const [code, setCode] = useState('+91');
+  const [code, setCode] = useState('+974');
   const [countryPicker, setCountryPicker] = useState(false);
-  const [selectedFlag, setSelectedFlag] = useState('');
+  const [selectedFlag, setSelectedFlag] = useState('🇶🇦');
   const [datePicker, setDatePicker] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
@@ -71,6 +75,7 @@ const SignUp = () => {
   const maxDate = new Date(dt.setFullYear(dt.getFullYear() - 15));
   const minDate = new Date(dt.setFullYear(dt.getFullYear() - 45));
   const [dob, setDob] = useState(maxDate);
+  const [termData, setTermData] = useState();
 
   const submit = async () => {
     const validate = validateDetail();
@@ -157,6 +162,19 @@ const SignUp = () => {
     }
   }
 
+
+  useEffect(() => {
+    getTerms();
+  },[])
+
+  const getTerms = async() => {
+    const instance = new TermsController();
+    const result = await instance.getTermsCondition();
+    if(result.status === 'success'){
+      setTermData(result.terms_and_conditions);
+    }
+  }
+
   const renderTerms = () => {
     return (
       <View style={styles.termsBox}>
@@ -175,14 +193,17 @@ const SignUp = () => {
   return (
     <>
       {/* <PageLoader loading={loading} /> */}
-      <View
+      <KeyboardAvoidingView behavior="padding"
         style={{
           paddingTop: Platform.OS === 'ios' ? 0 : 0,
           backgroundColor: '#fff',
+          flex:1
         }}>
         <ScrollView
-          contentContainerStyle={{paddingBottom: 10}}
-          showsVerticalScrollIndicator={false}>
+          contentContainerStyle={{paddingBottom: 80}}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          >
           <View
             style={{
               width: '100%',
@@ -272,7 +293,7 @@ const SignUp = () => {
                       date={dob}
                       mode="date"
                       format="YYYY-MM-DD"
-                      maxDate="2010-01-01"
+                      //maxDate="2010-01-01"
                       confirmBtnText="Confirm"
                       cancelBtnText="Cancel"
                       customStyles={{
@@ -377,8 +398,6 @@ const SignUp = () => {
                     width: 30,
                     paddingLeft: 0,
                     paddingTop: 8,
-                    fontSize: 12,
-                    color: '#000000',
                   }}
                   onClick={() => setTerms(!terms)}
                   isChecked={terms}
@@ -416,7 +435,7 @@ const SignUp = () => {
             </View>
           </View>
         </ScrollView>
-      </View>
+      </KeyboardAvoidingView>
 
       <ModalView
         visible={termsConditionModal}
@@ -429,7 +448,15 @@ const SignUp = () => {
           marginBottom: 0,
           zIndex: 999,
         }}>
-        <Terms />
+         <PageContainer>
+          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: 50}}>
+            <View style={styles.paraBox}>
+              <Text style={styles.paraText}>
+                {termData?.description}
+              </Text>
+            </View>
+          </ScrollView>
+        </PageContainer>
       </ModalView>
 
       <ModalView
@@ -442,6 +469,7 @@ const SignUp = () => {
       <CountryPicker
         show={countryPicker}
         pickerButtonOnPress={item => {
+          console.log(item,'item')
           setSelectedFlag(item.flag);
           setCode(item.dial_code);
           setCountryPicker(false);
@@ -532,6 +560,15 @@ const styles = StyleSheet.create({
   codeText: {
     lineHeight: 28,
     fontSize: 14,
+  },
+  paraBox: {
+    paddingHorizontal: 30,
+    marginVertical: 10,
+  },
+  paraText: {
+    fontSize: 14,
+    textAlign: 'left',
+    lineHeight: 21,
   },
 });
 export default SignUp;

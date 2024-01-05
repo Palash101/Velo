@@ -6,7 +6,15 @@ import {
   createDrawerNavigator,
 } from '@react-navigation/drawer';
 import BottomTab from './BottomTab';
-import {Image, TouchableOpacity, Text, View, Dimensions, Platform} from 'react-native';
+import {
+  Image,
+  TouchableOpacity,
+  Text,
+  View,
+  Dimensions,
+  Platform,
+  Alert,
+} from 'react-native';
 import {assets} from '../config/AssetsConfig';
 import {useNavigation} from '@react-navigation/native';
 import {UserContext} from '../../context/UserContext';
@@ -25,6 +33,8 @@ import Pay from '../screens/Buy/pay';
 import Buy from '../screens/Buy';
 import HappeningDetail from '../screens/Happenings/detail';
 import HappeningReport from '../screens/Happenings/report';
+import {NotificationController} from '../controllers/NotificationController';
+import {Badge} from 'react-native-paper';
 
 const Drawer = createDrawerNavigator();
 const width = Dimensions.get('window').width;
@@ -90,17 +100,28 @@ function LogoTitle() {
         width: Platform.OS === 'android' ? width - 105 : width - 155,
         justifyContent: 'center',
         alignItems: 'center',
-        
       }}>
       <Image source={assets.logo} style={{width: 60, height: 24}} />
     </View>
   );
 }
 
-function NotificationIcon() {
+function NotificationIcon({count, setCount}) {
   const navigation = useNavigation();
+
+  const goToNotification = () => {
+    setCount(0)
+    navigation.navigate('Notification');
+  }
+
   return (
-    <TouchableOpacity onPress={() => navigation.navigate('Notification')}>
+    <TouchableOpacity onPress={() => goToNotification()}>
+      {(count && count > 0) ? (
+        <Badge
+          style={{position: 'absolute', marginTop: -10, right: 8, zIndex: 999}}>
+          {count}
+        </Badge>
+      ):<></>}
       <Image
         source={assets.bell}
         style={{width: 24, height: 24, marginRight: 15}}
@@ -133,11 +154,30 @@ function BackIcon() {
 }
 
 export default function DrawerNavigation() {
+  const {getToken} = React.useContext(UserContext);
+  const [count, setCount] = React.useState();
+
+  React.useEffect(() => {
+    getNotification();
+  }, []);
+
+  const getNotification = async () => {
+    const token = await getToken();
+    if (token) {
+      const instance = new NotificationController();
+      const result = await instance.getAllNotification(token);
+      console.log(result,'ress')
+      if(result.count > 0){
+        setCount(result.count);
+      }
+    }
+  };
+
   return (
     <Drawer.Navigator
       screenOptions={{
         headerLeft: () => <HambergerIcon />,
-        headerRight: () => <NotificationIcon />,
+        headerRight: () => <NotificationIcon count={count} setCount={setCount} />,
         headerStyle: {
           borderBottomWidth: 1,
           borderColor: '#000',
@@ -236,7 +276,7 @@ export default function DrawerNavigation() {
           headerShown: true,
           headerLeft: () => <BackIcon />,
           headerTitle: props => <LogoTitle {...props} />,
-          headerRight:() => <></>
+          headerRight: () => <></>,
         }}
       />
       <Drawer.Screen
@@ -246,7 +286,7 @@ export default function DrawerNavigation() {
           headerShown: true,
           headerLeft: () => <BackIcon />,
           headerTitle: props => <LogoTitle {...props} />,
-          headerRight:() => <></>
+          headerRight: () => <></>,
         }}
       />
     </Drawer.Navigator>

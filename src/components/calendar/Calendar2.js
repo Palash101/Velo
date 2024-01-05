@@ -46,6 +46,8 @@ export default class Calendar2 extends PureComponent {
   };
 
   _scrollView;
+  
+  
 
   // Initialize the state with default values
   constructor(props: Props) {
@@ -65,6 +67,7 @@ export default class Calendar2 extends PureComponent {
       stday: moment(new Date()).format('DD'),
       globalIndex: props.globalIndex,
     };
+   
     
   }
 
@@ -103,6 +106,8 @@ export default class Calendar2 extends PureComponent {
   };
 
   onRenderDay = (index: number, width: number) => {
+    
+
     const {dayWidths} = this.state;
     const {showDaysBeforeCurrent, showDaysAfterCurrent} = this.props;
 
@@ -124,6 +129,8 @@ export default class Calendar2 extends PureComponent {
   };
 
   render() {
+    console.log(this.props,'pr')
+    this.setState({globalIndex:this.props.globalIndex})
     this.state.lastmonth = moment(
       this.state.dates[this.state.dates.length - 1],
     ).format('MMMM');
@@ -131,7 +138,7 @@ export default class Calendar2 extends PureComponent {
     if (this.state.currentMonth != this.state.lastmonth) {
       this.state.NewNextMonth = ' - ' + this.state.lastmonth;
     }
-    const {dates, currentDateIndex, currentMonth, lastmonth, NewNextMonth} =
+    const {dates, currentDateIndex,globalIndex, currentMonth, lastmonth, NewNextMonth} =
       this.state;
 
     return (
@@ -151,7 +158,7 @@ export default class Calendar2 extends PureComponent {
         >
           <Dates
             dates={dates}
-            currentDateIndex={this.state.globalIndex}
+            currentDateIndex={globalIndex}
             onSelectDay={this.onSelectDay}
             onRenderDay={this.onRenderDay}
           />

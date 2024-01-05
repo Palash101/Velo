@@ -49,6 +49,10 @@ const Classes = props => {
 
   React.useEffect(() => {
     const focusHandler = navigation.addListener('focus', () => {
+
+      console.log(navigation,'navigation')
+
+
       setForseReload(!forceReload);
       setAllData([]);
       setClasses();
@@ -367,9 +371,10 @@ const styles = StyleSheet.create({
     marginTop: height / 2 - 200,
   },
   tabBtn: {
-    width: width / 3 - 20,
-    marginRight: 10,
+    width: width / 3 - 23,
+    marginRight: 8,
     marginVertical: 10,
+    marginLeft: 3,
   },
   classesList: {
     marginBottom: 270,

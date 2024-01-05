@@ -47,21 +47,19 @@ const Buy = props => {
   const [refresh, setRefresh] = useState(false);
   const navigation = useNavigation();
 
-
   useEffect(() => {
     const focusHandler = navigation.addListener('focus', () => {
-      console.log('Buy Scree')
+      console.log('Buy Scree');
       if (props.route.params !== undefined) {
         setActive('My');
-      }
-      else{
-        setActive('All')
+      } else {
+        setActive('All');
       }
       getPackages();
       getUserAllPackages();
     });
     return focusHandler;
-  }, [props.route.params,navigation]);
+  }, [props.route.params, navigation]);
 
   useEffect(() => {
     getUserAllPackages();
@@ -72,7 +70,7 @@ const Buy = props => {
     const token = await getToken();
     const instance = new BuyContoller();
     const result = await instance.getAllPackages(token);
- 
+
     if (result?.data?.length) {
       setData(result.data);
       setLoading(false);
@@ -85,7 +83,7 @@ const Buy = props => {
     const token = await getToken();
     const instance = new BuyContoller();
     const result = await instance.getUserPackages(token);
-    console.log(result,'users package');
+    console.log(result, 'users package');
     if (result.status === 'error') {
       setUserPackages([]);
       setErrorMessage(result.msg);
@@ -123,8 +121,12 @@ const Buy = props => {
             </Text> */}
             <View style={styles.summaryLine}>
               <Text style={styles.stext1}>
-                {selectedItem.attributes.type !== 'unlimited' ? (
-                  selectedItem.attributes.type
+                {selectedItem?.attributes?.type !== 'unlimited' ? (
+                  selectedItem?.attributes?.type === 'ride' ? (
+                    ' Class'
+                  ) : (
+                    selectedItem?.attributes?.type
+                  )
                 ) : (
                   <></>
                 )}

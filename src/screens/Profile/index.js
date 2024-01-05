@@ -1,16 +1,19 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {Alert, Image, StyleSheet, Text, View} from 'react-native';
 import {PageContainer} from '../../components/Container';
 import {assets} from '../../config/AssetsConfig';
 import {GreyBox} from '../../components/GreBox';
 import {UserContext} from '../../../context/UserContext';
 import {ProfileController} from '../../controllers/ProfileController';
 import {API_BASE, API_SUCCESS} from '../../config/ApiConfig';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
+import {useToast} from 'react-native-toast-notifications';
 
 const Profile = ({navigation}) => {
   const {getToken} = useContext(UserContext);
   const [user, setUser] = useState({});
+  const toast = useToast();
+  const userCtx = React.useContext(UserContext);
 
   useEffect(() => {
     const focusHandler = navigation.addListener('focus', () => {
@@ -19,12 +22,38 @@ const Profile = ({navigation}) => {
     return focusHandler;
   }, [navigation]);
 
-
   const getDetail = async () => {
     const token = await getToken();
     const instance = new ProfileController();
     const result = await instance.getUserDetail(token);
     setUser(result.user);
+  };
+
+  const deleteAccount = async () => {
+    Alert.alert(
+      'Confirm',
+      'Are you sure? you want to delete your account.',
+      [
+        {
+          text: 'No',
+          onPress: () => {},
+        },
+        {
+          text: 'Yes',
+          onPress: async () => {
+            const token = await getToken();
+            const instance = new ProfileController();
+            const result = await instance.deleteAccount(token);
+            console.log(result, 'resultt');
+            toast.show(
+              'We have successfully received your request.,We will contact you on your email address.',
+            );
+            userCtx.signOut();
+          },
+        },
+      ],
+      {cancelable: false},
+    );
   };
 
   return (
@@ -49,7 +78,7 @@ const Profile = ({navigation}) => {
           <GreyBox
             label="My Packages"
             textStyle={{textAlign: 'center'}}
-            onPress={() => navigation.navigate('buy',{active:'My'})}
+            onPress={() => navigation.navigate('buy', {active: 'My'})}
           />
           <GreyBox
             label="Change password"
@@ -65,6 +94,11 @@ const Profile = ({navigation}) => {
             label="Journey"
             textStyle={{textAlign: 'center'}}
             onPress={() => navigation.navigate('journey')}
+          />
+          <GreyBox
+            label="Delete my account"
+            textStyle={{textAlign: 'center'}}
+            onPress={() => deleteAccount()}
           />
         </View>
       </View>

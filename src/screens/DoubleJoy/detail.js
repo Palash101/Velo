@@ -41,7 +41,7 @@ const DoubleJoyDetail = props => {
   const {getToken} = useContext(UserContext);
   const [ingredients, setIngredients] = useState([]);
   const [noteModal, setNoteModal] = useState(false);
-  const [note, setNote] = useState();
+  const [note, setNote] = useState('');
   const [loading, setLoading] = useState(false);
   const [addons, setAddons] = useState([]);
   const [addonPrice, setAddonPrice] = useState(0);
@@ -61,7 +61,6 @@ const DoubleJoyDetail = props => {
       });
       setAddonPrice(pr);
     }
-
   }, [props]);
 
   useEffect(() => {}, [refresh, item]);
@@ -239,21 +238,22 @@ const DoubleJoyDetail = props => {
                     }}>
                     {ingredients?.map((i, index) => (
                       <>
+                      {i.value && 
                         <View style={{marginTop: 10, paddingHorizontal: 10}}>
                           <View style={styles.greyBox}>
                             <Text style={styles.unitTitle}>{i.value}</Text>
                             <Text style={styles.unit}>{i.name}</Text>
                           </View>
                         </View>
+                      }
                       </>
                     ))}
                   </View>
                 )}
+                {item.attributes.addons?.length > 0 && (
+                  <View>
+                    <Text style={styles.addonHeading}>Add Ons</Text>
 
-                <View>
-                  <Text style={styles.addonHeading}>Add Ons</Text>
-
-                  {item.attributes.addons?.length > 0 && (
                     <View
                       style={{
                         display: 'flex',
@@ -306,9 +306,8 @@ const DoubleJoyDetail = props => {
                         </View>
                       ))}
                     </View>
-                  )}
-                </View>
-
+                  </View>
+                )}
                 <View
                   style={{
                     paddingHorizontal: '15%',

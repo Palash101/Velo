@@ -71,59 +71,60 @@ const Login = () => {
   return (
     <>
       <PageContainer>
-        <ScrollView contentContainerStyle={{flex: 1}}>
-        <KeyboardAvoidingView>
-          <View style={{width: '100%', maxWidth: 320, alignSelf: 'center'}}>
-            <AuthHeader title={'Login'} />
-            <View style={styles.form}>
-              <Input
-                value={email}
-                label={'E-MAIL ADDRESS'}
-                onChang={setEmail}
-              />
+        <KeyboardAvoidingView behavior='padding' style={{flex: 1}}>
+          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom:80}}>
+          <KeyboardAvoidingView>
+            <View style={{width: '100%', maxWidth: 320, alignSelf: 'center'}}>
+              <AuthHeader title={'Login'} />
+              <View style={styles.form}>
+                <Input
+                  value={email}
+                  label={'E-MAIL ADDRESS'}
+                  onChang={setEmail}
+                />
 
-              <Input
-                value={password}
-                label={'PASSWORD'}
-                onChang={setPassword}
-                secureTextEntry={true}
-              />
+                <Input
+                  value={password}
+                  label={'PASSWORD'}
+                  onChang={setPassword}
+                  secureTextEntry={true}
+                />
 
-              <DarkButton
-                label={'LOGIN'}
-                onPress={submit}
-                style={{marginTop: 20}}
-                loading={loading}
-                disabled={loading}
-              />
+                <DarkButton
+                  label={'LOGIN'}
+                  onPress={submit}
+                  style={{marginTop: 20}}
+                  loading={loading}
+                  disabled={loading}
+                />
 
-              <TouchableOpacity
-                style={styles.forget}
-                onPress={() => navigation.navigate('Forgot')}>
-                <Text style={styles.forgetText}>Forgot Password </Text>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.forget}
+                  onPress={() => navigation.navigate('Forgot')}>
+                  <Text style={styles.forgetText}>Forgot Password </Text>
+                </TouchableOpacity>
 
+              </View>
             </View>
+            </KeyboardAvoidingView>
+            <View style={styles.alreadyBox}>
+            <Text
+              style={{
+                color: '#161415',
+                fontFamily: 'Gotham-Medium',
+                opacity: 1,
+                fontSize: 14,
+                fontWeight:'400',
+                textTransform: 'uppercase',
+              }}>
+              Don't have account?{' '}
+            </Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+              <Text style={styles.AlreadyText}>Sign Up</Text>
+            </TouchableOpacity>
           </View>
-          </KeyboardAvoidingView>
-          <View style={styles.alreadyBox}>
-          <Text
-            style={{
-              color: '#161415',
-              fontFamily: 'Gotham-Medium',
-              opacity: 1,
-              fontSize: 14,
-              fontWeight:'400',
-              textTransform: 'uppercase',
-            }}>
-            Don't have account?{' '}
-          </Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-            <Text style={styles.AlreadyText}>Sign Up</Text>
-          </TouchableOpacity>
-        </View>
-        </ScrollView>
-
+          </ScrollView>
+        </KeyboardAvoidingView>
         
       </PageContainer>
     </>

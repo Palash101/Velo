@@ -19,6 +19,7 @@ console.log(visible,'visible')
 
   return (
     <Modal
+      onRequestClose={() => {this.setModalVisible(false)}}
       visible={visible}
       onDismiss={setVisible}
       style={style ? style : {height: 'auto', marginTop: 260}}

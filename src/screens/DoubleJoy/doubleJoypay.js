@@ -25,7 +25,7 @@ import {DoubleJoyController} from '../../controllers/DoubleJoyController';
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 
-const doubleJoypay = props => {
+const DoubleJoypay = props => {
   const [loading, setLoading] = useState(false);
   const {getToken} = useContext(UserContext);
   const [paymentUrl, setPaymentUrl] = useState();
@@ -277,7 +277,7 @@ const doubleJoypay = props => {
   );
 };
 
-export default doubleJoypay;
+export default DoubleJoypay;
 
 const styles = StyleSheet.create({
   modalBox1: {

@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
   rideBoxes: {
     display: 'flex',
     justifyContent: 'space-around',
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
   },
   rideBox: {
     backgroundColor: '#fff',

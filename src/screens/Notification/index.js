@@ -42,6 +42,17 @@ const Notification = ({navigation}) => {
     const result = await instance.getAllNotification(token);
     setLoading(false);
     setData(result?.data);
+    if(result?.count > 0){
+      readNotifications();
+    }
+  };
+
+  const readNotifications = async () => {
+    setLoading(true);
+    const token = await getToken();
+    const instance = new NotificationController();
+    const result = await instance.readNotification(token);
+    setLoading(false);
   };
 
   const deleteAll = async () => {

@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Platform,
   Alert,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {PageContainer} from '../../components/Container';
 import {assets} from '../../config/AssetsConfig';
@@ -205,167 +206,170 @@ const ProfileEdit = ({navigation}) => {
     <>
       <PageLoader loading={loading} />
       <PageContainer>
-        <ScrollView contentContainerStyle={{flex: 1}}>
-          <Text style={{paddingLeft: 15}}>EDIT PROFILE</Text>
-          <TouchableOpacity onPress={() => selectOneFile()}>
-            {image == '' ? (
-              <Image source={assets.bg} style={styles.prImg} />
-            ) : (
-              <Image source={{uri: image}} style={styles.prImg} />
-            )}
-
-            <View style={styles.editBox}>
-              <Image source={assets.edit} style={styles.editIcon} />
-            </View>
-          </TouchableOpacity>
-
-          <View style={styles.form}>
-            <Input
-              value={first_name}
-              label={'First name'}
-              onChang={setFirstName}
-            />
-            <Input
-              value={last_name}
-              label={'Last name'}
-              onChang={setLastName}
-            />
-            <Input
-              value={email}
-              editable={false}
-              label={'Email address'}
-              onChang={setEmail}
-            />
-
-            <Input
-              value={phone}
-              label={'Phone number'}
-              onChang={setPhone}
-              keyboardType={'numeric'}
-            />
-            <View style={{marginBottom:15}}>
-              <Text
-                style={{
-                  paddingTop: 15,
-                  fontSize: 12,
-                  color: '#333',
-                  marginLeft: 15,
-                }}>
-                Date of Birth
-              </Text>
-
-              {Platform.OS === 'android' ? (
-                <View style={{marginTop: -25}}>
-                  <TouchableOpacity
-                    style={{
-                      height: 50,
-                      position: 'absolute',
-                      left: 0,
-                      right: 0,
-                      top: 10,
-                      zIndex: 999,
-                    }}
-                    onPress={() => showDatePicker()}
-                  />
-                  <Input
-                    value={moment(dob).format('YYYY-MM-DD')}
-                    onChangeText={() => console.log('')}
-                    label={' '}
-                    disabled={true}
-                  />
-                </View>
+        <KeyboardAvoidingView behavior='padding' style={{flex:1}}>
+          <ScrollView contentContainerStyle={{paddingBottom:90}}>
+            <Text style={{paddingLeft: 15}}>EDIT PROFILE</Text>
+            <TouchableOpacity onPress={() => selectOneFile()}>
+            
+              {image == '' ? (
+                <View style={[styles.prImg,{backgroundColor:'#ddd'}]} />
               ) : (
-                <DatePicker
-                  style={{
-                    borderBottomWidth: 1.5,
-                    borderColor: '#000000',
-                    width: '100%',
-                    paddingTop: 0,
-                  }}
-                  placeholder="Birth Date"
-                  date={dob}
-                  mode="date"
-                  format="YYYY-MM-DD"
-                  maxDate="2010-01-01"
-                  confirmBtnText="Confirm"
-                  cancelBtnText="Cancel"
-                  customStyles={{
-                    dateIcon: {
-                      display: 'none',
-                    },
-
-                    dateText: {
-                      fontSize: 14,
-                      color: '#000000',
-                      paddingLeft: 15,
-                      paddingBottom: 0,
-                    },
-                    dateInput: {
-                      fontSize: 14,
-                      color: '#000000',
-                      marginTop: 0,
-                      borderWidth: 0,
-                      alignItems: 'flex-start',
-                      width: '100%',
-                    },
-                  }}
-                  onDateChange={date => {
-                    setDob(date);
-                  }}
-                />
+                <Image source={{uri: image}} style={styles.prImg} />
               )}
-            </View>
 
-            <RadioForm
-                    formHorizontal={true}
-                    animation={true}
-                  >
-                  {
-                    radio_props.map((obj, i) => (
-                      <RadioButton labelHorizontal={true} key={i} >
-                        <RadioButtonInput
-                          obj={obj}
-                          index={i}
-                          isSelected={gender === obj.value}
-                          onPress={(value) => setGender(value)}
-                          borderWidth={1}
-                          buttonInnerColor={'#000'}
-                          buttonOuterColor={gender === obj.value ? '#161415' : '#161415'}
-                          buttonSize={10}
-                          buttonOuterSize={18}
-                          buttonStyle={{}}
-                          buttonWrapStyle={{marginLeft: 10}}
-                        />
-                        <RadioButtonLabel
-                          obj={obj}
-                          index={i}
-                          labelHorizontal={true}
-                          onPress={(value) => setGender(value)}
-                          labelStyle={{fontSize: 14, color: '#161415'}}
-                          labelWrapStyle={{}}
-                        />
-                      </RadioButton>
-                    ))
-                  }  
-                </RadioForm>
+              <View style={styles.editBox}>
+                <Image source={assets.edit} style={styles.editIcon} />
+              </View>
+            </TouchableOpacity>
 
-
-            <View style={styles.btnBox}>
-              <RoundedThemeButton
-                label={'CANCEL'}
-                style={{marginTop: 0, width: width / 2 - 50}}
-                onPress={() => navigation.navigate('Profile')}
-                loading={false}
+            <View style={styles.form}>
+              <Input
+                value={first_name}
+                label={'First name'}
+                onChang={setFirstName}
               />
-              <RoundedDarkButton
-                label={'SAVE'}
-                style={{marginTop: 0, width: width / 2 - 50}}
-                onPress={submit}
-                loading={loading}
+              <Input
+                value={last_name}
+                label={'Last name'}
+                onChang={setLastName}
               />
+              <Input
+                value={email}
+                editable={false}
+                label={'Email address'}
+                onChang={setEmail}
+              />
+
+              <Input
+                value={phone}
+                label={'Phone number'}
+                onChang={setPhone}
+                keyboardType={'numeric'}
+              />
+              <View style={{marginBottom:15}}>
+                <Text
+                  style={{
+                    paddingTop: 15,
+                    fontSize: 12,
+                    color: '#333',
+                    marginLeft: 15,
+                  }}>
+                  Date of Birth
+                </Text>
+
+                {Platform.OS === 'android' ? (
+                  <View style={{marginTop: -25}}>
+                    <TouchableOpacity
+                      style={{
+                        height: 50,
+                        position: 'absolute',
+                        left: 0,
+                        right: 0,
+                        top: 10,
+                        zIndex: 999,
+                      }}
+                      onPress={() => showDatePicker()}
+                    />
+                    <Input
+                      value={moment(dob).format('YYYY-MM-DD')}
+                      onChangeText={() => console.log('')}
+                      label={' '}
+                      disabled={true}
+                    />
+                  </View>
+                ) : (
+                  <DatePicker
+                    style={{
+                      borderBottomWidth: 1.5,
+                      borderColor: '#000000',
+                      width: '100%',
+                      paddingTop: 0,
+                    }}
+                    placeholder="Birth Date"
+                    date={dob}
+                    mode="date"
+                    format="YYYY-MM-DD"
+                    maxDate="2010-01-01"
+                    confirmBtnText="Confirm"
+                    cancelBtnText="Cancel"
+                    customStyles={{
+                      dateIcon: {
+                        display: 'none',
+                      },
+
+                      dateText: {
+                        fontSize: 14,
+                        color: '#000000',
+                        paddingLeft: 15,
+                        paddingBottom: 0,
+                      },
+                      dateInput: {
+                        fontSize: 14,
+                        color: '#000000',
+                        marginTop: 0,
+                        borderWidth: 0,
+                        alignItems: 'flex-start',
+                        width: '100%',
+                      },
+                    }}
+                    onDateChange={date => {
+                      setDob(date);
+                    }}
+                  />
+                )}
+              </View>
+
+              <RadioForm
+                      formHorizontal={true}
+                      animation={true}
+                    >
+                    {
+                      radio_props.map((obj, i) => (
+                        <RadioButton labelHorizontal={true} key={i} >
+                          <RadioButtonInput
+                            obj={obj}
+                            index={i}
+                            isSelected={gender === obj.value}
+                            onPress={(value) => setGender(value)}
+                            borderWidth={1}
+                            buttonInnerColor={'#000'}
+                            buttonOuterColor={gender === obj.value ? '#161415' : '#161415'}
+                            buttonSize={10}
+                            buttonOuterSize={18}
+                            buttonStyle={{}}
+                            buttonWrapStyle={{marginLeft: 10}}
+                          />
+                          <RadioButtonLabel
+                            obj={obj}
+                            index={i}
+                            labelHorizontal={true}
+                            onPress={(value) => setGender(value)}
+                            labelStyle={{fontSize: 14, color: '#161415'}}
+                            labelWrapStyle={{}}
+                          />
+                        </RadioButton>
+                      ))
+                    }  
+                  </RadioForm>
+
+
+              <View style={styles.btnBox}>
+                <RoundedThemeButton
+                  label={'CANCEL'}
+                  style={{marginTop: 0, width: width / 2 - 50}}
+                  onPress={() => navigation.navigate('Profile')}
+                  loading={false}
+                />
+                <RoundedDarkButton
+                  label={'SAVE'}
+                  style={{marginTop: 0, width: width / 2 - 50}}
+                  onPress={submit}
+                  loading={loading}
+                />
+              </View>
             </View>
-          </View>
-        </ScrollView>
+          </ScrollView>
+        </KeyboardAvoidingView>
       </PageContainer>
 
       <ModalView

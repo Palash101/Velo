@@ -57,6 +57,7 @@ const MyWallet = () => {
   };
 
   const openModal = () => {
+    setAmount(0);
     setOpen(true);
   };
 

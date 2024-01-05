@@ -15,7 +15,7 @@ import DoubleJoyDetail from '../screens/DoubleJoy/detail';
 import DoubleJoyCheckout from '../screens/DoubleJoy/DoubleJouCheckout';
 import Home from '../screens/Home';
 import MyOrder from '../screens/DoubleJoy/myOrder';
-import doubleJoypay from '../screens/DoubleJoy/doubleJoypay';
+import DoubleJoypay from '../screens/DoubleJoy/doubleJoypay';
 
 const {createStackNavigator} = require('@react-navigation/stack');
 const width = Dimensions.get('window').width;
@@ -127,7 +127,7 @@ const DoubleJoyStack = ({navigation}) => {
 
       <Stack.Screen
         name="DoubleJoyPay"
-        component={doubleJoypay}
+        component={DoubleJoypay}
         options={{
           headerShown: false,
         }}

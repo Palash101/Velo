@@ -44,7 +44,7 @@ export const PlannerClass = props => {
             {item.relation.classes.attributes.title}
           </Text>
           {item.relation.classes.attributes.theme_name && (
-            <Text style={styles.subTitle}>
+            <Text style={styles.subTitle} ellipsizeMode='tail' numberOfLines={1} >
               {item.relation.classes.attributes.theme_name}
             </Text>
           )}
@@ -219,5 +219,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     textTransform: 'uppercase',
     color: '#161415',
+    width:90,
   },
 });
